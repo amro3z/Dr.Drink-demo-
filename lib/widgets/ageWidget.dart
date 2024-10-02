@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:dr_drink/widgets/genderWidget.dart';
 import 'package:flutter/material.dart';
