@@ -1,11 +1,7 @@
-import 'package:dr_drink/widgets/ageWidget.dart';
-import 'package:dr_drink/widgets/sleepWidget.dart';
-import 'package:dr_drink/widgets/wakeWidget.dart';
-import 'package:dr_drink/widgets/weightWidget.dart';
 import 'package:flutter/material.dart';
 
+import 'appbars.dart';
 import 'shares.dart';
-import 'genderWidget.dart';
 
 class MealWidget extends StatefulWidget {
   static int breakfastHour = 8;
@@ -88,80 +84,7 @@ class _MealWidgetState extends State<MealWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0, // إزالة التأثير الظل الخاص بالـ AppBar
-        toolbarHeight: 60, // تعديل ارتفاع الـ AppBar
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white, // لون خلفية ثابت للـ AppBar
-          ),
-        ),
-        actions: [
-          AppBaricon(
-            path: "assets/image/back.png",
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => Wakewidget()),
-              );
-            },
-          ),
-          AppBaricon(
-            path: "assets/image/sex (1).png",
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const GenderWidget()),
-              );
-            },
-          ),
-          AppBaricon(
-            path: "assets/image/time 1.png",
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => Agewidget()),
-              );
-            },
-          ),
-          AppBaricon(
-            path: "assets/image/weight.png",
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const Weightwidget()),
-              );
-            },
-          ),
-          AppBaricon(
-            path: "assets/image/clock.png",
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => Wakewidget()),
-              );
-            },
-          ),
-          AppBaricon(
-            path: "assets/image/food-service (1).png",
-          ),
-          AppBaricon(
-            path: "assets/image/moon.png",
-          ),
-          AppBaricon(
-            path: "assets/image/target.png",
-          ),
-          AppBaricon(
-            path: "assets/image/go.png",
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => Sleepwidget()),
-              );
-            },
-          ),
-        ],
-      ),
+      appBar: buildAppBarMeal(context),
       backgroundColor: Colors.white,
       body: Column(
         children: [
