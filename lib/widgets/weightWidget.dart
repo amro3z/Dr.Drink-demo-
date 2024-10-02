@@ -3,10 +3,10 @@ import 'package:dr_drink/widgets/genderWidget.dart';
 import 'package:dr_drink/widgets/wakeWidget.dart';
 import 'package:flutter/material.dart';
 
-import 'appBarrIcons.dart';
+import 'shares.dart';
 
 class Weightwidget extends StatefulWidget {
-  static int selectedWeight = 0; // القيمة الافتراضية تبدأ من 40
+  static int selectedWeight = 70; // القيمة الافتراضية تبدأ من 70
   const Weightwidget({super.key});
 
   @override
@@ -14,6 +14,22 @@ class Weightwidget extends StatefulWidget {
 }
 
 class _WeightwidgetState extends State<Weightwidget> {
+  static late FixedExtentScrollController scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    // تحديد الموضع الافتراضي لعجلة التمرير ليبدأ من الوزن 70
+    scrollController = FixedExtentScrollController(
+        initialItem: Weightwidget.selectedWeight - 40); // موضع الوزن 70
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,16 +88,10 @@ class _WeightwidgetState extends State<Weightwidget> {
           AppBaricon(
             path: "assets/image/go.png",
             onTap: () {
-              if (Weightwidget.selectedWeight == 0) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Please select a Number")),
-                );
-              } else {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Wakewidget()),
-                );
-              }
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => Wakewidget()),
+              );
             },
           ),
         ],
@@ -107,38 +117,17 @@ class _WeightwidgetState extends State<Weightwidget> {
             const SizedBox(
               height: 200,
             ),
-            SizedBox(
-              height: 400,
-              child: ListWheelScrollView.useDelegate(
-                itemExtent: 50, // المسافة بين كل عنصر
-                onSelectedItemChanged: (index) {
-                  setState(() {
-                    Weightwidget.selectedWeight =
-                        index + 40; // الرقم المختار يبدأ من 40
-                  });
-                },
-                perspective: 0.003,
-                physics: const FixedExtentScrollPhysics(),
-                childDelegate: ListWheelChildBuilderDelegate(
-                  builder: (context, index) {
-                    final weight = index + 40; // الأرقام تبدأ من 40
-                    return Center(
-                      child: Text(
-                        weight.toString(),
-                        style: TextStyle(
-                          fontSize: 40,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Poppins",
-                          color: Weightwidget.selectedWeight == weight
-                              ? Colors.black
-                              : Colors.grey, // تمييز الرقم المختار
-                        ),
-                      ),
-                    );
-                  },
-                  childCount: 200 - 40 + 1, // الأرقام من 40 إلى 200
-                ),
-              ),
+            WheelList(
+              scroll: scrollController,
+              selectedItem: Weightwidget.selectedWeight,
+              start: 40,
+              end: 200,
+              onSelectedItemChanged: (selected) {
+                setState(() {
+                  Weightwidget.selectedWeight =
+                      selected; // تحديث القيمة المختارة
+                });
+              },
             ),
             const Spacer(
               flex: 1,

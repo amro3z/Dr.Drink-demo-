@@ -1,22 +1,24 @@
+import 'package:dr_drink/widgets/ageWidget.dart';
 import 'package:dr_drink/widgets/mealWidget.dart';
+import 'package:dr_drink/widgets/test.dart';
+import 'package:dr_drink/widgets/wakeWidget.dart';
 import 'package:dr_drink/widgets/weightWidget.dart';
 import 'package:flutter/material.dart';
 
 import 'shares.dart';
 import 'genderWidget.dart';
 
-class Wakewidget extends StatefulWidget {
-  static int selectedHour = 6;
+class Sleepwidget extends StatefulWidget {
+  static int selectedHour = 11;
   static int selectedMinute = 30;
-  static String FormatedMinute = selectedMinute.toString().padLeft(2, '0');
-  static String selectedPeriod = "AM";
-  Wakewidget({super.key});
+  static String selectedPeriod = "PM";
+  Sleepwidget({super.key});
 
   @override
-  State<Wakewidget> createState() => _WakewidgetState();
+  State<Sleepwidget> createState() => _SleepwidgetState();
 }
 
-class _WakewidgetState extends State<Wakewidget> {
+class _SleepwidgetState extends State<Sleepwidget> {
   late FixedExtentScrollController hourController;
   late FixedExtentScrollController minuteController;
   late FixedExtentScrollController periodController;
@@ -26,13 +28,13 @@ class _WakewidgetState extends State<Wakewidget> {
     super.initState();
     // تعيين الموضع الافتراضي للمتحكمات لعجلة التمرير
     hourController = FixedExtentScrollController(
-      initialItem: Wakewidget.selectedHour - 1, // تعيين الساعات (من 1 إلى 12)
+      initialItem: Sleepwidget.selectedHour - 1, // تعيين الساعات (من 1 إلى 12)
     );
     minuteController = FixedExtentScrollController(
-      initialItem: Wakewidget.selectedMinute, // تعيين الدقائق
+      initialItem: Sleepwidget.selectedMinute, // تعيين الدقائق
     );
     periodController = FixedExtentScrollController(
-      initialItem: Wakewidget.selectedPeriod == "AM" ? 0 : 1, // AM أو PM
+      initialItem: Sleepwidget.selectedPeriod == "AM" ? 0 : 1, // AM أو PM
     );
   }
 
@@ -62,7 +64,7 @@ class _WakewidgetState extends State<Wakewidget> {
             onTap: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const Weightwidget()),
+                MaterialPageRoute(builder: (context) => const MealWidget()),
               );
             },
           ),
@@ -77,15 +79,39 @@ class _WakewidgetState extends State<Wakewidget> {
           ),
           AppBaricon(
             path: "assets/image/time 1.png",
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const Agewidget()),
+              );
+            },
           ),
           AppBaricon(
             path: "assets/image/weight.png",
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const Weightwidget()),
+              );
+            },
           ),
           AppBaricon(
             path: "assets/image/clock.png",
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => Wakewidget()),
+              );
+            },
           ),
           AppBaricon(
             path: "assets/image/food-service (1).png",
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const MealWidget()),
+              );
+            },
           ),
           AppBaricon(
             path: "assets/image/moon.png",
@@ -98,7 +124,7 @@ class _WakewidgetState extends State<Wakewidget> {
             onTap: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const MealWidget()),
+                MaterialPageRoute(builder: (context) => const test()),
               );
             },
           ),
@@ -112,7 +138,7 @@ class _WakewidgetState extends State<Wakewidget> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "When you wakes up?",
+                  "When you sleep?",
                   style: TextStyle(
                     fontFamily: "Poppins",
                     fontWeight: FontWeight.bold,
@@ -132,18 +158,18 @@ class _WakewidgetState extends State<Wakewidget> {
                 TimeWheel(
                   height: 400,
                   controller: hourController, // استخدم المتحكم
-                  selectedItem: Wakewidget.selectedHour,
+                  selectedItem: Sleepwidget.selectedHour,
                   start: 1,
                   end: 12,
                   onSelectedItemChanged: (selected) {
                     setState(() {
-                      Wakewidget.selectedHour = selected;
+                      Sleepwidget.selectedHour = selected;
                     });
                   },
                 ),
                 // Separator
                 const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  padding: EdgeInsets.only(top: 30, left: 10),
                   child: Text(
                     ":",
                     style: TextStyle(
@@ -157,13 +183,13 @@ class _WakewidgetState extends State<Wakewidget> {
                 TimeWheel(
                   height: 400,
                   controller: minuteController, // استخدم المتحكم
-                  selectedItem: Wakewidget.selectedMinute,
+                  selectedItem: Sleepwidget.selectedMinute,
                   start: 0,
                   end: 59,
                   padWithZero: true,
                   onSelectedItemChanged: (selected) {
                     setState(() {
-                      Wakewidget.selectedMinute = selected;
+                      Sleepwidget.selectedMinute = selected;
                     });
                   },
                 ),
@@ -171,10 +197,10 @@ class _WakewidgetState extends State<Wakewidget> {
                 AmPmWheel(
                   height: 200,
                   controller: periodController, // استخدم المتحكم
-                  selectedItem: Wakewidget.selectedPeriod,
+                  selectedItem: Sleepwidget.selectedPeriod,
                   onSelectedItemChanged: (selected) {
                     setState(() {
-                      Wakewidget.selectedPeriod = selected;
+                      Sleepwidget.selectedPeriod = selected;
                     });
                   },
                 ),

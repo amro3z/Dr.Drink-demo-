@@ -1,12 +1,11 @@
 
 import 'package:dr_drink/widgets/genderWidget.dart';
 import 'package:flutter/material.dart';
-
-import 'appBarrIcons.dart';
+import 'shares.dart';
 import 'weightWidget.dart';
 
 class Agewidget extends StatefulWidget {
-  static int selectedAge = 0;
+  static int selectedAge = 20; // تعيين القيمة الافتراضية
   const Agewidget({super.key});
 
   @override
@@ -14,6 +13,22 @@ class Agewidget extends StatefulWidget {
 }
 
 class _AgewidgetState extends State<Agewidget> {
+  late FixedExtentScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    // تحديد الموضع الافتراضي للتمرير إلى العمر 20
+    _scrollController =
+        FixedExtentScrollController(initialItem: Agewidget.selectedAge - 12);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,78 +81,45 @@ class _AgewidgetState extends State<Agewidget> {
           AppBaricon(
             path: "assets/image/go.png",
             onTap: () {
-              if (Agewidget.selectedAge == 0) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Please select a Number")),
-                );
-              } else {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Weightwidget()),
-                );
-              }
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const Weightwidget()),
+              );
             },
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(top: 30.0, left: 10),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "What's your age?",
-                  style: TextStyle(
-                    fontFamily: "Poppins",
-                    fontWeight: FontWeight.bold,
-                    fontSize: 27,
-                  ),
+      body: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 30.0, left: 10),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "What is your age?",
+                style: TextStyle(
+                  fontFamily: "Poppins",
+                  fontWeight: FontWeight.bold,
+                  fontSize: 27,
                 ),
               ),
             ),
-            const SizedBox(
-              height: 200,
-            ),
-            SizedBox(
-              height: 400,
-              child: ListWheelScrollView.useDelegate(
-                itemExtent: 50, // المسافة بين كل عنصر
-                onSelectedItemChanged: (index) {
-                  setState(() {
-                    Agewidget.selectedAge = index + 12; // الرقم المختار
-                  });
-                },
-                perspective: 0.003,
-                physics: const FixedExtentScrollPhysics(),
-                childDelegate: ListWheelChildBuilderDelegate(
-                  builder: (context, index) {
-                    final age = index + 12; // الأرقام من 12 إلى 100
-                    return Center(
-                      child: Text(
-                        age.toString(),
-                        style: TextStyle(
-                          fontSize: 40,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Poppins",
-                          color: Agewidget.selectedAge == age
-                              ? Colors.black
-                              : Colors.grey, // تمييز الرقم المختار
-                        ),
-                      ),
-                    );
-                  },
-                  childCount: 100 - 12 + 1, // الأرقام من 12 إلى 100
-                ),
-              ),
-            ),
-            const Spacer(
-              flex: 1,
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(
+            height: 200,
+          ),
+          WheelList(
+            start: 12,
+            end: 100,
+            selectedItem: Agewidget.selectedAge, // تمرير القيمة الافتراضية
+            onSelectedItemChanged: (selected) {
+              setState(() {
+                Agewidget.selectedAge = selected; // تحديث القيمة المختارة
+              });
+            },
+            scroll: _scrollController,
+          ),
+        ],
       ),
     );
   }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../main.dart';
 import 'ageWidget.dart';
-import 'appBarrIcons.dart';
+import 'shares.dart';
 
 class GenderWidget extends StatefulWidget {
   static bool isMale = false;
