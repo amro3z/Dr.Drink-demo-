@@ -9,9 +9,9 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    final logoWidth = screenWidth * 0.2;
-    final textFontSize = screenWidth * 0.05;
-    final subTextFontSize = screenWidth * 0.018;
+    final logoWidth = screenWidth * 0.5;
+    final textFontSize = screenWidth * 0.1;
+    final subTextFontSize = screenWidth * 0.04;
     final spacing = screenHeight * 0.002;
     final lottieSize = screenWidth * 0.3;
     return Scaffold(
