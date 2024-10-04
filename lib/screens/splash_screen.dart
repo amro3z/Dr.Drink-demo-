@@ -1,10 +1,27 @@
-import 'package:dr_drink/screens/target_screen.dart';
+import '../widgets/welcomeWidget.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const WelcomePage()),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -18,7 +35,14 @@ class SplashScreen extends StatelessWidget {
       backgroundColor: MyColor.blue,
       body: GestureDetector(
         onTap: () {
-          Navigator.pushReplacement(context,  MaterialPageRoute(builder: (context) => const TargetScreen()),);
+          Future.delayed(const Duration(seconds: 3), () {
+             Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const WelcomePage() ),
+          );
+
+          });
+         
         },
         child: Center(
           child: Column(

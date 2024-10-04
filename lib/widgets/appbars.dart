@@ -1,12 +1,13 @@
 import 'package:dr_drink/widgets/genderWidget.dart';
 import 'package:flutter/material.dart';
 
-import '../main.dart';
+import 'welcomeWidget.dart';
 import 'ageWidget.dart';
 import 'mealWidget.dart';
 import 'shares.dart';
 import 'sleepWidget.dart';
-import 'test.dart';
+// import 'test.dart';
+import '../screens/target_screen.dart';
 import 'wakeWidget.dart';
 import 'weightWidget.dart';
 
@@ -85,7 +86,7 @@ AppBar buildAppBarGender(BuildContext context) {
         onTap: () {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const HomeApp()),
+            MaterialPageRoute(builder: (context) => const WelcomePage()),
           );
         },
       ),
@@ -298,7 +299,7 @@ AppBar buildAppBarSleep(BuildContext context) {
         onTap: () {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const test()),
+            MaterialPageRoute(builder: (context) => const TargetScreen()),
           );
         },
       ),
