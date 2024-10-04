@@ -1,5 +1,4 @@
 // ignore_for_file: prefer_const_constructors
-import 'package:dr_drink/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'widgets/genderWidget.dart';
 
@@ -14,7 +13,7 @@ class Main extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: HomeApp(),
     );
   }
 }

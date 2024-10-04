@@ -1,9 +1,7 @@
-import 'package:dr_drink/widgets/mealWidget.dart';
-import 'package:dr_drink/widgets/weightWidget.dart';
 import 'package:flutter/material.dart';
 
+import 'appbars.dart';
 import 'shares.dart';
-import 'genderWidget.dart';
 
 class Wakewidget extends StatefulWidget {
   static int selectedHour = 6;
@@ -48,62 +46,7 @@ class _WakewidgetState extends State<Wakewidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0, // إزالة التأثير الظل الخاص بالـ AppBar
-        toolbarHeight: 60, // تعديل ارتفاع الـ AppBar
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white, // لون خلفية ثابت للـ AppBar
-          ),
-        ),
-        actions: [
-          AppBaricon(
-            path: "assets/image/back.png",
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const Weightwidget()),
-              );
-            },
-          ),
-          AppBaricon(
-            path: "assets/image/sex (1).png",
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const GenderWidget()),
-              );
-            },
-          ),
-          AppBaricon(
-            path: "assets/image/time 1.png",
-          ),
-          AppBaricon(
-            path: "assets/image/weight.png",
-          ),
-          AppBaricon(
-            path: "assets/image/clock.png",
-          ),
-          AppBaricon(
-            path: "assets/image/food-service (1).png",
-          ),
-          AppBaricon(
-            path: "assets/image/moon.png",
-          ),
-          AppBaricon(
-            path: "assets/image/target.png",
-          ),
-          AppBaricon(
-            path: "assets/image/go.png",
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const MealWidget()),
-              );
-            },
-          ),
-        ],
-      ),
+      appBar: buildAppBarWake(context),
       body: Center(
         child: Column(
           children: [
