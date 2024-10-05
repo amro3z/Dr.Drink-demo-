@@ -1,5 +1,8 @@
+import 'package:dr_drink/cubits/weather_cubit/weather_cubit.dart';
 import 'package:dr_drink/widgets/genderWidget.dart';
+import 'package:dr_drink/widgets/test.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'welcomeWidget.dart';
 import 'ageWidget.dart';
@@ -297,9 +300,11 @@ AppBar buildAppBarSleep(BuildContext context) {
         path: "assets/image/go.png",
         colorIcon: const Color(0xff2A6CE6),
         onTap: () {
+          var weather = BlocProvider.of<WeatherCubit>(context);
+          weather.getWeather();
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const TargetScreen()),
+            MaterialPageRoute(builder: (context) => const Test()),
           );
         },
       ),

@@ -5,7 +5,7 @@ class AppBaricon extends StatelessWidget {
       {super.key,
       required this.path,
       this.onTap,
-      this.colorIcon = const Color(0xff545454)});
+      this.colorIcon = Colors.black});
   final String path;
   final VoidCallback? onTap;
   final Color colorIcon;
@@ -15,7 +15,7 @@ class AppBaricon extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          padding: EdgeInsets.symmetric(horizontal: 8.0),
           child: Image.asset(
             path,
             width: 40,

@@ -1,22 +1,40 @@
-import 'package:dr_drink/widgets/ageWidget.dart';
-import 'package:dr_drink/widgets/mealWidget.dart';
-import 'package:dr_drink/widgets/wakeWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../cubits/weather_cubit/weather_cubit.dart';
+import '../cubits/weather_cubit/weather_states.dart';
+import 'ai.dart';
 
-import 'genderWidget.dart';
-import 'sleepWidget.dart';
-import 'weightWidget.dart';
-
-class test extends StatelessWidget {
-  const test({super.key});
+class Test extends StatelessWidget {
+  const Test({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text(
-          "age: ${Agewidget.selectedAge} \n weight: ${Weightwidget.selectedWeight}/n sex: ${GenderWidget.gender} \n wakes up: ${Wakewidget.selectedHour}:${Wakewidget.FormatedMinute} ${Wakewidget.selectedPeriod} \n breakFast: ${MealWidget.breakfastHour}:${MealWidget.breakfastMinute}  ${MealWidget.breakfastPeriod}\n lunch: ${MealWidget.lunchHour}:${MealWidget.lunchMinute} ${MealWidget.lunchPeriod} \n dinner: ${MealWidget.dinnerHour}:${MealWidget.dinnerMinute} ${MealWidget.dinnerPeriod} \n sleep: ${Sleepwidget.selectedHour}:${Sleepwidget.selectedMinute} ${Sleepwidget.selectedPeriod}",
-        ),
+      body: BlocBuilder<WeatherCubit, WeatherStates>(
+        builder: (context, state) {
+          if (state is NoWeatherDataState) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is WeatherLoadedState) {
+            var weather = BlocProvider.of<WeatherCubit>(context).weather;
+            return Center(
+              child: Column(
+                children: [
+                  Text("Weather condition: ${weather.condition}"),
+                  ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => AiWidget()));
+                      },
+                      child: Text("go"))
+                ],
+              ),
+            );
+          } else if (state is WeatherFailureState) {
+            return Center(child: Text("Error: ${state.message}"));
+          } else {
+            return const Center(child: Text("No data available"));
+          }
+        },
       ),
     );
   }
