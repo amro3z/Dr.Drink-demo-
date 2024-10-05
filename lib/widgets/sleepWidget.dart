@@ -1,3 +1,4 @@
+import 'package:dr_drink/screens/target_screen.dart';
 import 'package:dr_drink/widgets/ageWidget.dart';
 import 'package:dr_drink/widgets/mealWidget.dart';
 import 'package:dr_drink/widgets/test.dart';
@@ -124,7 +125,7 @@ class _SleepwidgetState extends State<Sleepwidget> {
             onTap: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const test()),
+                MaterialPageRoute(builder: (context) => const TargetScreen()),
               );
             },
           ),
