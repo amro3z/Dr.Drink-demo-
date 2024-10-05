@@ -44,23 +44,23 @@ AppBar buildAppBarAge(BuildContext context) {
       ),
       AppBaricon(
         path: "assets/image/weight.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/alarm.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/meal.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/sleep.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/target.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/go.png",
@@ -95,27 +95,27 @@ AppBar buildAppBarGender(BuildContext context) {
       ),
       AppBaricon(
         path: "assets/image/age.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/weight.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/alarm.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/meal.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/sleep.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/target.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/go.png",
@@ -200,11 +200,11 @@ AppBar buildAppBarMeal(BuildContext context) {
       ),
       AppBaricon(
         path: "assets/image/sleep.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/target.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/go.png",
@@ -290,7 +290,7 @@ AppBar buildAppBarSleep(BuildContext context) {
       ),
       AppBaricon(
         path: "assets/image/target.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/go.png",
@@ -352,15 +352,15 @@ AppBar buildAppBarWake(BuildContext context) {
       ),
       AppBaricon(
         path: "assets/image/meal.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/sleep.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/target.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/go.png",
@@ -419,19 +419,19 @@ AppBar buildAppBarWeight(BuildContext context) {
       ),
       AppBaricon(
         path: "assets/image/alarm.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/meal.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/sleep.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/target.png",
-        colorIcon: const Color.fromARGB(255, 148, 147, 147),
+        colorIcon: Colors.grey.withOpacity(0.55),
       ),
       AppBaricon(
         path: "assets/image/go.png",
