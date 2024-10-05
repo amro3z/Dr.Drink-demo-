@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-
 import '../main.dart';
 import 'ageWidget.dart';
 import 'shares.dart';
 
 class GenderWidget extends StatefulWidget {
-  static bool isMale = false;
+  static bool isMale = true;  // Male is selected by default
   static bool isFemale = false;
-  static String gender = "";
+  static String gender = "male";  // Default gender is male
+
   const GenderWidget({super.key});
+
   @override
   _GenderWidgetState createState() => _GenderWidgetState();
 }
