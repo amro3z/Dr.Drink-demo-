@@ -1,6 +1,15 @@
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dr_drink/widgets/ageWidget.dart';
+import 'package:dr_drink/widgets/weightWidget.dart';
+import 'package:dr_drink/widgets/genderWidget.dart';
+import 'package:dr_drink/widgets/wakeWidget.dart';
+import 'package:dr_drink/widgets/sleepWidget.dart';
+import 'package:dr_drink/logic/user.dart';
+
+import '../widgets/mealWidget.dart';
 
 class TargetScreen extends StatefulWidget {
   const TargetScreen({super.key});
@@ -10,16 +19,56 @@ class TargetScreen extends StatefulWidget {
 }
 
 class _TargetScreenState extends State<TargetScreen> {
+  User? _user;
   bool _showContent = false;
-  String _selectedUnit = '';
+  String _selectedUnit = 'ml';
+  double _waterGoal = 0.0; // Water goal in ml
 
   @override
   void initState() {
+    super.initState();
+    _storeAndCalculateWaterGoal();
     Future.delayed(const Duration(seconds: 3), () {
       setState(() {
         _showContent = true;
       });
     });
+  }
+
+  // Function to store user inputs in SharedPreferences and calculate water goal and it is async to wait for the SharedPreferences to be ready
+  Future<void> _storeAndCalculateWaterGoal() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Store values from your widgets
+    int age = Agewidget.selectedAge;
+    int weight = Weightwidget.selectedWeight;
+    String gender = GenderWidget.gender;
+    String wakeUpTime = '${Wakewidget.selectedHour}:${Wakewidget.selectedMinute} ${Wakewidget.selectedPeriod}';
+    String breakfastTime = '${MealWidget.breakfastHour}:${MealWidget.breakfastMinute} ${MealWidget.breakfastPeriod}';
+    String lunchTime = '${MealWidget.lunchHour}:${MealWidget.lunchMinute} ${MealWidget.lunchPeriod}';
+    String dinnerTime = '${MealWidget.dinnerHour}:${MealWidget.dinnerMinute} ${MealWidget.dinnerPeriod}';
+    String bedTime = '${Sleepwidget.selectedHour}:${Sleepwidget.selectedMinute} ${Sleepwidget.selectedPeriod}';
+
+    _user = User(gender: gender, weight: weight, age: age, wakeUpTime: wakeUpTime, bedTime: bedTime, breakfastTime: breakfastTime, lunchTime: lunchTime, dinnerTime: dinnerTime);
+
+    await prefs.setInt('age', age);
+    await prefs.setInt('weight', weight);
+    await prefs.setString('gender', gender);
+    await prefs.setString('wakeUpTime', wakeUpTime);
+    await prefs.setString('bedTime', bedTime);
+
+    // Calculate the daily water goal based on weight (default in ml)
+    setState(() {
+      _waterGoal = _user!.calculateWaterGoal();
+    });
+  }
+
+  // Function to convert between ml and L based on selected unit
+  double _getWaterGoalInSelectedUnit() {
+    if (_selectedUnit == 'ml') {
+      return _waterGoal; //  Default liters
+    }
+    return _waterGoal / 1000; // Convert to ml
   }
 
   @override
@@ -52,10 +101,21 @@ class _TargetScreenState extends State<TargetScreen> {
                     height: verticalSpacing,
                   ),
                   Text(
-                    'Your daily goal is',
+                    'Your daily water goal is',
                     style: TextStyle(
                       color: MyColor.white,
                       fontSize: textFontSize,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w700,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    '${_getWaterGoalInSelectedUnit()} $_selectedUnit',
+                    style: TextStyle(
+                      color: MyColor.white,
+                      fontSize: screenWidth * 0.06, // Larger font for water goal
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w700,
                       decoration: TextDecoration.none,
@@ -122,7 +182,7 @@ class _TargetScreenState extends State<TargetScreen> {
                       'L',
                       style: TextStyle(
                         color:
-                            _selectedUnit == 'L' ? MyColor.blue : MyColor.white,
+                        _selectedUnit == 'L' ? MyColor.blue : MyColor.white,
                         fontSize: subTextFontSize,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w700,
