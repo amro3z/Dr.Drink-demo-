@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors
+import 'package:dr_drink/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'componnent/navigation_bar.dart';
 import 'widgets/genderWidget.dart';
 import 'screens/splash_screen.dart';
 import 'screens/history_screen.dart';
@@ -15,7 +17,7 @@ class Main extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HistoryPage(),
+      home: HomeScreen(),
     );
   }
 }
