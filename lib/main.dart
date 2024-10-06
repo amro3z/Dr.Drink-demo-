@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'widgets/genderWidget.dart';
 import 'screens/splash_screen.dart';
+import 'screens/history_screen.dart';
 
 void main() {
   runApp(const Main());
@@ -14,7 +15,7 @@ class Main extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: HistoryPage(),
     );
   }
 }

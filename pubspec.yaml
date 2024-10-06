@@ -60,6 +60,7 @@ flutter:
   assets:
     - assets/image/
     - assets/animations/
+    - assets/icons/left_arrow.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
