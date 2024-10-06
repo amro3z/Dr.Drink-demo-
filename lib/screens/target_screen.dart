@@ -2,6 +2,8 @@ import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
+import 'home_screen.dart';
+
 class TargetScreen extends StatefulWidget {
   final double? initialQuantity = 50; // just for test
 
@@ -254,13 +256,18 @@ class _TargetScreenState extends State<TargetScreen> {
                   ),
                 ),
                 child: Center(
-                  child: Text(
-                    'Start',
-                    style: TextStyle(
-                      color: MyColor.blue,
-                      fontFamily: 'Poppins',
-                      fontSize: subTextFontSize,
-                      fontWeight: FontWeight.w700,
+                  child: GestureDetector(
+                    onTap: (){
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+                    },
+                    child: Text(
+                      'Start',
+                      style: TextStyle(
+                        color: MyColor.blue,
+                        fontFamily: 'Poppins',
+                        fontSize: subTextFontSize,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ),

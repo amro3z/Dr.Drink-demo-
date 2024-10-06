@@ -56,7 +56,7 @@ class _BottomBarState extends State<BottomBar> {
                 onTap: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                    MaterialPageRoute(builder: (context) => HomePage()),
                   );
                 },
                 child: Opacity(
