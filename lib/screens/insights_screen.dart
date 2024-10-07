@@ -16,12 +16,10 @@ class InsightsPage extends StatelessWidget {
               style: TextStyle(color: MyColor.blue, fontSize: 20),
             ),
           ),
-          BottomBar(
-            homeOpacity: 0.5,
-            historyOpacity: 0.5,
-            insightsOpacity: 1,
-            avatarOpacity: 0.5,
-          ),
+          // CustomStyledBottomNavBar(
+          //   currentIndex: _currentIndex,  // Pass the current index
+          //   onItemSelected: _onItemSelected,  // Pass the callback to handle item selection
+          // ),
         ]));
   }
 }

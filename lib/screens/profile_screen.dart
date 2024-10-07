@@ -16,12 +16,9 @@ class ProfilePage extends StatelessWidget {
               style: TextStyle(color: MyColor.blue, fontSize: 20),
             ),
           ),
-          BottomBar(
-            homeOpacity: 0.5,
-            historyOpacity: 0.5,
-            insightsOpacity: 0.5,
-            avatarOpacity: 1,
-          ),
+          // CustomStyledBottomNavBar(
+          //
+          // ),
         ]));
   }
 }
