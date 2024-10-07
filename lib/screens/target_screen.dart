@@ -1,6 +1,11 @@
-import 'package:dr_drink/values/color.dart';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import '../cubits/weather_cubit/weather_cubit.dart';
+import '../cubits/weather_cubit/weather_states.dart';
+import '../values/color.dart';
+import '../tips/ai.dart';
+import '../tips/tip_screen.dart';
 
 class TargetScreen extends StatefulWidget {
   final double? initialQuantity = 50; // just for test
@@ -8,20 +13,40 @@ class TargetScreen extends StatefulWidget {
   const TargetScreen({super.key});
 
   @override
-  State<TargetScreen> createState() => _TargetScreenState();
+  State<TargetScreen> createState() => _TargetScreenState(); // التصحيح هنا
 }
 
 class _TargetScreenState extends State<TargetScreen> {
   bool _showContent = false;
   String _selectedUnit = '';
   double? _quantity;
+  late final WeatherCubit weatherCubit;
+  late final TipService
+      tipService; // يجب تهيئة TipService بعد تهيئة weatherCubit
+  List<String> tips = [];
 
   @override
   void initState() {
     super.initState();
     _selectedUnit = 'ml'; // Set default unit to 'ml'
-
     _quantity = widget.initialQuantity;
+
+    // تهيئة weatherCubit وبدء جلب حالة الطقس
+    weatherCubit = WeatherCubit();
+
+    // تهيئة TipService بعد تهيئة weatherCubit
+    tipService = TipService(weatherCubit: weatherCubit);
+
+    weatherCubit.getWeather(); // جلب حالة الطقس
+
+    // إضافة مستمع لتحميل بيانات الطقس قبل استدعاء fetchTipsFromService
+    weatherCubit.stream.listen((state) {
+      if (state is WeatherLoadedState) {
+        fetchTipsFromService(); // جلب النصائح بعد تحميل الطقس
+      }
+    });
+
+    // إظهار محتوى الشاشة بعد 3 ثوانٍ
     Future.delayed(const Duration(seconds: 3), () {
       setState(() {
         _showContent = true;
@@ -29,6 +54,26 @@ class _TargetScreenState extends State<TargetScreen> {
     });
   }
 
+  // دالة لجلب النصائح من TipService
+  Future<void> fetchTipsFromService() async {
+    try {
+      List<String> fetchedTips = await tipService.fetchTips();
+
+      setState(() {
+        tips = fetchedTips;
+      });
+
+      if (fetchedTips.isNotEmpty) {
+        Future.delayed(const Duration(seconds: 1, milliseconds: 500), () {
+          TipDisplay.showTipBottomSheet(context, fetchedTips[0]);
+        });
+      }
+    } catch (e) {
+      log('Error in fetching tips from service: $e'); // تسجيل أي خطأ يحدث هنا
+    }
+  }
+
+  // بقية كود TargetScreen كما هو
   void setQuantity(double quantity) {
     setState(() {
       _quantity = quantity;
@@ -36,46 +81,12 @@ class _TargetScreenState extends State<TargetScreen> {
   }
 
   double getDisplayedQuantity() {
-    if (_selectedUnit == 'ml')
+    if (_selectedUnit == 'ml') {
       return _quantity ?? 0.0;
-    else
+    } else {
       return (_quantity ?? 0.0) / 1000;
+    }
   }
-
-  // void _showAdjustDialog() {
-  //   final TextEditingController controller = TextEditingController();
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: Text('Adjust Quantity'),
-  //         content: TextField(
-  //           controller: controller,
-  //           keyboardType: TextInputType.number,
-  //           decoration: InputDecoration(hintText: 'Enter new quantity'),
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //             },
-  //             child: Text('Cancel'),
-  //           ),
-  //           TextButton(
-  //             onPressed: () {
-  //               final newQuantity = double.tryParse(controller.text);
-  //               if (newQuantity != null) {
-  //                 setQuantity(newQuantity);
-  //               }
-  //               Navigator.of(context).pop();
-  //             },
-  //             child: Text('OK'),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +117,6 @@ class _TargetScreenState extends State<TargetScreen> {
           ),
         ),
         if (_showContent) ...[
-          // Positioned text
           Positioned(
             top: textTopPosition,
             left: 0,
@@ -124,8 +134,6 @@ class _TargetScreenState extends State<TargetScreen> {
               ),
             ),
           ),
-
-          // Positioned 'ML' and 'L' buttons
           Positioned(
             top: unitsTopPosition,
             left: 0,
@@ -203,27 +211,27 @@ class _TargetScreenState extends State<TargetScreen> {
             ),
           ),
           Positioned(
-            top: screenHeight * 0.71, // Adjust positioning as needed
+            top: screenHeight * 0.71,
             left: 0,
             right: 0,
             child: Center(
-
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: MyColor.white.withOpacity(0.55),
-                      ),
-                      child: Text('Adjust', style: TextStyle(
-                        color: MyColor.white
-                        ,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w700,
-                        fontSize: adjustFontSize,
-                      ),),
-                    ),
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: MyColor.white.withOpacity(0.55),
+                ),
+                child: Text(
+                  'Adjust',
+                  style: TextStyle(
+                    color: MyColor.white,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w700,
+                    fontSize: adjustFontSize,
+                  ),
+                ),
+              ),
             ),
           ),
-          // Positioned Divider
           Positioned(
             top: dividerTopPosition,
             left: 0,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'appbars.dart';
-import 'shares.dart';
+import '../shares/appbars.dart';
+import '../shares/shares.dart';
 
 class Agewidget extends StatefulWidget {
   static int selectedAge = 20; // تعيين القيمة الافتراضية

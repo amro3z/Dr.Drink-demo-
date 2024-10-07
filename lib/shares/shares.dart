@@ -256,7 +256,7 @@ Widget buildMealTimeSection(
           TimeWheel(
             height: 120,
             controller: hourController,
-            selectedItem: hour, // تعديل لتعيين العنصر المختار
+            selectedItem: hour,
             start: 1,
             end: 12,
             onSelectedItemChanged: onHourChanged,
@@ -277,7 +277,7 @@ Widget buildMealTimeSection(
           TimeWheel(
             height: 120,
             controller: minuteController,
-            selectedItem: minute, // تعديل لتعيين العنصر المختار
+            selectedItem: minute,
             start: 0,
             end: 59,
             padWithZero: true,
@@ -288,7 +288,7 @@ Widget buildMealTimeSection(
           AmPmWheel(
             height: 120,
             controller: periodController,
-            selectedItem: perioed, // تعديل لتعيين العنصر المختار
+            selectedItem: perioed,
             onSelectedItemChanged: onPeriodChanged,
             fontSize: fontSize,
           ),
@@ -296,4 +296,50 @@ Widget buildMealTimeSection(
       ),
     ],
   );
+}
+
+class AnimatedGender extends StatelessWidget {
+  const AnimatedGender({
+    super.key,
+    required this.path,
+    required this.text,
+    required this.isSelected,
+    this.onTap,
+  });
+
+  final String path;
+  final String text;
+  final bool isSelected;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedOpacity(
+      opacity: isSelected ? 1.0 : 0.2,
+      duration: const Duration(milliseconds: 300),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              path,
+              width: 200,
+              height: 200,
+            ),
+            Text(
+              text,
+              style: const TextStyle(
+                fontSize: 26,
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.bold,
+                color: Color(0xff4970CD),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
