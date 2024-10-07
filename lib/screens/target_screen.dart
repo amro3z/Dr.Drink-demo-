@@ -2,6 +2,7 @@ import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
+import '../componnent/navigation_bar.dart';
 import 'home_screen.dart';
 
 class TargetScreen extends StatefulWidget {
@@ -258,7 +259,7 @@ class _TargetScreenState extends State<TargetScreen> {
                 child: Center(
                   child: GestureDetector(
                     onTap: (){
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CustomNavigationBar()));
                     },
                     child: Text(
                       'Start',

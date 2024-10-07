@@ -1,3 +1,4 @@
+import 'package:dr_drink/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'buildDayContent.dart';
 import 'buildMonthContent.dart';
@@ -5,6 +6,8 @@ import 'buildWeekContent.dart';
 import '../values/color.dart';
 
 class HistoryPage extends StatelessWidget {
+  final Map<double, double>? recordedData;
+  HistoryPage({ this.recordedData});
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -67,6 +70,13 @@ class HistoryPage extends StatelessWidget {
           child: TabBarView(
             children: [
               BuildDayContent(
+                goal: 6,
+                unit: 'L',
+                waterConsumptionList: HomePage.quantityValues,
+                hours: HomePage.hours,
+
+              ),
+              BuildWeekContent(
                 goal: 2.5,
                 unit: 'L',
                 waterConsumptionMap: {
@@ -77,9 +87,7 @@ class HistoryPage extends StatelessWidget {
                   22: 0.2,
                   23: 0.2,
                   24: 0.2,
-                },
-              ),
-              BuildWeekContent(),
+                },),
               BuildMonthContent(),
             ],
           ),
