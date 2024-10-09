@@ -1,17 +1,19 @@
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import '../componnent/navigation_bar.dart';
+import '../logic/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dr_drink/widgets/ageWidget.dart';
 import 'package:dr_drink/widgets/weightWidget.dart';
 import 'package:dr_drink/widgets/genderWidget.dart';
 import 'package:dr_drink/widgets/wakeWidget.dart';
 import 'package:dr_drink/widgets/sleepWidget.dart';
-import 'package:dr_drink/logic/user.dart';
-
 import '../widgets/mealWidget.dart';
 
 class TargetScreen extends StatefulWidget {
+  final double? initialQuantity = 50; // just for test
+
   const TargetScreen({super.key});
 
   @override
@@ -21,19 +23,28 @@ class TargetScreen extends StatefulWidget {
 class _TargetScreenState extends State<TargetScreen> {
   User? _user;
   bool _showContent = false;
-  String _selectedUnit = 'ml';
-  double _waterGoal = 0.0; // Water goal in ml
+  String _selectedUnit = '';
+  double? _quantity = 0.0;
 
   @override
   void initState() {
     super.initState();
     _storeAndCalculateWaterGoal();
+    _selectedUnit = 'ml'; // Set default unit to 'ml'
+
+    _quantity = widget.initialQuantity;
     Future.delayed(const Duration(seconds: 3), () {
       setState(() {
         _showContent = true;
       });
     });
   }
+  //
+  // void setQuantity(double quantity) {
+  //   setState(() {
+  //     _quantity = quantity;
+  //   });
+  // }
 
   // Function to store user inputs in SharedPreferences and calculate water goal and it is async to wait for the SharedPreferences to be ready
   Future<void> _storeAndCalculateWaterGoal() async {
@@ -55,80 +66,80 @@ class _TargetScreenState extends State<TargetScreen> {
     await prefs.setInt('weight', weight);
     await prefs.setString('gender', gender);
     await prefs.setString('wakeUpTime', wakeUpTime);
+    await prefs.setString('breakfastTime', breakfastTime);
+    await prefs.setString('lunchTime', lunchTime);
+    await prefs.setString('dinnerTime', dinnerTime);
     await prefs.setString('bedTime', bedTime);
+    await prefs.setBool('isUserRegistered', true);
 
     // Calculate the daily water goal based on weight (default in ml)
     setState(() {
-      _waterGoal = _user!.calculateWaterGoal();
+      _quantity = _user!.calculateWaterGoal();
     });
+    await prefs.setDouble('waterGoal', _quantity!);
   }
 
-  // Function to convert between ml and L based on selected unit
-  double _getWaterGoalInSelectedUnit() {
-    if (_selectedUnit == 'ml') {
-      return _waterGoal; //  Default liters
-    }
-    return _waterGoal / 1000; // Convert to ml
+  double getDisplayedQuantity() {
+    if (_selectedUnit == 'ml')
+      return _quantity ?? 0.0;
+    else
+      return (_quantity ?? 0.0) / 1000;
   }
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    final textFontSize = screenWidth * 0.04;
-    final subTextFontSize = screenWidth * 0.03;
+    final textFontSize = screenWidth * 0.08;
+    final adjustFontSize = screenWidth * 0.04;
+    final numFontSize = screenWidth * 0.3;
+    final unitFontSize = screenWidth * 0.08;
+    final subTextFontSize = screenWidth * 0.04;
 
-    final verticalSpacing = screenHeight * 0.1;
-    final horizontalSpacing = screenWidth * 0.3;
+    final textTopPosition = screenHeight * 0.22;
+    final unitsTopPosition = textTopPosition + (screenHeight * 0.15);
+    final dividerTopPosition = unitsTopPosition + (screenHeight * 0.1);
 
-    final horizontalPadding = screenHeight * 0.05;
-    final verticalPadding = screenHeight * 0.00;
+    final horizontalPadding = screenHeight * 0.035;
+    final verticalPadding = screenHeight * 0.015;
     final borderRadius = screenHeight * 0.1;
 
-    return Stack(children: [
-      Positioned.fill(
-          child: Lottie.asset('assets/animations/water_fill_animation.json',
-              fit: BoxFit.fill, repeat: false)),
-      if (_showContent)
-        Column(
-          children: [
-            Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    height: verticalSpacing,
-                  ),
-                  Text(
-                    'Your daily water goal is',
-                    style: TextStyle(
-                      color: MyColor.white,
-                      fontSize: textFontSize,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w700,
-                      decoration: TextDecoration.none,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    '${_getWaterGoalInSelectedUnit()} $_selectedUnit',
-                    style: TextStyle(
-                      color: MyColor.white,
-                      fontSize: screenWidth * 0.06, // Larger font for water goal
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w700,
-                      decoration: TextDecoration.none,
-                    ),
-                  ),
-                ],
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: Lottie.asset(
+            'assets/animations/water_fill_animation.json',
+            fit: BoxFit.fill,
+            repeat: false,
+          ),
+        ),
+        if (_showContent) ...[
+          // Positioned text
+          Positioned(
+            top: textTopPosition,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Text(
+                'Your daily goal is',
+                style: TextStyle(
+                  color: MyColor.white,
+                  fontSize: textFontSize,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w700,
+                  decoration: TextDecoration.none,
+                ),
               ),
             ),
-            SizedBox(
-              height: verticalSpacing,
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
+          ),
+
+          // Positioned 'ML' and 'L' buttons
+          Positioned(
+            top: unitsTopPosition,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
                   onTap: () {
@@ -138,15 +149,19 @@ class _TargetScreenState extends State<TargetScreen> {
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(
-                        vertical: verticalPadding,
-                        horizontal: horizontalPadding),
-                    decoration: BoxDecoration(
-                        color: _selectedUnit == 'ml'
-                            ? MyColor.white
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(borderRadius)),
+                      vertical: verticalPadding,
+                      horizontal: horizontalPadding,
+                    ),
+                    decoration: ShapeDecoration(
+                      color: _selectedUnit == 'ml'
+                          ? MyColor.white
+                          : Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(borderRadius),
+                      ),
+                    ),
                     child: Text(
-                      'ML',
+                      'ml',
                       style: TextStyle(
                         color: _selectedUnit == 'ml'
                             ? MyColor.blue
@@ -159,9 +174,7 @@ class _TargetScreenState extends State<TargetScreen> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: horizontalSpacing,
-                ),
+                SizedBox(width: screenWidth * 0.04),
                 GestureDetector(
                   onTap: () {
                     setState(() {
@@ -170,19 +183,22 @@ class _TargetScreenState extends State<TargetScreen> {
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(
-                        vertical: verticalPadding,
-                        horizontal: horizontalPadding),
-                    decoration: BoxDecoration(
+                      vertical: verticalPadding,
+                      horizontal: horizontalPadding,
+                    ),
+                    decoration: ShapeDecoration(
                       color: _selectedUnit == 'L'
                           ? MyColor.white
                           : Colors.transparent,
-                      borderRadius: BorderRadius.circular(borderRadius),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(borderRadius),
+                      ),
                     ),
                     child: Text(
                       'L',
                       style: TextStyle(
                         color:
-                        _selectedUnit == 'L' ? MyColor.blue : MyColor.white,
+                            _selectedUnit == 'L' ? MyColor.blue : MyColor.white,
                         fontSize: subTextFontSize,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w700,
@@ -190,11 +206,115 @@ class _TargetScreenState extends State<TargetScreen> {
                       ),
                     ),
                   ),
-                )
+                ),
               ],
-            )
-          ],
-        )
-    ]);
+            ),
+          ),
+          Positioned(
+            top: screenHeight * 0.71, // Adjust positioning as needed
+            left: 0,
+            right: 0,
+            child: Center(
+
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: MyColor.white.withOpacity(0.55),
+                      ),
+                      child: Text('Adjust', style: TextStyle(
+                        color: MyColor.white
+                        ,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w700,
+                        fontSize: adjustFontSize,
+                      ),),
+                    ),
+            ),
+          ),
+          // Positioned Divider
+          Positioned(
+            top: dividerTopPosition,
+            left: 0,
+            right: 0,
+            child: const Opacity(
+              opacity: 0.25,
+              child: Divider(
+                color: MyColor.white,
+                thickness: 1,
+                indent: 50,
+                endIndent: 50,
+              ),
+            ),
+          ),
+          Positioned(
+            top: screenHeight * 0.932,
+            left: 0,
+            right: 0,
+            child: Align(
+              alignment: Alignment.center,
+              child: Container(
+                height: 50,
+                width: 290,
+                decoration: ShapeDecoration(
+                  color: MyColor.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(borderRadius),
+                  ),
+                ),
+                child: Center(
+                  child: GestureDetector(
+                    onTap: (){
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CustomNavigationBar()));
+                    },
+                    child: Text(
+                      'Start',
+                      style: TextStyle(
+                        color: MyColor.blue,
+                        fontFamily: 'Poppins',
+                        fontSize: subTextFontSize,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: screenHeight * 0.5,
+            left: 0,
+            right: 0,
+            child: Align(
+              alignment: Alignment.center,
+              child: Text(
+                '${getDisplayedQuantity()}',
+                style: TextStyle(
+                  color: MyColor.white,
+                  fontFamily: 'Poppins',
+                  fontSize: numFontSize,
+                  fontWeight: FontWeight.w500,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: screenHeight * 0.615,
+            right:
+                _selectedUnit == 'ml' ? screenWidth * 0.08 : screenWidth * 0.12,
+            child: Text(
+              _selectedUnit == 'ml' ? 'ml' : 'L',
+              style: TextStyle(
+                color: MyColor.white,
+                fontFamily: 'Poppins',
+                fontSize: unitFontSize,
+                fontWeight: FontWeight.w500,
+                decoration: TextDecoration.none,
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
   }
 }
