@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
 class AppBaricon extends StatelessWidget {
-  AppBaricon({super.key, required this.path, this.onTap});
+  AppBaricon(
+      {super.key,
+      required this.path,
+      this.onTap,
+      this.colorIcon = const Color(0xff545454)});
   final String path;
   final VoidCallback? onTap;
+  final Color colorIcon;
   @override
   Widget build(BuildContext context) {
     return Flexible(
@@ -15,6 +20,7 @@ class AppBaricon extends StatelessWidget {
             path,
             width: 40,
             height: 40,
+            color: colorIcon,
           ),
         ),
       ),

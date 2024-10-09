@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import '../main.dart';
-import 'ageWidget.dart';
-import 'shares.dart';
+
+import 'appbars.dart';
 
 class GenderWidget extends StatefulWidget {
-  static bool isMale = true;  // Male is selected by default
+  static bool isMale = true;
   static bool isFemale = false;
-  static String gender = "male";  // Default gender is male
-
+  static String gender = "";
   const GenderWidget({super.key});
-
   @override
   _GenderWidgetState createState() => _GenderWidgetState();
 }
@@ -19,58 +16,7 @@ class _GenderWidgetState extends State<GenderWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        actions: [
-          AppBaricon(
-            path: "assets/image/back.png",
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const HomeApp()),
-              );
-            },
-          ),
-          AppBaricon(
-            path: "assets/image/sex (1).png",
-          ),
-          AppBaricon(
-            path: "assets/image/time 1.png",
-          ),
-          AppBaricon(
-            path: "assets/image/weight.png",
-          ),
-          AppBaricon(
-            path: "assets/image/clock.png",
-          ),
-          AppBaricon(
-            path: "assets/image/food-service (1).png",
-          ),
-          AppBaricon(
-            path: "assets/image/moon.png",
-          ),
-          AppBaricon(
-            path: "assets/image/target.png",
-          ),
-          AppBaricon(
-            path: "assets/image/go.png",
-            onTap: () {
-              if (GenderWidget.isMale || GenderWidget.isFemale) {
-                GenderWidget.gender = GenderWidget.isMale ? "male" : "female";
-
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Agewidget()),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Please select a gender")),
-                );
-              }
-            },
-          ),
-        ],
-      ),
+      appBar: buildAppBarGender(context),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
