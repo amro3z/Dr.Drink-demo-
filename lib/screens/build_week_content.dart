@@ -1,17 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../componnent/navigation_bar.dart';
 import '../values/color.dart';
 import '../values/icons.dart';
 
 class BuildWeekContent extends StatelessWidget {
   final double goal;
   final String unit;
-  final Map<int, double>
-  waterConsumptionMap;
+  final Map<int, double> waterConsumptionMap;
 
-  BuildWeekContent({
+  const BuildWeekContent({
+    super.key,
     required this.goal,
     required this.unit,
     required this.waterConsumptionMap,
@@ -63,7 +61,7 @@ class BuildWeekContent extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -145,23 +143,23 @@ class BuildWeekContent extends StatelessWidget {
 
   // Configuration for Bar Touch Data
   BarTouchData get barTouchData => BarTouchData(
-    enabled: false,
-    touchTooltipData: BarTouchTooltipData(
-      getTooltipColor: (group) => Colors.transparent,
-      tooltipPadding: EdgeInsets.zero,
-      tooltipMargin: 8,
-      getTooltipItem: (BarChartGroupData group, int groupIndex,
-          BarChartRodData rod, int rodIndex) {
-        return BarTooltipItem(
-          rod.toY.toStringAsFixed(1),
-          TextStyle(
-            color: MyColor.blue.withOpacity(0.2),
-            fontWeight: FontWeight.w500,
-          ),
-        );
-      },
-    ),
-  );
+        enabled: false,
+        touchTooltipData: BarTouchTooltipData(
+          getTooltipColor: (group) => Colors.transparent,
+          tooltipPadding: EdgeInsets.zero,
+          tooltipMargin: 8,
+          getTooltipItem: (BarChartGroupData group, int groupIndex,
+              BarChartRodData rod, int rodIndex) {
+            return BarTooltipItem(
+              rod.toY.toStringAsFixed(1),
+              TextStyle(
+                color: MyColor.blue.withOpacity(0.2),
+                fontWeight: FontWeight.w500,
+              ),
+            );
+          },
+        ),
+      );
 
   // Titles for the Y Axis (Left)
   Widget getLeftTitles(double value, TitleMeta meta, double goal) {
@@ -217,7 +215,7 @@ class BuildWeekContent extends StatelessWidget {
           showTitles: true,
           reservedSize: 50, // Adjusted to align y-axis titles
           interval:
-          interval, // Set interval to evenly distribute from 0 to goal
+              interval, // Set interval to evenly distribute from 0 to goal
           getTitlesWidget: (value, meta) => getLeftTitles(value, meta, goal),
         ),
       ),
@@ -232,31 +230,31 @@ class BuildWeekContent extends StatelessWidget {
 
   // Configure Border Data
   FlBorderData get borderData => FlBorderData(
-    show: true,
-    border: Border(
-      left: BorderSide(
-        color: MyColor.blue.withOpacity(0.2), // Set your desired color
-        width: 1, // Set the border width
-      ),
-      bottom: BorderSide(
-        color: MyColor.blue.withOpacity(0.2), // Set your desired color
-        width: 1, // Set the border width
-      ),
-      right: BorderSide.none, // No border on the right
-      top: BorderSide.none, // No border on the top
-    ),
-  );
+        show: true,
+        border: Border(
+          left: BorderSide(
+            color: MyColor.blue.withOpacity(0.2), // Set your desired color
+            width: 1, // Set the border width
+          ),
+          bottom: BorderSide(
+            color: MyColor.blue.withOpacity(0.2), // Set your desired color
+            width: 1, // Set the border width
+          ),
+          right: BorderSide.none, // No border on the right
+          top: BorderSide.none, // No border on the top
+        ),
+      );
 
   // Configure Gradient for Bars
   LinearGradient get _barsGradient => LinearGradient(
-    colors: [
-      Colors.white70.withOpacity(0.5),
-      MyColor.white,
-      MyColor.white,
-    ],
-    begin: Alignment.bottomCenter,
-    end: Alignment.topCenter,
-  );
+        colors: [
+          Colors.white70.withOpacity(0.5),
+          MyColor.white,
+          MyColor.white,
+        ],
+        begin: Alignment.bottomCenter,
+        end: Alignment.topCenter,
+      );
 
   // Generate dynamic Bar Groups Data
   List<BarChartGroupData> getBarGroups() {

@@ -2,11 +2,11 @@ import 'package:dr_drink/componnent/record_card.dart';
 import 'package:dr_drink/screens/history_screen.dart';
 import 'package:dr_drink/screens/home_screen.dart';
 import 'package:dr_drink/screens/insights_screen.dart';
-import 'package:dr_drink/screens/profile_screen.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 
 class CustomNavigationBar extends StatefulWidget {
+  const CustomNavigationBar({super.key});
   @override
   State<CustomNavigationBar> createState() => _NavigationBarState();
 }
@@ -15,9 +15,9 @@ class _NavigationBarState extends State<CustomNavigationBar> {
   int currentPageIndex = 0;
   final List<Widget> _pages = [
     HomePage(),
-    HistoryPage(),
-    InsightsPage(),
-    RecordCard(),
+    const HistoryPage(),
+    const InsightsPage(),
+    const RecordCard(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class _NavigationBarState extends State<CustomNavigationBar> {
                   color: MyColor.blue.withOpacity(0.4),
                   spreadRadius: 1,
                   blurRadius: 10,
-                  offset: Offset(0, 2),
+                  offset: const Offset(0, 2),
                 ),
               ]),
           child: NavigationBar(

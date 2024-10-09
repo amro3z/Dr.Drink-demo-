@@ -4,6 +4,7 @@ import '../values/color.dart';
 import '../values/icons.dart';
 
 class BuildMonthContent extends StatelessWidget {
+  const BuildMonthContent({super.key});
   @override
   Widget build(BuildContext context) {
     final scaleFactor = MediaQuery.of(context).textScaleFactor;

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 import '../componnent/navigation_bar.dart';
-import 'home_screen.dart';
 
 class TargetScreen extends StatefulWidget {
   final double? initialQuantity = 50; // just for test

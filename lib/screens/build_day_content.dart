@@ -11,11 +11,13 @@ class BuildDayContent extends StatelessWidget {
   final List<int> hours;
   final List<double> waterConsumptionList;
 
-  BuildDayContent(
-      {required this.goal,
-      required this.unit,
-      required this.waterConsumptionList,
-      required this.hours});
+  const BuildDayContent({
+    super.key,
+    required this.goal,
+    required this.unit,
+    required this.waterConsumptionList,
+    required this.hours,
+  });
 
   double get total {
     return waterConsumptionList.fold(0, (sum, item) => sum + item);
@@ -23,19 +25,22 @@ class BuildDayContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Fetch screen dimensions and scale factors
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
     final scaleFactor = MediaQuery.of(context).textScaleFactor;
     final textHeadSize = scaleFactor * 20;
 
     return Stack(
       children: [
         Positioned(
-          top: 20,
+          top: screenHeight * 0.02,
           left: 0,
           right: 0,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(Icons.arrow_back_ios),
+              const Icon(Icons.arrow_back_ios),
               Text(
                 'Today',
                 style: TextStyle(
@@ -45,34 +50,35 @@ class BuildDayContent extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              Icon(Icons.arrow_forward_ios),
+              const Icon(Icons.arrow_forward_ios),
             ],
           ),
         ),
         Positioned(
-          top: 90,
+          top: screenHeight * 0.1,
           left: 0,
           right: 0,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                height: 350,
+                height: screenHeight * 0.4,
                 decoration: ShapeDecoration(
                   color: MyColor.blue.withOpacity(0.04),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(screenHeight * 0.02),
                   ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 16),
+                    SizedBox(height: screenHeight * 0.02),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: screenWidth * 0.04),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -80,7 +86,7 @@ class BuildDayContent extends StatelessWidget {
                                 'Total',
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
-                                  fontSize: 18,
+                                  fontSize: screenWidth * 0.04,
                                   color: MyColor.blue.withOpacity(0.4),
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -89,7 +95,7 @@ class BuildDayContent extends StatelessWidget {
                                 '${total.toStringAsFixed(2)} $unit',
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
-                                  fontSize: 18,
+                                  fontSize: screenWidth * 0.045,
                                   color: MyColor.blue.withOpacity(0.9),
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -98,7 +104,8 @@ class BuildDayContent extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: screenWidth * 0.04),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -106,7 +113,7 @@ class BuildDayContent extends StatelessWidget {
                                 'Goal',
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
-                                  fontSize: 18,
+                                  fontSize: screenWidth * 0.04,
                                   color: MyColor.blue.withOpacity(0.4),
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -115,7 +122,7 @@ class BuildDayContent extends StatelessWidget {
                                 '${goal.toStringAsFixed(2)} $unit',
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
-                                  fontSize: 18,
+                                  fontSize: screenWidth * 0.045,
                                   color: MyColor.blue.withOpacity(0.9),
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -125,7 +132,7 @@ class BuildDayContent extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 64),
+                    SizedBox(height: screenHeight * 0.05),
                     Expanded(
                       child: BarChart(
                         BarChartData(
@@ -143,7 +150,8 @@ class BuildDayContent extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 15, bottom: 15),
+                padding: EdgeInsets.only(
+                    top: screenHeight * 0.02, bottom: screenHeight * 0.02),
                 child: Text(
                   'Records',
                   style: TextStyle(
@@ -154,17 +162,19 @@ class BuildDayContent extends StatelessWidget {
                   ),
                 ),
               ),
+              // Records section
               Row(
                 children: [
                   Expanded(
                     child: SizedBox(
-                      height: 150,
+                      height: screenHeight * 0.15,
                       child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: HomePage.interval,
                           itemBuilder: (context, index) {
                             return Padding(
-                              padding: EdgeInsets.only(right: 15),
+                              padding:
+                                  EdgeInsets.only(right: screenWidth * 0.04),
                               child: RecordCard(
                                 quantity: waterConsumptionList[index],
                                 time: HomePage.formattedTime!,
@@ -287,7 +297,6 @@ class BuildDayContent extends StatelessWidget {
 
   // Generate the Bar Data
   List<BarChartGroupData> getBarGroups() {
-    int valueOfX = 1;
     final barGroups = <BarChartGroupData>[];
 
     for (int i = 0; i < waterConsumptionList.length && i < hours.length; i++) {

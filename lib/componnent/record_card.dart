@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class RecordCard extends StatefulWidget {
-  double quantity;
-  String time;
+  final double quantity;
+  final String time;
 
-  RecordCard({this.quantity = 0.34, this.time = '10:00 AM'});
+  const RecordCard({super.key,this.quantity = 0.34, this.time = '10:00 AM'});
 
   @override
   State<RecordCard> createState() => _RecordCardState();
@@ -37,28 +37,28 @@ class _RecordCardState extends State<RecordCard> {
               color: MyColor.blue.withOpacity(0.1),
               spreadRadius: 2,
               blurRadius: 4,
-              offset: Offset(0, 1),
+              offset: const Offset(0, 1),
             )
           ]),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Image.asset(
             'assets/icons/cup_record.png',
             width: 50,
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Opacity(
             opacity: 0.5,
             child: Text(
               amount,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 20,
                 color: MyColor.blue,
@@ -70,7 +70,7 @@ class _RecordCardState extends State<RecordCard> {
             opacity: 0.3,
             child: Text(
               formattedtime,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 16,
                 color: MyColor.blue,
