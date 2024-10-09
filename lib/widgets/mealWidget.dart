@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'appbars.dart';
-import 'shares.dart';
+import '../shares/appbars.dart';
+import '../shares/shares.dart';
 
 class MealWidget extends StatefulWidget {
   static int breakfastHour = 8;

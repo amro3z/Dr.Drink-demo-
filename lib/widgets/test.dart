@@ -1,23 +1,22 @@
-import 'package:dr_drink/widgets/ageWidget.dart';
-import 'package:dr_drink/widgets/mealWidget.dart';
-import 'package:dr_drink/widgets/wakeWidget.dart';
+import 'package:dr_drink/deta/user_deta.dart';
 import 'package:flutter/material.dart';
 
-import 'genderWidget.dart';
-import 'sleepWidget.dart';
-import 'weightWidget.dart';
-
-class test extends StatelessWidget {
-  const test({super.key});
+class Test extends StatelessWidget {
+  const Test({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text(
-          "age: ${Agewidget.selectedAge} \n weight: ${Weightwidget.selectedWeight}/n sex: ${GenderWidget.gender} \n wakes up: ${Wakewidget.selectedHour}:${Wakewidget.FormatedMinute} ${Wakewidget.selectedPeriod} \n breakFast: ${MealWidget.breakfastHour}:${MealWidget.breakfastMinute}  ${MealWidget.breakfastPeriod}\n lunch: ${MealWidget.lunchHour}:${MealWidget.lunchMinute} ${MealWidget.lunchPeriod} \n dinner: ${MealWidget.dinnerHour}:${MealWidget.dinnerMinute} ${MealWidget.dinnerPeriod} \n sleep: ${Sleepwidget.selectedHour}:${Sleepwidget.selectedMinute} ${Sleepwidget.selectedPeriod}",
-        ),
-      ),
-    );
+        body: Center(
+      child: Text(
+          "Lunch Time: ${UserDeta.formatTimeOfDay(UserDeta.lunchTime)}\n"
+          "Breakfast Time: ${UserDeta.formatTimeOfDay(UserDeta.breakfastTime)}\n"
+          "Dinner Time: ${UserDeta.formatTimeOfDay(UserDeta.dinnerTime)}\n"
+          "Sleep Time: ${UserDeta.formatTimeOfDay(UserDeta.sleep)}\n"
+          "Wake Up Time: ${UserDeta.formatTimeOfDay(UserDeta.wakesup)}\n"
+          "Weight: ${UserDeta.weight}\n"
+          "Age: ${UserDeta.age}\n"
+          "Gender: ${UserDeta.gender}"),
+    ));
   }
 }
