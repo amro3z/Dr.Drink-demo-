@@ -1,5 +1,6 @@
+import 'package:dr_drink/widgets/dataWidget.dart';
 import 'package:flutter/material.dart';
-import 'genderWidget.dart';
+
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
 
@@ -14,7 +15,7 @@ class WelcomePage extends StatelessWidget {
             onTap: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const GenderWidget()),
+                MaterialPageRoute(builder: (context) => DataWidget()),
               );
             },
             child: Image.asset(

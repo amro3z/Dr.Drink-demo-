@@ -1,4 +1,3 @@
-import 'package:dr_drink/shares/appbars.dart';
 import 'package:dr_drink/shares/shares.dart';
 
 import 'package:flutter/material.dart';
@@ -45,7 +44,6 @@ class _SleepwidgetState extends State<Sleepwidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: buildAppBarSleep(context),
       body: Center(
         child: Column(
           children: [

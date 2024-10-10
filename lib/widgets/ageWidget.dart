@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../shares/appbars.dart';
 import '../shares/shares.dart';
 
 class Agewidget extends StatefulWidget {
@@ -31,7 +30,6 @@ class _AgewidgetState extends State<Agewidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: buildAppBarAge(context),
       body: Column(
         children: [
           const Padding(
