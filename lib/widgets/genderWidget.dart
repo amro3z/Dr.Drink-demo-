@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../shares/appbars.dart';
 import '../shares/shares.dart';
 
 class GenderWidget extends StatefulWidget {
@@ -17,7 +16,6 @@ class _GenderWidgetState extends State<GenderWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: buildAppBarGender(context),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

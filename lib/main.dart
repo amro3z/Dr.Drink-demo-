@@ -2,7 +2,6 @@ import 'package:dr_drink/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'cubits/weather_cubit/weather_cubit.dart';
-import 'widgets/test.dart';
 
 void main() {
   runApp(const Main());
