@@ -1,21 +1,32 @@
+import 'package:dr_drink/screens/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../values/color.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-        body: Stack(children: [
-          Align(
-            alignment: Alignment(0, 0),
-            child: Text(
-              'Welcome Profile!',
-              style: TextStyle(color: MyColor.blue, fontSize: 20),
-            ),
-          ),
-          
-        ]));
+    return Scaffold(
+      body: Center(
+        child: IconButton(
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+                (Route<dynamic> route) => false,
+              );
+            },
+            icon: Icon(Icons.exit_to_app)),
+      ),
+    );
   }
 }

@@ -1,7 +1,7 @@
-import 'package:dr_drink/componnent/record_card.dart';
 import 'package:dr_drink/screens/history_screen.dart';
 import 'package:dr_drink/screens/home_screen.dart';
 import 'package:dr_drink/screens/insights_screen.dart';
+import 'package:dr_drink/screens/profile_screen.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +17,7 @@ class _NavigationBarState extends State<CustomNavigationBar> {
     HomePage(),
     const HistoryPage(),
     const InsightsPage(),
-    const RecordCard(),
+    const ProfilePage(),
   ];
   @override
   Widget build(BuildContext context) {
