@@ -1,3 +1,5 @@
+import 'package:dr_drink/screens/sign_up_screen.dart';
+import 'package:dr_drink/widgets/welcomeWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:dr_drink/values/color.dart';
 
@@ -71,7 +73,8 @@ class LoginScreen extends StatelessWidget {
                     TextFormField(
                       decoration: InputDecoration(
                         hintText: 'Ex: abc@example.com',
-                        hintStyle: TextStyle(color: Colors.grey),
+                        hintStyle: TextStyle(
+                            color: Colors.grey, fontFamily: 'Poppins'),
                         prefixIcon: Icon(
                           Icons.alternate_email,
                           color: MyColor.blue,
@@ -108,7 +111,7 @@ class LoginScreen extends StatelessWidget {
                         hintText: '***********',
                         hintStyle: TextStyle(color: Colors.grey),
                         prefixIcon: Icon(
-                          Icons.lock,
+                          Icons.lock_open_outlined,
                           color: MyColor.blue,
                         ),
                         enabledBorder: OutlineInputBorder(
@@ -140,7 +143,12 @@ class LoginScreen extends StatelessWidget {
                       height: 28,
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => WelcomePage()));
+                      },
                       style: ElevatedButton.styleFrom(
                           elevation: 0,
                           backgroundColor: MyColor.blue,
@@ -214,16 +222,24 @@ class LoginScreen extends StatelessWidget {
                         SizedBox(
                           width: 3,
                         ),
-                        Text(
-                          'Register',
-                          style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              decorationColor: MyColor.blue,
-                              decorationThickness: 1.5,
-                              fontFamily: 'Poppins',
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: MyColor.blue),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SignUpScreen()));
+                          },
+                          child: Text(
+                            'Register',
+                            style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                decorationColor: MyColor.blue,
+                                decorationThickness: 1.5,
+                                fontFamily: 'Poppins',
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: MyColor.blue),
+                          ),
                         ),
                       ]),
                     ),
