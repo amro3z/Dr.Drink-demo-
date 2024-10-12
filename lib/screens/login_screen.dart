@@ -16,7 +16,7 @@ class LoginScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              height: 255,
+              height: 116,
             ),
             Container(
               width: double.infinity,
@@ -25,42 +25,19 @@ class LoginScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Welcome to ',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 24,
-                      fontFamily: 'Poppins',
-                      fontWeight: subTextWeight,
-                    ),
-                  ),
-                  Text(
-                    'Drink Daily ',
+                    'Login ',
                     style: TextStyle(
                       color: MyColor.blue,
-                      fontSize: 50,
+                      fontSize: 40,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   Text(
-                    'A place where you can track\nall your daily water intake...',
-                    textAlign: TextAlign.start,
+                    'Login now to track all your expenses and income at a place! ',
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 18,
-                      fontFamily: 'Poppins',
-                      fontWeight: subTextWeight,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 70,
-                  ),
-                  Text(
-                    'Let’s Get Started...',
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,
+                      fontSize: 22,
                       fontFamily: 'Poppins',
                       fontWeight: subTextWeight,
                     ),
