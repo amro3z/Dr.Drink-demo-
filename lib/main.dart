@@ -2,8 +2,22 @@ import 'package:dr_drink/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'cubits/weather_cubit/weather_cubit.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
+            apiKey: 'AIzaSyABLxq1U60vAWE5cIqyqSjb0MIudKiWKQ4',
+            appId: '1:710563306562:android:d894e4e55beb2b6c5fe1db',
+            messagingSenderId: '710563306562',
+            projectId: 'drink-daily-app'));
+    print('Firebase successfully connected!');
+  } catch (e) {
+    print('Firebase connection error: $e');
+  }
+
   runApp(const Main());
 }
 
