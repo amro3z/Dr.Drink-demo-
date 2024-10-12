@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "710563306562",
+    "project_id": "drink-daily-app",
+    "storage_bucket": "drink-daily-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:710563306562:android:d894e4e55beb2b6c5fe1db",
+        "android_client_info": {
+          "package_name": "com.example.dr_drink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABLxq1U60vAWE5cIqyqSjb0MIudKiWKQ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
