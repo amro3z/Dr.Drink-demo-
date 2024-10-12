@@ -1,3 +1,4 @@
+import 'package:dr_drink/screens/login_screen.dart';
 import 'package:dr_drink/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,7 +23,7 @@ class _MainState extends State<Main> {
           WeatherCubit()..getWeather(), // تأكد من استدعاء getWeather هنا
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: const SplashScreen(),
+        home:  LoginScreen(),
       ),
     );
   }
