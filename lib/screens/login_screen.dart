@@ -97,7 +97,8 @@ class LoginScreen extends StatelessWidget {
                         fontFamily: 'Poppins',
                         fontWeight: subTextWeight,
                       ),
-                    ),SizedBox(
+                    ),
+                    SizedBox(
                       height: 5,
                     ),
                     TextFormField(
@@ -119,20 +120,113 @@ class LoginScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                           borderSide:
                               BorderSide(color: MyColor.blue, width: 1.5),
-
                         ),
                       ),
                     ),
-                    SizedBox(height: 7,),
-                    Text('Forgot Password?', style:TextStyle(
-                      decoration: TextDecoration.underline,
-                      decorationColor: MyColor.blue,
-                      decorationThickness: 1.5,
-                      color: MyColor.blue,
-                      fontSize: 12,
-                      fontFamily: 'Poppins',
-                      fontWeight: subTextWeight,
-                    ),)
+                    SizedBox(
+                      height: 7,
+                    ),
+                    Text('Forgot Password?',
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          decorationColor: MyColor.blue,
+                          decorationThickness: 1.5,
+                          color: MyColor.blue,
+                          fontSize: 12,
+                          fontFamily: 'Poppins',
+                          fontWeight: subTextWeight,
+                        )),
+                    SizedBox(
+                      height: 28,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor: MyColor.blue,
+                          minimumSize: Size(double.infinity, 60),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16))),
+                      child: Text('Login',
+                          style: TextStyle(
+                              color: MyColor.white,
+                              fontSize: 16,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w700)),
+                    ),
+                    SizedBox(
+                      height: 29,
+                    ),
+                    Divider(
+                      thickness: 1,
+                      color: Colors.black,
+                    ),
+                    SizedBox(
+                      height: 29,
+                    ),
+                    OutlinedButton(
+                      onPressed: () {},
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: Size(double.infinity, 60),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 72, vertical: 16),
+                        side: BorderSide(color: Colors.black, width: 1.5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image(
+                            image: AssetImage('assets/icons/google_icon.png'),
+                            width: 24,
+                            height: 24,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            'Login with Google',
+                            style: TextStyle(
+                                fontFamily: 'Poppins',
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    Center(
+                      child: Row(mainAxisSize: MainAxisSize.min, children: [
+                        Text(
+                          'Don\'t have an account?',
+                          style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 16,
+                              fontWeight: subTextWeight,
+                              color: Colors.black),
+                        ),
+                        SizedBox(
+                          width: 3,
+                        ),
+                        Text(
+                          'Register',
+                          style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              decorationColor: MyColor.blue,
+                              decorationThickness: 1.5,
+                              fontFamily: 'Poppins',
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: MyColor.blue),
+                        ),
+                      ]),
+                    ),
                   ],
                 ),
               ),
