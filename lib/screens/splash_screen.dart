@@ -1,6 +1,9 @@
+import 'package:dr_drink/componnent/navigation_bar.dart';
+import 'package:dr_drink/screens/home_screen.dart';
 import 'package:dr_drink/screens/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import '../widgets/welcomeWidget.dart';
+
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -17,10 +20,17 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-      );
+      if (FirebaseAuth.instance.currentUser == null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => CustomNavigationBar()),
+        );
+      }
     });
   }
 
