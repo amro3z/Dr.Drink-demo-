@@ -81,7 +81,9 @@ class _TargetScreenState extends State<TargetScreen> {
     String bedTime = '${Sleepwidget.selectedHour}:${Sleepwidget.selectedMinute} ${Sleepwidget.selectedPeriod}';
 
     _user = User(gender: gender, weight: weight, age: age, wakeUpTime: wakeUpTime, bedTime: bedTime, breakfastTime: breakfastTime, lunchTime: lunchTime, dinnerTime: dinnerTime);
+
     log('User data: $age, $weight, $gender, $wakeUpTime, $breakfastTime, $lunchTime, $dinnerTime, $bedTime');
+
     await prefs.setInt('age', age);
     await prefs.setInt('weight', weight);
     await prefs.setString('gender', gender);
