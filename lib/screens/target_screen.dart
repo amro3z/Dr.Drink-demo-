@@ -8,6 +8,14 @@ import '../tips/ai.dart';
 import '../tips/tip_screen.dart';
 
 import '../componnent/navigation_bar.dart';
+import '../logic/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dr_drink/widgets/ageWidget.dart';
+import 'package:dr_drink/widgets/weightWidget.dart';
+import 'package:dr_drink/widgets/genderWidget.dart';
+import 'package:dr_drink/widgets/wakeWidget.dart';
+import 'package:dr_drink/widgets/sleepWidget.dart';
+import '../widgets/mealWidget.dart';
 
 class TargetScreen extends StatefulWidget {
   final double? initialQuantity = 50; // just for test
@@ -19,6 +27,7 @@ class TargetScreen extends StatefulWidget {
 }
 
 class _TargetScreenState extends State<TargetScreen> {
+  User? _user;
   bool _showContent = false;
   String _selectedUnit = '';
   double? _quantity;
@@ -30,6 +39,7 @@ class _TargetScreenState extends State<TargetScreen> {
   @override
   void initState() {
     super.initState();
+    _storeAndCalculateWaterGoal();
     _selectedUnit = 'ml'; // Set default unit to 'ml'
     _quantity = widget.initialQuantity;
 
@@ -54,6 +64,39 @@ class _TargetScreenState extends State<TargetScreen> {
         _showContent = true;
       });
     });
+  }
+
+  // Function to store user inputs in SharedPreferences and calculate water goal and it is async to wait for the SharedPreferences to be ready
+  Future<void> _storeAndCalculateWaterGoal() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Store values from your widgets
+    int age = Agewidget.selectedAge;
+    int weight = Weightwidget.selectedWeight;
+    String gender = GenderWidget.gender;
+    String wakeUpTime = '${Wakewidget.selectedHour}:${Wakewidget.selectedMinute} ${Wakewidget.selectedPeriod}';
+    String breakfastTime = '${MealWidget.breakfastHour}:${MealWidget.breakfastMinute} ${MealWidget.breakfastPeriod}';
+    String lunchTime = '${MealWidget.lunchHour}:${MealWidget.lunchMinute} ${MealWidget.lunchPeriod}';
+    String dinnerTime = '${MealWidget.dinnerHour}:${MealWidget.dinnerMinute} ${MealWidget.dinnerPeriod}';
+    String bedTime = '${Sleepwidget.selectedHour}:${Sleepwidget.selectedMinute} ${Sleepwidget.selectedPeriod}';
+
+    _user = User(gender: gender, weight: weight, age: age, wakeUpTime: wakeUpTime, bedTime: bedTime, breakfastTime: breakfastTime, lunchTime: lunchTime, dinnerTime: dinnerTime);
+
+    await prefs.setInt('age', age);
+    await prefs.setInt('weight', weight);
+    await prefs.setString('gender', gender);
+    await prefs.setString('wakeUpTime', wakeUpTime);
+    await prefs.setString('breakfastTime', breakfastTime);
+    await prefs.setString('lunchTime', lunchTime);
+    await prefs.setString('dinnerTime', dinnerTime);
+    await prefs.setString('bedTime', bedTime);
+    await prefs.setBool('isUserRegistered', true);
+
+    // Calculate the daily water goal based on weight (default in ml)
+    setState(() {
+      _quantity = _user!.calculateWaterGoal();
+    });
+    await prefs.setDouble('waterGoal', _quantity!);
   }
 
   // دالة لجلب النصائح من TipService
