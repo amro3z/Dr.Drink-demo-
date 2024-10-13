@@ -5,9 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'cubits/weather_cubit/weather_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:dr_drink/logic/notifications.dart';
+
+Future<void> requestPermissions() async {
+  if (await Permission.notification.isDenied) {
+    await Permission.notification.request();
+  }
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await LocalNotificationService.init();
+  await requestPermissions();
+  await Permission.ignoreBatteryOptimizations.request();
+  
   try {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
