@@ -86,7 +86,7 @@ class LocalNotificationService {
       1,
       'Repeated Notification',
       'body',
-      RepeatInterval.everyMinute,
+      RepeatInterval.hourly,
       details,
       payload: "Payload Data",
     );
