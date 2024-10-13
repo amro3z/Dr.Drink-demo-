@@ -1,7 +1,6 @@
-import 'package:dr_drink/widgets/appbars.dart';
-import 'package:flutter/material.dart';
+import 'package:dr_drink/shares/shares.dart';
 
-import 'shares.dart';
+import 'package:flutter/material.dart';
 
 class Sleepwidget extends StatefulWidget {
   static int selectedHour = 11;
@@ -45,7 +44,6 @@ class _SleepwidgetState extends State<Sleepwidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: buildAppBarSleep(context),
       body: Center(
         child: Column(
           children: [
@@ -85,7 +83,7 @@ class _SleepwidgetState extends State<Sleepwidget> {
                 ),
                 // Separator
                 const Padding(
-                  padding: EdgeInsets.only(top: 30, left: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
                     ":",
                     style: TextStyle(

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'appbars.dart';
-import 'shares.dart';
+import '../shares/shares.dart';
 
 class MealWidget extends StatefulWidget {
   static int breakfastHour = 8;
@@ -84,7 +82,6 @@ class _MealWidgetState extends State<MealWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBarMeal(context),
       backgroundColor: Colors.white,
       body: Column(
         children: [

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'appbars.dart';
-import 'shares.dart';
+import '../shares/shares.dart';
 
 class Wakewidget extends StatefulWidget {
   static int selectedHour = 6;
@@ -46,7 +44,6 @@ class _WakewidgetState extends State<Wakewidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: buildAppBarWake(context),
       body: Center(
         child: Column(
           children: [

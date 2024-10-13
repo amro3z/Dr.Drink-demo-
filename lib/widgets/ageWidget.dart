@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'appbars.dart';
-import 'shares.dart';
+import '../shares/shares.dart';
 
 class Agewidget extends StatefulWidget {
   static int selectedAge = 20; // تعيين القيمة الافتراضية
@@ -31,7 +30,6 @@ class _AgewidgetState extends State<Agewidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: buildAppBarAge(context),
       body: Column(
         children: [
           const Padding(

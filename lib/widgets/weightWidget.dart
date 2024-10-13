@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'appbars.dart';
-import 'shares.dart';
+import '../shares/shares.dart';
 
 class Weightwidget extends StatefulWidget {
   static int selectedWeight = 70; // القيمة الافتراضية تبدأ من 70
@@ -32,7 +30,6 @@ class _WeightwidgetState extends State<Weightwidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: buildAppBarWeight(context),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -15,40 +15,40 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _controller = TextEditingController();
+  double? _submittedValue;
+  DateTime? _recordedTime;
   double _waterConsumed = 0; // Water consumed by the user
   // get the value from shared preferences
   double _waterGoal = 0; // Water goal for the user
-
-  @override
+  
+    @override
   void initState() {
     super.initState();
     getWaterConsumed();
     getWaterGoal();
   }
-
+  
   void _submitValue() {
     setState(() {
       try {
-        // Parse the input value
-        double submittedValue = double.parse(_controller.text);
-
-        // Increase water consumed by the input amount
-        _waterConsumed += submittedValue;
-        saveWaterConsumed();
-        // Update the list of consumed quantities
         HomePage.interval++;
-        HomePage.quantityValues.add(submittedValue);
 
-        // Record the current time for logging
-        DateTime recordedTime = DateTime.now();
-        int hours = recordedTime.hour;
-        HomePage.formattedTime = DateFormat.jm().format(recordedTime);
+        _submittedValue = double.parse(_controller.text);
+
+        HomePage.quantityValues.add(_submittedValue ?? 0);
+
+        _recordedTime = DateTime.now();
+        int hours = _recordedTime!.hour;
+        HomePage.formattedTime = DateFormat.jm().format(_recordedTime!);
+
         HomePage.hours.add(hours);
 
-        // Clear the input field
+        print(HomePage.quantityValues);
+        print(HomePage.hours);
+
         _controller.clear();
       } catch (e) {
-        // Handle invalid input (non-numeric values)
+        _submittedValue = null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Invalid input! Please enter a valid number.'),
@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,18 +94,11 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Display water consumed / water goal
-            Text(
-              'Water consumed: $_waterConsumed ml / $_waterGoal ml',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            // Input field for drinking water amount
             TextField(
               controller: _controller,
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               decoration: InputDecoration(
-                labelText: 'Enter amount (ml)',
+                labelText: 'Enter a number',
                 border: OutlineInputBorder(),
               ),
               inputFormatters: [
@@ -113,18 +106,10 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             SizedBox(height: 16),
-            // Drink button
             ElevatedButton(
               onPressed: _submitValue,
               child: Text('Drink!'),
             ),
-            SizedBox(height: 16),
-            // Show formatted time of last drink (optional)
-            if (HomePage.formattedTime != null)
-              Text(
-                'Last drink at: ${HomePage.formattedTime}',
-                style: TextStyle(fontSize: 16),
-              ),
           ],
         ),
       ),

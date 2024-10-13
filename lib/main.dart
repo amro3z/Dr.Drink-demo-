@@ -1,133 +1,69 @@
-// ignore_for_file: prefer_const_constructors
+import 'package:dr_drink/componnent/navigation_bar.dart';
 import 'package:dr_drink/screens/splash_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'widgets/genderWidget.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'cubits/weather_cubit/weather_cubit.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:dr_drink/logic/notifications.dart';
 
-void main() {
-  runApp(const Main());
-}
-
-class Main extends StatelessWidget {
-  const Main({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
-    );
+Future<void> requestPermissions() async {
+  if (await Permission.notification.isDenied) {
+    await Permission.notification.request();
   }
 }
 
-class HomeApp extends StatelessWidget {
-  const HomeApp({super.key});
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await LocalNotificationService.init();
+  await requestPermissions();
+  await Permission.ignoreBatteryOptimizations.request();
+  LocalNotificationService.showRepeatedNotification();
+
+  try {
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
+            apiKey: 'AIzaSyABLxq1U60vAWE5cIqyqSjb0MIudKiWKQ4',
+            appId: '1:710563306562:android:d894e4e55beb2b6c5fe1db',
+            messagingSenderId: '710563306562',
+            projectId: 'drink-daily-app'));
+    print('Firebase successfully connected!');
+  } catch (e) {
+    print('Firebase connection error: $e');
+  }
+
+  runApp(const Main());
+}
+
+class Main extends StatefulWidget {
+  const Main({super.key});
+
+  @override
+  State<Main> createState() => _MainState();
+}
+
+class _MainState extends State<Main> {
+  
+  @override
+  void initState() {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        print('User is currently signed out!');
+      } else {
+        print('User is signed in!');
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        actions: [
-          GestureDetector(
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => GenderWidget()),
-              );
-            },
-            child: Image.asset(
-              "assets/image/go.png",
-              width: 40,
-              height: 40,
-            ),
-          )
-        ],
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Spacer(
-              flex: 1,
-            ),
-            Image(
-              image: AssetImage(
-                "assets/image/bot 1.png",
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Text(
-              "Hello,",
-              style: TextStyle(
-                  fontSize: 27,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Poppins'),
-            ),
-            Text(
-              "welcome to your smart water",
-              style: TextStyle(
-                fontSize: 27,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              "reminder",
-              style: TextStyle(
-                fontSize: 25,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              "Here comes a few simple questions before we can",
-              style: TextStyle(
-                fontSize: 15,
-                fontFamily: 'Poppins',
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "personalize",
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontFamily: 'Poppins',
-                    color: Colors.blue,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 3),
-                  child: Text(
-                    "your daily",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontFamily: 'Poppins',
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 3),
-                  child: Text(
-                    "goal schedule",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontFamily: 'Poppins',
-                      color: Colors.blue,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Spacer(
-              flex: 2,
-            ),
-          ],
-        ),
+    return BlocProvider(
+      create: (context) =>
+          WeatherCubit()..getWeather(), // تأكد من استدعاء getWeather هنا
+      child:  const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: SplashScreen(),
       ),
     );
   }

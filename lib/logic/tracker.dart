@@ -1,14 +1,14 @@
 class Tracker {
   // Attributes
   double cupSize;
-  double waterGoal;
-  double waterConsumed;
+  double totalWaterGoal;
+  double totalWaterConsumed;
 
   // Constructor
   Tracker({
     required this.cupSize,
-    required this.waterGoal,
-    this.waterConsumed = 0.0, // Initialize with 0 by default
+    required this.totalWaterGoal,
+    this.totalWaterConsumed = 0, // Initialize with 0 by default
   });
 
   // Method to change the cup size
@@ -18,8 +18,8 @@ class Tracker {
     }
   }
 
-  // Method to simulate drinking water (adds to waterConsumed)
+  // Method to simulate drinking water (adds to totalWaterConsumed)
   void drink() {
-    waterConsumed += cupSize;
+    totalWaterConsumed += cupSize;
   }
 }

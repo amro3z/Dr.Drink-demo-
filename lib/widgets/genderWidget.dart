@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'appbars.dart';
+import '../shares/shares.dart';
 
 class GenderWidget extends StatefulWidget {
   static bool isMale = true;
   static bool isFemale = false;
-  static String gender = "";
+  static String gender = "Male";
   const GenderWidget({super.key});
   @override
   _GenderWidgetState createState() => _GenderWidgetState();
@@ -16,7 +16,6 @@ class _GenderWidgetState extends State<GenderWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: buildAppBarGender(context),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -49,6 +48,7 @@ class _GenderWidgetState extends State<GenderWidget> {
                       setState(() {
                         GenderWidget.isMale = true;
                         GenderWidget.isFemale = false;
+                        GenderWidget.gender = "Male";
                       });
                     }),
                 AnimatedGender(
@@ -59,58 +59,13 @@ class _GenderWidgetState extends State<GenderWidget> {
                       setState(() {
                         GenderWidget.isMale = false;
                         GenderWidget.isFemale = true;
+                        GenderWidget.gender = "Female";
                       });
                     })
               ],
             ),
             const Spacer(
               flex: 1,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class AnimatedGender extends StatelessWidget {
-  const AnimatedGender({
-    super.key,
-    required this.path,
-    required this.text,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  final String path;
-  final String text;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedOpacity(
-      opacity: isSelected ? 1.0 : 0.2,
-      duration: const Duration(milliseconds: 300),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.asset(
-              path,
-              width: 200,
-              height: 200,
-            ),
-            Text(
-              text,
-              style: const TextStyle(
-                fontSize: 26,
-                fontFamily: "Poppins",
-                fontWeight: FontWeight.bold,
-                color: Color(0xff4970CD),
-              ),
             ),
           ],
         ),

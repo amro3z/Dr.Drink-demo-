@@ -1,13 +1,13 @@
 import 'package:dr_drink/screens/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'buildDayContent.dart';
-import 'buildMonthContent.dart';
-import 'buildWeekContent.dart';
+import 'build_day_content.dart';
+import 'build_month_content.dart';
+import 'build_week_content.dart';
 import '../values/color.dart';
 
 class HistoryPage extends StatelessWidget {
   final Map<double, double>? recordedData;
-  HistoryPage({ this.recordedData});
+  const HistoryPage({ super.key,this.recordedData});
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
