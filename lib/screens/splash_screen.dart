@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,6 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    _checkUserInput();
     Future.delayed(const Duration(seconds: 3), () {
       if (FirebaseAuth.instance.currentUser == null) {
         Navigator.pushReplacement(
@@ -32,6 +34,31 @@ class _SplashScreenState extends State<SplashScreen> {
         );
       }
     });
+  }
+
+  // Check if the user has already entered their data
+  Future<void> _checkUserInput() async {
+    await Future.delayed(const Duration(seconds: 4));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    bool? isUserRegistered = prefs.getBool('isUserRegistered');
+
+
+    if (!mounted) return; // Check if the widget is still in the tree
+
+    if (isUserRegistered == true) {
+      // If user data exists, navigate to the TargetScreen (home screen)
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => CustomNavigationBar()),
+      );
+    } else {
+      // If no user data, navigate to GenderWidget (input screen)
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const WelcomePage()),
+      );
+    }
   }
 
   @override
