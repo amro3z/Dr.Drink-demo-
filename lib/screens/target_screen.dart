@@ -27,6 +27,7 @@ class TargetScreen extends StatefulWidget {
 }
 
 class _TargetScreenState extends State<TargetScreen> {
+  User? _user;
   bool _showContent = false;
   String _selectedUnit = '';
   double? _quantity;
@@ -80,7 +81,7 @@ class _TargetScreenState extends State<TargetScreen> {
     String bedTime = '${Sleepwidget.selectedHour}:${Sleepwidget.selectedMinute} ${Sleepwidget.selectedPeriod}';
 
     _user = User(gender: gender, weight: weight, age: age, wakeUpTime: wakeUpTime, bedTime: bedTime, breakfastTime: breakfastTime, lunchTime: lunchTime, dinnerTime: dinnerTime);
-
+    log('User data: $age, $weight, $gender, $wakeUpTime, $breakfastTime, $lunchTime, $dinnerTime, $bedTime');
     await prefs.setInt('age', age);
     await prefs.setInt('weight', weight);
     await prefs.setString('gender', gender);
@@ -89,7 +90,6 @@ class _TargetScreenState extends State<TargetScreen> {
     await prefs.setString('lunchTime', lunchTime);
     await prefs.setString('dinnerTime', dinnerTime);
     await prefs.setString('bedTime', bedTime);
-    await prefs.setBool('isUserRegistered', true);
 
     // Calculate the daily water goal based on weight (default in ml)
     setState(() {

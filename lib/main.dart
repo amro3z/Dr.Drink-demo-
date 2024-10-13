@@ -19,7 +19,8 @@ void main() async {
   await LocalNotificationService.init();
   await requestPermissions();
   await Permission.ignoreBatteryOptimizations.request();
-  
+  LocalNotificationService.showRepeatedNotification();
+
   try {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
@@ -60,9 +61,9 @@ class _MainState extends State<Main> {
     return BlocProvider(
       create: (context) =>
           WeatherCubit()..getWeather(), // تأكد من استدعاء getWeather هنا
-      child:  MaterialApp(
+      child:  const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: FirebaseAuth.instance.currentUser == null ? const SplashScreen() : const CustomNavigationBar(),
+        home: SplashScreen(),
       ),
     );
   }

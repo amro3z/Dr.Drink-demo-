@@ -53,6 +53,7 @@ dependencies:
   permission_handler: ^11.3.1
   flutter_timezone: ^3.0.1
   rxdart: ^0.28.0
+  connectivity_plus: ^6.0.5
 dev_dependencies:
   flutter_test:
     sdk: flutter
