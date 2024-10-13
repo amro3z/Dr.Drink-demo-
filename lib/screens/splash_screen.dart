@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dr_drink/componnent/navigation_bar.dart';
 import 'package:dr_drink/screens/home_screen.dart';
 import 'package:dr_drink/screens/login_screen.dart';
@@ -8,6 +10,8 @@ import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,24 +24,37 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkUserInput();
-    Future.delayed(const Duration(seconds: 3), () {
-      if (FirebaseAuth.instance.currentUser == null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => CustomNavigationBar()),
-        );
-      }
-    });
+
+    checkCredentials();
+
   }
 
+  Future<void> checkCredentials() async {
+    final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      log('****************************offline');
+      _checkUserAuthLocaly();
+    } else {
+      log('****************************online');
+      Future.delayed(const Duration(seconds: 3), () {
+        if (FirebaseAuth.instance.currentUser == null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => CustomNavigationBar()),
+          );
+        }
+      });
+    }
+  }
+
+
   // Check if the user has already entered their data
-  Future<void> _checkUserInput() async {
+  Future<void> _checkUserAuthLocaly() async {
     await Future.delayed(const Duration(seconds: 4));
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -56,7 +73,7 @@ class _SplashScreenState extends State<SplashScreen> {
       // If no user data, navigate to GenderWidget (input screen)
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const WelcomePage()),
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
     }
   }
