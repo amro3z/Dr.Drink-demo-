@@ -16,6 +16,17 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _controller = TextEditingController();
   double? _submittedValue;
   DateTime? _recordedTime;
+  double _waterConsumed = 0; // Water consumed by the user
+  // get the value from shared preferences
+  double _waterGoal = 0; // Water goal for the user
+  
+    @override
+  void initState() {
+    super.initState();
+    getWaterConsumed();
+    getWaterGoal();
+  }
+  
   void _submitValue() {
     setState(() {
       try {
@@ -46,6 +57,34 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // function to get the water consumed from shared preferences
+  void getWaterConsumed() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    double? waterConsumed = prefs.getDouble('waterConsumed');
+    if (waterConsumed != null) {
+      setState(() {
+        _waterConsumed = waterConsumed;
+      });
+    }
+  }
+
+  // function to save the water consumed in shared preferences
+  void saveWaterConsumed() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setDouble('waterConsumed', _waterConsumed);
+  }
+
+  // function to get the water goal from shared preferences
+  void getWaterGoal() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    double? waterGoal = prefs.getDouble('waterGoal');
+    if (waterGoal != null) {
+      setState(() {
+        _waterGoal = waterGoal;
+      });
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
