@@ -4,6 +4,7 @@ import 'package:dr_drink/widgets/welcomeWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:dr_drink/values/color.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -74,6 +75,10 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (credential.user != null) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isUserRegistered', true);
+        print(await prefs.getBool('isUserRegistered'));
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const WelcomePage()),
