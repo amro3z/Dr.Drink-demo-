@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:dr_drink/componnent/navigation_bar.dart';
-import 'package:dr_drink/screens/home_screen.dart';
 import 'package:dr_drink/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

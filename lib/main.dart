@@ -1,4 +1,4 @@
-import 'package:dr_drink/componnent/navigation_bar.dart';
+import 'package:dr_drink/screens/insights_screen.dart';
 import 'package:dr_drink/screens/splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +44,6 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
-  
   @override
   void initState() {
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
@@ -61,9 +60,9 @@ class _MainState extends State<Main> {
     return BlocProvider(
       create: (context) =>
           WeatherCubit()..getWeather(), // تأكد من استدعاء getWeather هنا
-      child:  const MaterialApp(
+      child: const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: SplashScreen(),
+        home: const InsightsPage(),
       ),
     );
   }
