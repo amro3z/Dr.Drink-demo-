@@ -4,6 +4,7 @@ import 'package:dr_drink/screens/insights_screen.dart';
 import 'package:dr_drink/screens/profile_screen.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
+import 'package:dr_drink/screens/home_page.dart';
 
 class CustomNavigationBar extends StatefulWidget {
   const CustomNavigationBar({super.key});
@@ -16,7 +17,7 @@ class _NavigationBarState extends State<CustomNavigationBar> {
   final List<Widget> _pages = [
     HomePage(),
     const HistoryPage(),
-    const InsightsPage(),
+    const WaterTracker(),
     const ProfilePage(),
   ];
   @override

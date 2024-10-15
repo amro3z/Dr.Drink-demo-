@@ -48,9 +48,11 @@ class _MainState extends State<Main> {
     return BlocProvider(
       create: (context) =>
           WeatherCubit()..getWeather(), // تأكد من استدعاء getWeather هنا
-      child:  MaterialApp(
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: FirebaseAuth.instance.currentUser == null ? const SplashScreen() : const CustomNavigationBar(),
+        home: FirebaseAuth.instance.currentUser == null
+            ? const SplashScreen()
+            : const CustomNavigationBar(),
       ),
     );
   }
