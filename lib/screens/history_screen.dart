@@ -22,6 +22,7 @@ class HistoryPage extends StatelessWidget {
       initialIndex: 0,
       length: 3,
       child: Scaffold(
+        backgroundColor: MyColor.white,
         appBar: AppBar(
           bottom: TabBar(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -69,13 +70,13 @@ class HistoryPage extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: TabBarView(
             children: [
-              BuildDayContent(
-                goal: 6,
-                unit: 'L',
-                waterConsumptionList: HomePage.quantityValues,
-                hours: HomePage.hours,
-
-              ),
+              // BuildDayContent(
+              //   goal: 6,
+              //   unit: 'L',
+              //   // waterConsumptionList: HomePage.quantityValues,
+              //   // hours: HomePage.hours,
+              //
+              // ),
               BuildWeekContent(
                 goal: 2.5,
                 unit: 'L',
