@@ -1,5 +1,6 @@
+import 'dart:developer';
+
 import 'package:dr_drink/componnent/navigation_bar.dart';
-import 'package:dr_drink/screens/home_screen.dart';
 import 'package:dr_drink/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -7,6 +8,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,19 +23,58 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
-      if (FirebaseAuth.instance.currentUser == null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => CustomNavigationBar()),
-        );
-      }
-    });
+
+    checkCredentials();
+
+  }
+
+  Future<void> checkCredentials() async {
+    final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      log('****************************offline');
+      _checkUserAuthLocaly();
+    } else {
+      log('****************************online');
+      Future.delayed(const Duration(seconds: 3), () {
+        if (FirebaseAuth.instance.currentUser == null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => CustomNavigationBar()),
+          );
+        }
+      });
+    }
+  }
+
+
+  // Check if the user has already entered their data
+  Future<void> _checkUserAuthLocaly() async {
+    await Future.delayed(const Duration(seconds: 4));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    bool? isUserRegistered = prefs.getBool('isUserRegistered');
+
+
+    if (!mounted) return; // Check if the widget is still in the tree
+
+    if (isUserRegistered == true) {
+      // If user data exists, navigate to the TargetScreen (home screen)
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => CustomNavigationBar()),
+      );
+    } else {
+      // If no user data, navigate to GenderWidget (input screen)
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+    }
   }
 
   @override

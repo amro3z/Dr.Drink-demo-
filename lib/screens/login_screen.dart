@@ -4,6 +4,8 @@ import 'package:dr_drink/widgets/welcomeWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:dr_drink/values/color.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,6 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final FocusNode _emailFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
   bool _isLoading = false;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  bool _isPasswordVisible = false;
 
   @override
   void dispose() {
@@ -26,6 +30,76 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailFocus.dispose();
     _passwordFocus.dispose();
     super.dispose();
+  }
+
+  void _logInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) {
+        // User canceled the login
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final UserCredential userCredential =
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      if (userCredential.user != null) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isUserRegistered', true);
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const WelcomePage()),
+        );
+      }
+    } catch (e) {
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.error,
+        animType: AnimType.rightSlide,
+        title: 'Google Sign-In Failed',
+        desc: e.toString(),
+      ).show();
+    }
+  }
+
+  void _resetPassword() async {
+    if (_emailController.text.isEmpty) {
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.error,
+        animType: AnimType.rightSlide,
+        title: 'Error',
+        desc: 'Please enter your email to reset password.',
+      ).show();
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: _emailController.text);
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.success,
+        animType: AnimType.rightSlide,
+        title: 'Success',
+        desc: 'Password reset email sent!',
+      ).show();
+    } catch (e) {
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.error,
+        animType: AnimType.rightSlide,
+        title: 'Error',
+        desc: e.toString(),
+      ).show();
+    }
   }
 
   void _loginUser() async {
@@ -74,6 +148,10 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (credential.user != null) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isUserRegistered', true);
+        print(await prefs.getBool('isUserRegistered'));
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const WelcomePage()),
@@ -210,7 +288,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextFormField(
                       controller: _passwordController,
                       focusNode: _passwordFocus,
-                      obscureText: true,
+                      obscureText: !_isPasswordVisible, // Control visibility
                       keyboardType: TextInputType.visiblePassword,
                       decoration: InputDecoration(
                         hintText: '***********',
@@ -219,20 +297,32 @@ class _LoginScreenState extends State<LoginScreen> {
                           Icons.lock_open_outlined,
                           color: MyColor.blue,
                         ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                            color: MyColor.blue,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isPasswordVisible = !_isPasswordVisible; // Toggle visibility
+                            });
+                          },
+                        ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
-                          borderSide: const BorderSide(
-                              color: MyColor.blue, width: 1.5),
+                          borderSide: const BorderSide(color: MyColor.blue, width: 1.5),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
-                          borderSide: const BorderSide(
-                              color: MyColor.blue, width: 1.5),
+                          borderSide: const BorderSide(color: MyColor.blue, width: 1.5),
                         ),
                       ),
                     ),
                     SizedBox(height: screenHeight * 0.008),
-                    Text('Forgot Password?',
+                    GestureDetector(
+                      onTap: _resetPassword,
+                      child: Text(
+                        'Forgot Password?',
                         style: TextStyle(
                           decoration: TextDecoration.underline,
                           decorationColor: MyColor.blue,
@@ -241,7 +331,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontSize: screenWidth * 0.03,
                           fontFamily: 'Poppins',
                           fontWeight: subTextWeight,
-                        )),
+                        ),
+                      ),
+                    ),
                     SizedBox(height: screenHeight * 0.03),
                     _isLoading
                         ? const Center(
@@ -271,7 +363,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     SizedBox(height: screenHeight * 0.04),
                     OutlinedButton(
-                      onPressed: () {},
+                      onPressed: _logInWithGoogle,
                       style: OutlinedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 60),
                         padding: const EdgeInsets.symmetric(

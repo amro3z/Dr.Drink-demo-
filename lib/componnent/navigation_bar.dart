@@ -6,6 +6,8 @@ import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import 'package:dr_drink/screens/home_page.dart';
 
+import '../screens/water_tracker_page.dart';
+
 class CustomNavigationBar extends StatefulWidget {
   const CustomNavigationBar({super.key});
   @override
@@ -15,16 +17,16 @@ class CustomNavigationBar extends StatefulWidget {
 class _NavigationBarState extends State<CustomNavigationBar> {
   int currentPageIndex = 0;
   final List<Widget> _pages = [
-    HomePage(),
+    const WaterTrackerPage(),
     const HistoryPage(),
-    const WaterTracker(),
+    const InsightsPage(),
     const ProfilePage(),
   ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(right: 16, left: 16, bottom: 40),
+        padding: const EdgeInsets.only(right: 16, left: 16, bottom: 16),
         child: Container(
           height: 75,
           decoration: BoxDecoration(
