@@ -74,13 +74,13 @@ class HistoryPage extends StatelessWidget {
             children: [
               // BuildDayContent(
               //   goal: 6,
-              //   unit: 'L',
-              //   // waterConsumptionList: HomePage.quantityValues,
-              //   // hours: HomePage.hours,
+              //    unit: 'L',
+              //  waterConsumptionList: HomePage.quantityValues,
+              //     hours: HomePage.hours,
               //
-              // ),
-              BuildWeekContent(
-                goal: 2.5,
+              //  ),
+              BuildDayContent(
+                goal: 3,
                 unit: 'L',
                 waterConsumptionMap: {
                   8: 0.5,
