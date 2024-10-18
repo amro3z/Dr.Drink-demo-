@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -12,7 +14,9 @@ class WaterIntakeScreen extends StatefulWidget {
 
 class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
   double waterLevel = 50;
-  List<String> records = [];
+  List<double> records = [];
+  List<int> recordedTimes = [];
+  DateTime? recordedTime;
 
   void _onDragUpdate(DragUpdateDetails details) {
     setState(() {
@@ -22,11 +26,17 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
   }
 
   void _storeRecord() {
-    String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(DateTime.now());
-    String record = 'Drank ${(waterLevel * 2).toInt()} ml at $formattedDate';
+    recordedTime = DateTime.now();
+    int hours = recordedTime!.hour;
+    recordedTimes.add(hours);
+
+    log('$recordedTimes');
+
+    double record = double.parse((waterLevel * 2).toStringAsFixed(1));
     setState(() {
       records.add(record);
     });
+    log('Water intake records: ${records.toString()}');
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Record saved: $record')),
     );
