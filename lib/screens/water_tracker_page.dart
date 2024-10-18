@@ -1,3 +1,4 @@
+import 'package:dr_drink/screens/water_intake.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 
@@ -107,21 +108,29 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
                   SizedBox(
                     height: 10,
                   ),
-                  Text(
-                    '200ml',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: 'Poppins',
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600),
-                  ),
+                  // Text(
+                  //   '200ml',
+                  //   style: TextStyle(
+                  //       color: Colors.black,
+                  //       fontFamily: 'Poppins',
+                  //       fontSize: 17,
+                  //       fontWeight: FontWeight.w600),
+                  // ),
                   SizedBox(
-                    height: 10,
+                    height: 25,
                   ),
-                  Image.asset(
-                    'assets/icons/drink-cup.png',
-                    width: 60,
-                    height: 60,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => WaterIntakeScreen()),
+                      );
+                    },
+                    child: Image.asset(
+                      'assets/icons/drink-cup.png',
+                      width: 60,
+                      height: 60,
+                    ),
                   ),
                 ],
               ),
