@@ -48,9 +48,9 @@ class LocalNotificationService {
     );
     await flutterLocalNotificationsPlugin.periodicallyShow(
       1,
-      'Repeated Notification',
-      'body',
-      RepeatInterval.hourly,
+      'Water Reminder',
+      'Time to drink water! Stay hydrated 💧',
+      RepeatInterval.everyMinute,
       details,
       payload: "Payload Data",
     );

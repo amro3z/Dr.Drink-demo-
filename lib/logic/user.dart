@@ -1,4 +1,4 @@
-class User {
+class MyUser {
   String gender;
   int age;
   int weight;
@@ -9,7 +9,7 @@ class User {
   String bedTime;
   double? totalWaterGoal;
 
-  User({
+  MyUser({
     required this.gender,
     required this.age,
     required this.weight,
@@ -18,6 +18,7 @@ class User {
     required this.lunchTime,
     required this.dinnerTime,
     required this.bedTime,
+    this.totalWaterGoal,
   });
 
   double calculateWaterGoal() {
@@ -57,5 +58,35 @@ class User {
 
     // Recalculate water goal after editing profile
     calculateWaterGoal();
+  }
+
+  // to map
+  Map<String, dynamic> toMap() {
+    return {
+      'gender': gender,
+      'age': age,
+      'weight': weight,
+      'wakeUpTime': wakeUpTime,
+      'breakfastTime': breakfastTime,
+      'lunchTime': lunchTime,
+      'dinnerTime': dinnerTime,
+      'bedTime': bedTime,
+      'totalWaterGoal': totalWaterGoal,
+    };
+  }
+
+  // from map
+  factory MyUser.fromMap(Map<String, dynamic> map) {
+    return MyUser(
+      gender: map['gender'],
+      age: map['age'],
+      weight: map['weight'],
+      wakeUpTime: map['wakeUpTime'],
+      breakfastTime: map['breakfastTime'],
+      lunchTime: map['lunchTime'],
+      dinnerTime: map['dinnerTime'],
+      bedTime: map['bedTime'],
+      totalWaterGoal: map['totalWaterGoal'],
+    );
   }
 }

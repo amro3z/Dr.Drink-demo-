@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import '../cubits/weather_cubit/weather_cubit.dart';
@@ -27,7 +30,7 @@ class TargetScreen extends StatefulWidget {
 }
 
 class _TargetScreenState extends State<TargetScreen> {
-  User? _user;
+  MyUser? _user;
   bool _showContent = false;
   String _selectedUnit = '';
   double? _quantity;
@@ -80,24 +83,31 @@ class _TargetScreenState extends State<TargetScreen> {
     String dinnerTime = '${MealWidget.dinnerHour}:${MealWidget.dinnerMinute} ${MealWidget.dinnerPeriod}';
     String bedTime = '${Sleepwidget.selectedHour}:${Sleepwidget.selectedMinute} ${Sleepwidget.selectedPeriod}';
 
-    _user = User(gender: gender, weight: weight, age: age, wakeUpTime: wakeUpTime, bedTime: bedTime, breakfastTime: breakfastTime, lunchTime: lunchTime, dinnerTime: dinnerTime);
+    _user = MyUser(gender: gender, weight: weight, age: age, wakeUpTime: wakeUpTime, bedTime: bedTime, breakfastTime: breakfastTime, lunchTime: lunchTime, dinnerTime: dinnerTime);
 
     log('User data: $age, $weight, $gender, $wakeUpTime, $breakfastTime, $lunchTime, $dinnerTime, $bedTime');
-
-    await prefs.setInt('age', age);
-    await prefs.setInt('weight', weight);
-    await prefs.setString('gender', gender);
-    await prefs.setString('wakeUpTime', wakeUpTime);
-    await prefs.setString('breakfastTime', breakfastTime);
-    await prefs.setString('lunchTime', lunchTime);
-    await prefs.setString('dinnerTime', dinnerTime);
-    await prefs.setString('bedTime', bedTime);
 
     // Calculate the daily water goal based on weight (default in ml)
     setState(() {
       _quantity = _user!.calculateWaterGoal();
     });
-    await prefs.setDouble('waterGoal', _quantity!);
+    // Store user to shared preferences
+    await prefs.setString("user", json.encode(_user!.toMap()));
+    await _saveUserToFirestore(_user!);
+  }
+
+  // Function to Save User to Firestore
+  Future<void> _saveUserToFirestore(MyUser user) async {
+    try {
+      final userCollection = FirebaseFirestore.instance.collection('users');
+      String userId = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous'; // Get the user ID if available
+
+      await userCollection.doc(userId).set(user.toMap());
+
+      log('User saved to Firestore successfully.');
+    } catch (e) {
+      log('Failed to save user to Firestore: $e');
+    }
   }
 
   // دالة لجلب النصائح من TipService
