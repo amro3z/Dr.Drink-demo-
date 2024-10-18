@@ -27,7 +27,27 @@ class BuildWeekContent extends StatelessWidget {
 
     return Stack(
       children: [
-        
+        Positioned(
+          top: 20,
+          left: 0,
+          right: 0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              MyIcon.leftArrow,
+              Text(
+                'Today',
+                style: TextStyle(
+                  color: MyColor.blue,
+                  fontFamily: 'Poppins',
+                  fontSize: textHeadSize,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              MyIcon.rightArrow,
+            ],
+          ),
+        ),
         Positioned(
           top: 90,
           left: 0,

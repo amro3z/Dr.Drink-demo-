@@ -1,3 +1,4 @@
+import 'package:dr_drink/screens/water_intake.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../values/color.dart';
@@ -27,6 +28,28 @@ class BuildDayContent extends StatelessWidget {
 
     return Stack(
       children: [
+        Positioned(
+          top: 20,
+          left: 0,
+          right: 0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              MyIcon.leftArrow,
+              Text(
+                'Today',
+                style: TextStyle(
+                  color: MyColor.blue,
+                  fontFamily: 'Poppins',
+                  fontSize: textHeadSize,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              MyIcon.rightArrow,
+            ],
+          ),
+        ),
+
 
         Positioned(
           top: 90,
@@ -74,7 +97,7 @@ class BuildDayContent extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             'Goal',
@@ -86,7 +109,7 @@ class BuildDayContent extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '${goal.toStringAsFixed(2)} $unit',
+                            '${goal.toStringAsFixed(1)} $unit',
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 18,
@@ -150,7 +173,7 @@ class BuildDayContent extends StatelessWidget {
       fontFamily: 'Poppins',
     );
 
-    String text = value.toStringAsFixed(1);
+    String text = value.toStringAsFixed(0);
     return SideTitleWidget(
       axisSide: meta.axisSide,
       space: 4,
@@ -159,28 +182,33 @@ class BuildDayContent extends StatelessWidget {
   }
 
   // Titles for the X Axis (Bottom)
+  // Titles for the X Axis (Bottom)
   Widget getBottomTitles(double value, TitleMeta meta) {
     final style = TextStyle(
-        color: MyColor.blue.withOpacity(0.5),
-        fontWeight: FontWeight.w500,
-        fontSize: 16,
-        fontFamily: 'Poppins');
-
-    String text = waterConsumptionMap.containsKey(value.toInt())
-        ? '${value.toInt()}' // Showing as hours (e.g., 8h, 12h)
-        : '';
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 4,
-      child: Text(text, style: style),
+      color: MyColor.blue.withOpacity(0.5),
+      fontWeight: FontWeight.w500,
+      fontSize: 16,
+      fontFamily: 'Poppins',
     );
+
+    // Check if the index is valid within the records list
+    if (value.toInt() < WaterIntakeScreen.records.length) {
+      // Access the corresponding time label for the given index
+      final timeLabel = WaterIntakeScreen.recordedTimesHour[value.toInt()].toString(); // Ensure it's a string
+      return SideTitleWidget(
+        axisSide: meta.axisSide,
+        space: 4,
+        child: Text(timeLabel, style: style), // Display the time as text
+      );
+    }
+
+    return Container(); // Return an empty container if no valid time is found
   }
+
+
 
   // Get Titles Data
   FlTitlesData getTitlesData(double goal) {
-    double interval =
-        goal / 4; // Divide the goal into four intervals to have five labels
-
     return FlTitlesData(
       show: true,
       bottomTitles: AxisTitles(
@@ -194,8 +222,7 @@ class BuildDayContent extends StatelessWidget {
         sideTitles: SideTitles(
           showTitles: true,
           reservedSize: 50, // Adjusted to align y-axis titles
-          interval:
-          interval, // Set interval to evenly distribute from 0 to goal
+          interval: goal / 4, // Set interval to evenly distribute from 0 to goal
           getTitlesWidget: (value, meta) => getLeftTitles(value, meta, goal),
         ),
       ),
@@ -207,6 +234,7 @@ class BuildDayContent extends StatelessWidget {
       ),
     );
   }
+
 
   // Configure Border Data
   FlBorderData get borderData => FlBorderData(
@@ -239,22 +267,26 @@ class BuildDayContent extends StatelessWidget {
   // Generate dynamic Bar Groups Data
   List<BarChartGroupData> getBarGroups() {
     List<BarChartGroupData> barGroups = [];
-    waterConsumptionMap.forEach((key, value) {
+
+    // Loop through the records to create BarChartGroupData
+    for (int i = 0; i < WaterIntakeScreen.records.length; i++) {
       barGroups.add(
         BarChartGroupData(
-          x: key,
+          x: i, // Use the index of the record as the X value
           barRods: [
             BarChartRodData(
-              toY: value,
+              toY: WaterIntakeScreen.records[i], // Set Y value to the record
               gradient: _barsGradient,
-            )
+            ),
           ],
-          showingTooltipIndicators: [0],
+          showingTooltipIndicators: [0], // Optional: Show tooltips for this bar
         ),
       );
-    });
+    }
+
     return barGroups;
   }
+
 
   // Grid Data to show dividers for X-Axis and Y-Axis
   FlGridData getGridData() {
