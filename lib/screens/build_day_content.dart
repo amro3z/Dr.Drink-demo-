@@ -7,17 +7,15 @@ import '../values/icons.dart';
 class BuildDayContent extends StatelessWidget {
   final double goal;
   final String unit;
-  final Map<int, double> waterConsumptionMap;
 
   const BuildDayContent({
     super.key,
     required this.goal,
     required this.unit,
-    required this.waterConsumptionMap,
   });
 
   double get total {
-    return waterConsumptionMap.values
+    return WaterIntakeScreen.records
         .fold(0.0, (previousValue, element) => previousValue + element);
   }
 

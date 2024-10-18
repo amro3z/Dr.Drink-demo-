@@ -82,15 +82,7 @@ class HistoryPage extends StatelessWidget {
               BuildDayContent(
                 goal: 2000,
                 unit: 'ml',
-                waterConsumptionMap: {
-                  8: 0.5,
-                  12: 0.8,
-                  16: 0.5,
-                  20: 0.5,
-                  22: 0.2,
-                  23: 0.2,
-                  24: 0.2,
-                },),
+                ),
               BuildMonthContent(),
             ],
           ),
