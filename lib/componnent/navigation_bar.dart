@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:dr_drink/screens/history_screen.dart';
 import 'package:dr_drink/screens/home_screen.dart';
 import 'package:dr_drink/screens/insights_screen.dart';
@@ -5,7 +8,12 @@ import 'package:dr_drink/screens/profile_screen.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import 'package:dr_drink/screens/home_page.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../logic/notifications.dart';
+import '../logic/user.dart';
+import '../main.dart';
 import '../screens/water_tracker_page.dart';
 
 class CustomNavigationBar extends StatefulWidget {
@@ -22,6 +30,35 @@ class _NavigationBarState extends State<CustomNavigationBar> {
     const InsightsPage(),
     const ProfilePage(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    // _loadUserFromSharedPrefs();
+    _initNotifications();
+  }
+  //
+  // // load user from shared prefs
+  // Future<void> _loadUserFromSharedPrefs() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   MyUser user = MyUser.fromMap(json.decode(prefs.getString('user')!));
+  //   log("user loaded from shared prefs");
+  //   log(user.toString());
+  // }
+
+  void _initNotifications() async {
+    await requestPermissions();
+    await Permission.ignoreBatteryOptimizations.request();
+    LocalNotificationService.showRepeatedNotification();
+  }
+
+  Future<void> requestPermissions() async {
+    if (await Permission.notification.isDenied) {
+      await Permission.notification.request();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

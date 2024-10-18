@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_drink/screens/sign_up_screen.dart';
 import 'package:dr_drink/widgets/welcomeWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../componnent/navigation_bar.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -51,13 +57,8 @@ class _LoginScreenState extends State<LoginScreen> {
       await FirebaseAuth.instance.signInWithCredential(credential);
 
       if (userCredential.user != null) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('isUserRegistered', true);
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const WelcomePage()),
-        );
+        _loadUserFromFirestoreAndStoreLocally();
       }
     } catch (e) {
       AwesomeDialog(
@@ -148,13 +149,13 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (credential.user != null) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('isUserRegistered', true);
-        print(await prefs.getBool('isUserRegistered'));
+
+        // load user data to shared prefs
+        _loadUserFromFirestoreAndStoreLocally();
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const WelcomePage()),
+          MaterialPageRoute(builder: (context) => const CustomNavigationBar()),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -187,6 +188,38 @@ class _LoginScreenState extends State<LoginScreen> {
           desc: e.message ?? 'Login failed. Please try again.',
         ).show();
       }
+    }
+  }
+
+  Future<void> _loadUserFromFirestoreAndStoreLocally() async {
+    try {
+      // Get the authenticated user's ID
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+
+      // Reference to the user's document in Firestore
+      final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
+
+      // Fetch user data from Firestore
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await userDoc.get();
+
+      if (snapshot.exists) {
+        Map<String, dynamic> userData = snapshot.data()!;
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString("user", json.encode(userData));
+        await prefs.setBool('isUserRegistered', true);
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const CustomNavigationBar()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const WelcomePage()),
+        );
+      }
+    } catch (e) {
+      log('Error loading user from Firestore: $e');
     }
   }
 

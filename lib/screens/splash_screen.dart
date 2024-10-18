@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_drink/componnent/navigation_bar.dart';
 import 'package:dr_drink/screens/login_screen.dart';
+import 'package:dr_drink/widgets/welcomeWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
@@ -35,19 +38,51 @@ class _SplashScreenState extends State<SplashScreen> {
       _checkUserAuthLocaly();
     } else {
       log('****************************online');
-      Future.delayed(const Duration(seconds: 3), () {
+      Future.delayed(const Duration(seconds: 3), () async { // added async
         if (FirebaseAuth.instance.currentUser == null) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const LoginScreen()),
           );
         } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => CustomNavigationBar()),
-          );
+          // User is authenticated, load their data from Firestore
+          // this is important for syncing data between devices
+          await _loadUserFromFirestoreAndStoreLocally();
+
         }
       });
+    }
+  }
+
+  Future<void> _loadUserFromFirestoreAndStoreLocally() async {
+    try {
+      // Get the authenticated user's ID
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+
+      // Reference to the user's document in Firestore
+      final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
+
+      // Fetch user data from Firestore
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await userDoc.get();
+
+      if (snapshot.exists) {
+        Map<String, dynamic> userData = snapshot.data()!;
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString("user", json.encode(userData));
+        await prefs.setBool('isUserRegistered', true);
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const CustomNavigationBar()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const WelcomePage()),
+        );
+      }
+    } catch (e) {
+      log('Error loading user from Firestore: $e');
     }
   }
 
