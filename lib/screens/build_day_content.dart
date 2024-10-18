@@ -81,7 +81,7 @@ class BuildDayContent extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '${total.toStringAsFixed(2)} $unit',
+                            '${total.toStringAsFixed(1)} $unit',
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 18,
