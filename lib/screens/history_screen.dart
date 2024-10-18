@@ -1,4 +1,3 @@
-import 'package:dr_drink/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'build_day_content.dart';
 import 'build_month_content.dart';
@@ -7,7 +6,7 @@ import '../values/color.dart';
 
 class HistoryPage extends StatelessWidget {
   final Map<double, double>? recordedData;
-  const HistoryPage({ super.key,this.recordedData});
+  const HistoryPage({super.key, this.recordedData});
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -24,8 +23,8 @@ class HistoryPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: MyColor.white,
         appBar: AppBar(
+          backgroundColor: MyColor.white,
           automaticallyImplyLeading: false,
-
           bottom: TabBar(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             tabs: [
@@ -63,13 +62,13 @@ class HistoryPage extends StatelessWidget {
             indicatorColor: MyColor.blue,
             indicatorSize: TabBarIndicatorSize.tab,
             indicatorPadding:
-            EdgeInsets.symmetric(horizontal: horizontalIndicatorPadding),
+                EdgeInsets.symmetric(horizontal: horizontalIndicatorPadding),
             dividerColor: MyColor.blue.withOpacity(0.2),
             dividerHeight: dividerHeight,
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16),
+        body: const Padding(
+          padding:  EdgeInsets.symmetric(horizontal: 16),
           child: TabBarView(
             children: [
               // BuildDayContent(
@@ -80,18 +79,17 @@ class HistoryPage extends StatelessWidget {
               //
               //  ),
               BuildDayContent(
-                goal: 3,
-                unit: 'L',
-                waterConsumptionMap: {
-                  8: 0.5,
-                  12: 0.8,
-                  16: 0.5,
-                  20: 0.5,
-                  22: 0.2,
-                  23: 0.2,
-                  24: 0.2,
-                },),
-              BuildMonthContent(),
+                goal: 2000,
+                unit: 'ml',
+              ),
+              BuildWeekContent(
+                goal: 2000,
+                unit: 'ml',
+              ),
+              BuildMonthContent(
+                goal: 2000,
+                unit: 'ml',
+              ),
             ],
           ),
         ),
