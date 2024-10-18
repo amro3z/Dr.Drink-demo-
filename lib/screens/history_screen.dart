@@ -24,6 +24,8 @@ class HistoryPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: MyColor.white,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
+
           bottom: TabBar(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             tabs: [
