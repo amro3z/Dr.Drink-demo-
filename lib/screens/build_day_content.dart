@@ -1,6 +1,7 @@
 import 'package:dr_drink/screens/water_intake.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../componnent/record_card.dart';
 import '../values/color.dart';
 import '../values/icons.dart';
 
@@ -24,143 +25,171 @@ class BuildDayContent extends StatelessWidget {
     final scaleFactor = MediaQuery.of(context).textScaleFactor;
     final textHeadSize = scaleFactor * 20;
 
-    return Stack(
-      children: [
-        Positioned(
-          top: 20,
-          left: 0,
-          right: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              MyIcon.leftArrow,
-              Text(
-                'Today',
-                style: TextStyle(
-                  color: MyColor.blue,
-                  fontFamily: 'Poppins',
-                  fontSize: textHeadSize,
-                  fontWeight: FontWeight.w700,
+    return Container(
+      color: MyColor.white,
+      child: ListView(children: [
+        Column(
+          children: [
+            SizedBox(height: 10,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                MyIcon.leftArrow,
+                Text(
+                  'Today',
+                  style: TextStyle(
+                    color: MyColor.blue,
+                    fontFamily: 'Poppins',
+                    fontSize: textHeadSize,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
+                MyIcon.rightArrow,
+              ],
+            ),
+            SizedBox(height: 25,),
+
+            Container(
+              height: 450,
+              decoration: ShapeDecoration(
+                  color: MyColor.blue.withOpacity(0.04),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15))),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Total',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 18,
+                                color: MyColor.blue.withOpacity(0.4),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              '${total.toStringAsFixed(1)} $unit',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 18,
+                                color: MyColor.blue.withOpacity(0.9),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Goal',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 18,
+                                color: MyColor.blue.withOpacity(0.4),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              '${goal.toStringAsFixed(1)} $unit',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 18,
+                                color: MyColor.blue.withOpacity(0.9),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 64),
+                  Expanded(
+                    child: BarChart(
+                      BarChartData(
+                        barTouchData: barTouchData,
+                        titlesData: getTitlesData(goal),
+                        borderData: borderData,
+                        barGroups: getBarGroups(),
+                        gridData: getGridData(), // Add grid data to show dividers
+                        alignment: BarChartAlignment.spaceAround,
+                        maxY: goal, // Make sure max Y matches the goal
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              MyIcon.rightArrow,
-            ],
-          ),
-        ),
+            ),
+            SizedBox(height: 10,),
 
-
-        Positioned(
-          top: 90,
-          left: 0,
-          right: 0,
-          child: Container(
-            height: 450,
-            decoration: ShapeDecoration(
-                color: MyColor.blue.withOpacity(0.04),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15))),
-            child: Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Total',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 18,
-                              color: MyColor.blue.withOpacity(0.4),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            '${total.toStringAsFixed(1)} $unit',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 18,
-                              color: MyColor.blue.withOpacity(0.9),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Goal',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 18,
-                              color: MyColor.blue.withOpacity(0.4),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            '${goal.toStringAsFixed(1)} $unit',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 18,
-                              color: MyColor.blue.withOpacity(0.9),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                Text(
+                  'Records',
+                  style: TextStyle(
+                    color: MyColor.blue,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w700,
+                    fontSize: textHeadSize,
+                  ),
                 ),
-                const SizedBox(height: 64),
-                Expanded(
-                  child: BarChart(
-                    BarChartData(
-                      barTouchData: barTouchData,
-                      titlesData: getTitlesData(goal),
-                      borderData: borderData,
-                      barGroups: getBarGroups(),
-                      gridData: getGridData(), // Add grid data to show dividers
-                      alignment: BarChartAlignment.spaceAround,
-                      maxY: goal, // Make sure max Y matches the goal
-                    ),
+                const SizedBox(height: 10),
+                 Container(
+                  height: 130,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: WaterIntakeScreen.records.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: RecordCard(
+                          quantity: WaterIntakeScreen.records[index],
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
             ),
-          ),
+          ],
         ),
-      ],
+      ]),
     );
   }
 
   // Configuration for Bar Touch Data
   BarTouchData get barTouchData => BarTouchData(
-    enabled: false,
-    touchTooltipData: BarTouchTooltipData(
-      getTooltipColor: (group) => Colors.transparent,
-      tooltipPadding: EdgeInsets.zero,
-      tooltipMargin: 8,
-      getTooltipItem: (BarChartGroupData group, int groupIndex,
-          BarChartRodData rod, int rodIndex) {
-        return BarTooltipItem(
-          rod.toY.toStringAsFixed(1),
-          TextStyle(
-            color: MyColor.blue.withOpacity(0.2),
-            fontWeight: FontWeight.w500,
-          ),
-        );
-      },
-    ),
-  );
+        enabled: false,
+        touchTooltipData: BarTouchTooltipData(
+          getTooltipColor: (group) => Colors.transparent,
+          tooltipPadding: EdgeInsets.zero,
+          tooltipMargin: 8,
+          getTooltipItem: (BarChartGroupData group, int groupIndex,
+              BarChartRodData rod, int rodIndex) {
+            return BarTooltipItem(
+              rod.toY.toStringAsFixed(1),
+              TextStyle(
+                color: MyColor.blue.withOpacity(0.2),
+                fontWeight: FontWeight.w500,
+              ),
+            );
+          },
+        ),
+      );
 
   // Titles for the Y Axis (Left)
   Widget getLeftTitles(double value, TitleMeta meta, double goal) {
@@ -192,7 +221,8 @@ class BuildDayContent extends StatelessWidget {
     // Check if the index is valid within the records list
     if (value.toInt() < WaterIntakeScreen.records.length) {
       // Access the corresponding time label for the given index
-      final timeLabel = WaterIntakeScreen.recordedTimesHour[value.toInt()].toString(); // Ensure it's a string
+      final timeLabel = WaterIntakeScreen.recordedTimesHour[value.toInt()]
+          .toString(); // Ensure it's a string
       return SideTitleWidget(
         axisSide: meta.axisSide,
         space: 4,
@@ -202,8 +232,6 @@ class BuildDayContent extends StatelessWidget {
 
     return Container(); // Return an empty container if no valid time is found
   }
-
-
 
   // Get Titles Data
   FlTitlesData getTitlesData(double goal) {
@@ -220,7 +248,8 @@ class BuildDayContent extends StatelessWidget {
         sideTitles: SideTitles(
           showTitles: true,
           reservedSize: 50, // Adjusted to align y-axis titles
-          interval: goal / 4, // Set interval to evenly distribute from 0 to goal
+          interval:
+              goal / 4, // Set interval to evenly distribute from 0 to goal
           getTitlesWidget: (value, meta) => getLeftTitles(value, meta, goal),
         ),
       ),
@@ -233,34 +262,33 @@ class BuildDayContent extends StatelessWidget {
     );
   }
 
-
   // Configure Border Data
   FlBorderData get borderData => FlBorderData(
-    show: true,
-    border: Border(
-      left: BorderSide(
-        color: MyColor.blue.withOpacity(0.2), // Set your desired color
-        width: 1, // Set the border width
-      ),
-      bottom: BorderSide(
-        color: MyColor.blue.withOpacity(0.2), // Set your desired color
-        width: 1, // Set the border width
-      ),
-      right: BorderSide.none, // No border on the right
-      top: BorderSide.none, // No border on the top
-    ),
-  );
+        show: true,
+        border: Border(
+          left: BorderSide(
+            color: MyColor.blue.withOpacity(0.2), // Set your desired color
+            width: 1, // Set the border width
+          ),
+          bottom: BorderSide(
+            color: MyColor.blue.withOpacity(0.2), // Set your desired color
+            width: 1, // Set the border width
+          ),
+          right: BorderSide.none, // No border on the right
+          top: BorderSide.none, // No border on the top
+        ),
+      );
 
   // Configure Gradient for Bars
   LinearGradient get _barsGradient => LinearGradient(
-    colors: [
-      Colors.white70.withOpacity(0.5),
-      MyColor.white,
-      MyColor.white,
-    ],
-    begin: Alignment.bottomCenter,
-    end: Alignment.topCenter,
-  );
+        colors: [
+          Colors.white70.withOpacity(0.5),
+          MyColor.white,
+          MyColor.white,
+        ],
+        begin: Alignment.bottomCenter,
+        end: Alignment.topCenter,
+      );
 
   // Generate dynamic Bar Groups Data
   List<BarChartGroupData> getBarGroups() {
@@ -284,7 +312,6 @@ class BuildDayContent extends StatelessWidget {
 
     return barGroups;
   }
-
 
   // Grid Data to show dividers for X-Axis and Y-Axis
   FlGridData getGridData() {

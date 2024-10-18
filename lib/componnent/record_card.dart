@@ -19,7 +19,7 @@ class _RecordCardState extends State<RecordCard> {
   @override
   void initState() {
     amount = '${widget.quantity} L';
-    time = widget.time;
+    time = '${widget.time} PM';
   }
 
   @override
