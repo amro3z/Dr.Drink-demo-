@@ -67,8 +67,8 @@ class HistoryPage extends StatelessWidget {
             dividerHeight: dividerHeight,
           ),
         ),
-        body: const Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 16),
+        body: Padding(
+          padding:  const EdgeInsets.symmetric(horizontal: 16),
           child: TabBarView(
             children: [
               // BuildDayContent(
@@ -79,16 +79,10 @@ class HistoryPage extends StatelessWidget {
               //
               //  ),
               BuildDayContent(
-                goal: 2000,
-                unit: 'ml',
               ),
               BuildWeekContent(
-                goal: 2000,
-                unit: 'ml',
               ),
               BuildMonthContent(
-                goal: 2000,
-                unit: 'ml',
               ),
             ],
           ),

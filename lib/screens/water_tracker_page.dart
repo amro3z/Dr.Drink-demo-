@@ -1,9 +1,16 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:dr_drink/screens/water_intake.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 
 import '../componnent/circle.dart'; // CircleWithShadow widget
 import '../componnent/semi_circle_progress_painter.dart'; // Semi-circle painter
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../logic/tracker.dart';
+import '../logic/user.dart';
 
 class WaterTrackerPage extends StatefulWidget {
   const WaterTrackerPage({super.key});
@@ -13,6 +20,43 @@ class WaterTrackerPage extends StatefulWidget {
 }
 
 class _WaterTrackerPageState extends State<WaterTrackerPage> {
+  final MyUser _user = MyUser.instance;
+  int _totalWaterGoal = 0;
+  int _totalWaterConsumed = 0;
+  double _progress = 0.0;
+  String _unit = 'ml';
+
+  @override
+  void initState() {
+    super.initState();
+    // Tracker tracker = Tracker(cupSize: 200, totalWaterGoal: user.calculateWaterGoal());
+    _updateWaterConsumed();
+  }
+
+  // Function to update the consumed water when coming back
+  void _updateWaterConsumed() {
+    setState(() {
+      // Refreshing the total water consumed value
+      _totalWaterGoal = _user.totalWaterGoal!;
+      _totalWaterConsumed = _user.totalWaterConsumed!;
+      _progress = _totalWaterConsumed / _totalWaterGoal;
+      _unit = _user.unit!;
+
+    });
+  }
+
+  String getWaterConsumed() {
+    return _unit == 'ml'
+        ? '$_totalWaterConsumed'
+        : (_totalWaterConsumed / 1000).toStringAsFixed(2);
+  }
+
+  String getWaterGoal() {
+    return _unit == 'ml'
+        ? '/$_totalWaterGoal'
+        : '/${(_totalWaterGoal / 1000).toStringAsFixed(2)}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +105,9 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
             top: 270,
             child: CustomPaint(
               size: const Size(395, 210),
-              painter: SemiCircleProgressPainter(0.5),
+              painter: SemiCircleProgressPainter(
+                _progress,
+              ),
             ),
           ),
           Positioned(
@@ -76,7 +122,7 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
                   Row(
                     children: [
                       Text(
-                        '1500',
+                        getWaterConsumed(),
                         style: TextStyle(
                             color: MyColor.blue,
                             fontFamily: 'Poppins',
@@ -84,7 +130,7 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
                             fontWeight: FontWeight.w500),
                       ),
                       Text(
-                        '/3000ml',
+                        getWaterGoal(),
                         style: TextStyle(
                             color: Colors.black,
                             fontFamily: 'Poppins',
@@ -120,11 +166,16 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
                     height: 25,
                   ),
                   GestureDetector(
-                    onTap: () {
-                      Navigator.push(
+                    onTap: () async {
+                      // Navigate to WaterIntakeScreen and await result
+                      await Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => WaterIntakeScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => WaterIntakeScreen(),
+                        ),
                       );
+                      // Update the consumed water when returning
+                      _updateWaterConsumed();
                     },
                     child: Image.asset(
                       'assets/icons/drink-cup.png',

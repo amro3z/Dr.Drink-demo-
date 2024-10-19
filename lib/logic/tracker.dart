@@ -1,8 +1,8 @@
 class Tracker {
   // Attributes
-  double cupSize;
-  double totalWaterGoal;
-  double totalWaterConsumed;
+  int cupSize;
+  int totalWaterGoal;
+  int totalWaterConsumed;
 
   // Constructor
   Tracker({
@@ -12,7 +12,7 @@ class Tracker {
   });
 
   // Method to change the cup size
-  void changeCupSize(double newCupSize) {
+  void changeCupSize(int newCupSize) {
     if (newCupSize > 0) {
       cupSize = newCupSize;
     }

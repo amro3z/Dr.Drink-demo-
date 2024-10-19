@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class RecordCard extends StatefulWidget {
-  final double quantity;
+  final int quantity;
   final String time;
+  final String unit;
 
-  const RecordCard({super.key,this.quantity = 0.34, this.time = '10:00 AM'});
+  const RecordCard({super.key,this.quantity = 34, this.time = '10:00 AM', this.unit = 'ml'});
 
   @override
   State<RecordCard> createState() => _RecordCardState();
@@ -18,8 +19,8 @@ class _RecordCardState extends State<RecordCard> {
 
   @override
   void initState() {
-    amount = '${widget.quantity} L';
-    time = '${widget.time} PM';
+    amount = widget.unit == 'ml' ? '${widget.quantity} ml' : '${widget.quantity/1000} L';
+    time = widget.time;
   }
 
   @override
