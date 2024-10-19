@@ -23,7 +23,7 @@ class _NavigationBarState extends State<CustomNavigationBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(right: 16, left: 16, bottom: 40),
+        padding: const EdgeInsets.only(right: 10, left: 10, bottom: 10,top: 10),
         child: Container(
           height: 75,
           decoration: BoxDecoration(
