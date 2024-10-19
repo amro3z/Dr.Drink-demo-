@@ -49,7 +49,7 @@ class LocalNotificationService {
       1,
       'Water Reminder',
       'Time to drink water! Stay hydrated 💧',
-      RepeatInterval.hourly,
+      RepeatInterval.everyMinute,
       details,
       payload: "Payload Data",
     );
