@@ -142,6 +142,7 @@ class _TargetScreenState extends State<TargetScreen> {
     final textFontSize = screenWidth * 0.08;
     final adjustFontSize = screenWidth * 0.04;
     final numFontSize = screenWidth * 0.3;
+    final numFontSize1 = screenWidth * 0.2;
     final unitFontSize = screenWidth * 0.08;
     final subTextFontSize = screenWidth * 0.04;
 
@@ -333,11 +334,11 @@ class _TargetScreenState extends State<TargetScreen> {
             child: Align(
               alignment: Alignment.center,
               child: Text(
-                '${getDisplayedQuantity()}',
+                '${_selectedUnit == 'ml' ? getDisplayedQuantity().toStringAsFixed(0) : getDisplayedQuantity().toStringAsFixed(2)}',
                 style: TextStyle(
                   color: MyColor.white,
                   fontFamily: 'Poppins',
-                  fontSize: numFontSize,
+                  fontSize:  numFontSize,
                   fontWeight: FontWeight.w500,
                   decoration: TextDecoration.none,
                 ),
