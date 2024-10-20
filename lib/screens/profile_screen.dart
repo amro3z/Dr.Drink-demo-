@@ -1,5 +1,8 @@
+import 'dart:math' show Random;
 import 'package:dr_drink/screens/reminder.dart';
+import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
+// import 'function_profile.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -9,31 +12,43 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
-String ?value1="";
-String ?value2="";
-
+  late TextEditingController _passwordController;
+  //  TextEditingController _goalController = TextEditingController();
+  // _PasswordScreenState createState() => _PasswordScreenState();
   TextEditingController _goalController = TextEditingController();
+  // bool _obscureText = true;
   @override
   Widget build(BuildContext context) {
     
     return  SafeArea(
       child: Scaffold(
-        backgroundColor:const Color(0xFF0247C8),
+        backgroundColor:MyColor.blue,
         body:  Padding(
           padding: const EdgeInsets.only(top:18 ),
           child: ListView(
             children: [
-              const CircleAvatar(
-                backgroundColor:Color(0xFF6690DE),
-                child:Icon(Icons.person,color:Color(0xFF0247C8),),
-              ),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Data synchronization ",style:TextStyle(color:Colors.white)),
-                  Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
-                ],
+              GestureDetector(
+                onTap: (){
+                  account_dialog(context);
+                },
+                child: const Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundColor:Color(0xFF6690DE),
+                      child:Icon(Icons.person,color:MyColor.blue,size:35 ,),
+                    ),
+                    SizedBox(height:10 ,),
+                    Row(
+                      
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Data synchronization ",style:TextStyle(color:Colors.white)),
+                        Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
+                      ],
+                    ),
+                  ],
+                ),
               ),
       
               const SizedBox(height: 25,),
@@ -116,6 +131,7 @@ String ?value2="";
                         GestureDetector(
                           onTap: (){
                             dailyGoal_dialog(context);
+                            // Profile.dailyGoal_dialog(context);
                           },
                           child: const Row(
                             children: [
@@ -144,7 +160,8 @@ String ?value2="";
        const SizedBox(height:25 ),
                         GestureDetector(
                           onTap: (){
-                           units_dialog(context);
+                            units_dialog(context);
+                            // Profile.units_dialog(context);
                           },
                           child: const Row(
                             children: [
@@ -153,6 +170,22 @@ String ?value2="";
                               Text("Units ",style:TextStyle(color:Colors.white)),
                               Spacer(flex:25,),
                               Text("ml,kg ",style:TextStyle(color:Colors.white)),
+                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
+                              // Spacer(),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height:25 ),
+                        GestureDetector(
+                          onTap: (){
+                            
+                          },
+                          child: const Row(
+                            children: [
+                              Icon(Icons.brush_outlined,color:Colors.white),
+                              Spacer(flex: 1,),
+                              Text("Themes",style:TextStyle(color:Colors.white)),
+                              Spacer(flex:25,),
                               Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
                               // Spacer(),
                             ],
@@ -173,7 +206,8 @@ String ?value2="";
                       children: [
                         GestureDetector(
                           onTap: (){
-                           gender_dialog(context);
+                            gender_dialog(context);
+                          //  Profile.gender_dialog(context);
                           },
                           child: const Row(
                             children: [
@@ -190,7 +224,8 @@ String ?value2="";
 
                          GestureDetector(
                           onTap: (){
-                           weight_dialog(context);
+                            weight_dialog(context);
+                          //  Profile.weight_dialog(context);
                           },
                           child: const Row(
                             children: [
@@ -207,6 +242,7 @@ String ?value2="";
                         GestureDetector(
                           onTap: (){
                             timer_dialog(context);
+                            // Profile.timer_dialog(context);
                           },
                           child: const Row(
                             children: [
@@ -224,6 +260,7 @@ String ?value2="";
                         GestureDetector(
                           onTap: (){
                             days_dialog(context);
+                            // Profile.days_dialog(context);
                           },
                           child: const Row(
                             children: [
@@ -247,14 +284,161 @@ String ?value2="";
       ),
     );
   }
-  // ignore: non_constant_identifier_names
-  void dailyGoal_dialog(BuildContext context) {
+
+
+
+
+
+
+
+
+
+
+ // ignore: non_constant_identifier_names
+ void account_dialog(BuildContext context) {
+    showDialog(
+      context: context, 
+      builder: (context)
+    {
+       return AlertDialog(
+          title: const Text('Account'),
+          content:SizedBox(
+             width: 70,
+             height: 200,
+             
+             child: Column(
+               mainAxisAlignment: MainAxisAlignment.center,
+               children: [
+                
+                 // حقل عرض كلمة المرور العشوائية
+            TextField(
+              controller: _passwordController,
+              readOnly: true,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 8),
+            // النص الخاص بتغيير كلمة المرور
+            Align(
+              alignment: Alignment.centerRight,
+              child: GestureDetector(
+                onTap: _showChangePasswordDialog,
+                child: const Text(
+                  'Change Password',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ),
+          ],
+             ),
+
+           ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // إغلاق المربع
+              },
+              child: const Text('Cancel',style: TextStyle(color:Colors.blue)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+               // function of save data 
+                Navigator.pop(context); // إغلاق المربع وحفظ القيمة
+              },
+              child: const Text('Log Out',style: TextStyle(color:Colors.red),),
+            ),
+          ],
+        );
+      }
+    );
+  }
+  @override
+  void initState() {
+    super.initState();
+    // إنشاء كلمة مرور عشوائية وضبطها في TextEditingController
+    String randomPassword = generateRandomPassword(10);
+    _passwordController = TextEditingController(text: randomPassword);
+  }
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
+  }
+  String generateRandomPassword(int length) {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    Random random = Random();
+    return String.fromCharCodes(Iterable.generate(
+      length,
+      (_) => chars.codeUnitAt(random.nextInt(chars.length)),
+    ));
+  }
+void _showChangePasswordDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Change Password',style: TextStyle(color:Colors.blue)),
+          content: const Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Old Password',
+                ),
+              ),
+              SizedBox(height: 8),
+              TextField(
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'New Password',
+                ),
+              ),
+              SizedBox(height: 8),
+              TextField(
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Confirm the new password',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel',style: TextStyle(color:Colors.blue)),
+            ),
+            TextButton(
+              onPressed: () {
+                // منطق تغيير كلمة المرور هنا
+                Navigator.of(context).pop();
+              },
+              child: const Text('Sumbit',style: TextStyle(color:Colors.blue),),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+
+
+
+ void dailyGoal_dialog(BuildContext context) {
     showDialog(
       
       context: context, 
       builder: (context)
     {
        return AlertDialog(
+        
           title: const Text('Daily Goal'),
           content: TextField(
             controller: _goalController,
@@ -283,9 +467,8 @@ String ?value2="";
     );
                               
   }
- 
-  // ignore: non_constant_identifier_names
-  void units_dialog(BuildContext context) {
+
+    void units_dialog(BuildContext context) {
     showDialog(
       context: context, 
       builder: (context)
@@ -355,9 +538,8 @@ String ?value2="";
     );
   }
  
- 
  // ignore: non_constant_identifier_names
- void gender_dialog(BuildContext context) {
+  void gender_dialog(BuildContext context) {
     showDialog(
       context: context, 
       builder: (context)
@@ -402,9 +584,7 @@ String ?value2="";
     );
   }
  
-
-
-
+// ignore: non_constant_identifier_names
  void weight_dialog(BuildContext context) {
     showDialog(
       context: context, 
@@ -478,7 +658,7 @@ String ?value2="";
       }
     );
   }
- 
+ // ignore: non_constant_identifier_names
   void timer_dialog(BuildContext context) {
     showDialog(
       context: context, 
@@ -524,7 +704,7 @@ String ?value2="";
     );
   }
  
-
+// ignore: non_constant_identifier_names
   void days_dialog(BuildContext context) {
     showDialog(
       context: context, 
@@ -558,7 +738,8 @@ String ?value2="";
       }
     );
   }
- 
+
+
  }
 
 
@@ -579,31 +760,41 @@ String ?value2="";
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Stack(         
+//                                children: [
+//                                  TextField(
+//                   controller: _passwordController,
+//                   obscureText: _obscureText,
+//                   decoration: InputDecoration(
+//                     labelText: 'كلمة المرور',
+//                     border: OutlineInputBorder(),
+//                     suffixIcon: IconButton(
+//                       icon: Icon(
+//                         _obscureText ? Icons.visibility : Icons.visibility_off,
+//                       ),
+//                       onPressed: () {
+//                         setState(() {
+//                           _obscureText = !_obscureText;
+//                         });
+//                       },
+//                     ),
+//                   ),
+//                                  ),
+//                                  // SizedBox(height: 5,),
+//                                  // النص الصغير في الأسفل على اليمين
+//                                  Positioned(
+//                   right: 1,
+//                   bottom: -10,
+//                   child: Text(
+//                     'يجب أن تكون 6 أحرف على الأقل',
+//                     style: TextStyle(
+//                       fontSize: 12,
+//                       color: Colors.grey[600],
+//                     ),
+//                   ),
+//                                  ),
+//                                ],
+//                              ),
 
      //  Column(
           //   mainAxisSize: MainAxisSize.min,

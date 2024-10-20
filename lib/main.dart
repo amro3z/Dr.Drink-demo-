@@ -1,4 +1,3 @@
-import 'package:dr_drink/screens/insights_screen.dart';
 import 'package:dr_drink/screens/splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +45,7 @@ class Main extends StatefulWidget {
 class _MainState extends State<Main> {
   @override
   void initState() {
+    super.initState();
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
         print('User is currently signed out!');

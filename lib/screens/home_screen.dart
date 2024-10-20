@@ -19,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   DateTime? _recordedTime;
   double _waterConsumed = 0; // Water consumed by the user
   // get the value from shared preferences
+  // ignore: unused_field
   double _waterGoal = 0; // Water goal for the user
   
     @override
