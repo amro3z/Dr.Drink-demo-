@@ -66,7 +66,7 @@ class _NavigationBarState extends State<CustomNavigationBar> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(right: 16, left: 16, bottom: 16),
         child: Container(
-          height: 75,
+          height: 65,
           decoration: BoxDecoration(
               color: MyColor.blue,
               borderRadius: BorderRadius.circular(45),
