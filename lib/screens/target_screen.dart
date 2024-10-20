@@ -347,7 +347,7 @@ class _TargetScreenState extends State<TargetScreen> {
             child: Align(
               alignment: Alignment.center,
               child: Text(
-                '${_selectedUnit == 'ml' ? getDisplayedQuantity().toStringAsFixed(0) : getDisplayedQuantity().toStringAsFixed(2)}',
+                '${_selectedUnit == 'ml' ? getDisplayedQuantity() : getDisplayedQuantity()}',
                 style: TextStyle(
                   color: MyColor.white,
                   fontFamily: 'Poppins',
