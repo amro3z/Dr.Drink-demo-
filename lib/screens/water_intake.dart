@@ -11,8 +11,7 @@ import '../logic/user.dart';
 
 class WaterIntakeScreen extends StatefulWidget {
   static List<int> records = [];
-  static List<int> recordedTimesHour = [];
-  static List<int> recordedTimesMinute = [];
+  static List<String> recordedTimes = [];
 
   @override
   _WaterIntakeScreenState createState() => _WaterIntakeScreenState();
@@ -55,19 +54,19 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
 
   void _storeRecord() {
     recordedTime = DateTime.now();
-    log('Recorded time: $recordedTime');
-    int hours = recordedTime!.hour;
-    int minuetes = recordedTime!.minute;
-    WaterIntakeScreen.recordedTimesHour.add(hours); //
-    WaterIntakeScreen.recordedTimesMinute.add(minuetes); //
+    int hours = recordedTime!.hour > 12 ? recordedTime!.hour - 12 : recordedTime!.hour;
+    String minutes = recordedTime!.minute.toString();
+    if (recordedTime!.minute < 10) {
+      minutes = '0${recordedTime!.minute}';
+    }
 
-    log('$WaterIntakeScreen.recordedTimes');
     int record = unit == 'ml' ? (waterLevel * 2).truncate() : (waterLevel * 0.2).truncate()*10 ;
-    _user.tracker!.drink(record);
+    _user.tracker.drink(record);
     _saveUserToSharedPrefs(_user);
     _saveUserToFirestore(_user);
     setState(() {
       WaterIntakeScreen.records.add(record); //
+      WaterIntakeScreen.recordedTimes.add('$hours:$minutes ${recordedTime!.hour > 12 ? 'PM' : 'AM'}');
     });
     log('Water intake records: ${WaterIntakeScreen.records.toString()}');
     ScaffoldMessenger.of(context).showSnackBar(

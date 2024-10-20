@@ -25,8 +25,8 @@ class _RecordCardState extends State<RecordCard> {
 
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
-    String formattedtime = DateFormat.jm().format(now);
+    // DateTime now = DateTime.now();
+    // String formattedtime = DateFormat.jm().format(now);
     return Container(
       height: 140,
       width: 90,
@@ -70,7 +70,7 @@ class _RecordCardState extends State<RecordCard> {
           Opacity(
             opacity: 0.3,
             child: Text(
-              formattedtime,
+              time!,
               style: const TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 16,

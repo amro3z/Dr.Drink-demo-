@@ -229,6 +229,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
                           padding: const EdgeInsets.only(right: 10),
                           child: RecordCard(
                             quantity: WaterIntakeScreen.records[index],
+                            time: WaterIntakeScreen.recordedTimes[index],
                             unit: unit!,
                           ),
                         );
