@@ -62,6 +62,7 @@ class _NavigationBarState extends State<CustomNavigationBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: currentPageIndex == 3 ? MyColor.blue : MyColor.white,
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(right: 16, left: 16, bottom: 16),
         child: Container(
