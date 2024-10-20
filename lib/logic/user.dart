@@ -1,48 +1,64 @@
+import 'dart:convert';
+// import 'dart:math';
+
+import 'package:dr_drink/logic/tracker.dart';
+import 'dart:developer';
+import 'package:flutter/material.dart';
+
 class MyUser {
-  String gender;
-  int age;
-  int weight;
-  String wakeUpTime;
-  String breakfastTime;
-  String lunchTime;
-  String dinnerTime;
-  String bedTime;
-  double? totalWaterGoal;
+  // Singleton instance
+  static final MyUser _instance = MyUser._internal();
 
-  MyUser({
-    required this.gender,
-    required this.age,
-    required this.weight,
-    required this.wakeUpTime,
-    required this.breakfastTime,
-    required this.lunchTime,
-    required this.dinnerTime,
-    required this.bedTime,
-    this.totalWaterGoal,
-  });
-
-  double calculateWaterGoal() {
-    // // Base formula: weight * 0.033 (in liters)
-    // double baseWaterGoal = weight * 0.033;
-    //
-    // // Adjust based on gender
-    // if (gender.toLowerCase() == 'male') {
-    //   totalWaterGoal = baseWaterGoal + 0.5;
-    // } else {
-    //   totalWaterGoal = baseWaterGoal;
-    // }
-    //
-    // // Adjust based on age
-    // if (age < 30) {
-    //   totalWaterGoal = (totalWaterGoal ?? 0) + 0.2;
-    // } else if (age > 55) {
-    //   totalWaterGoal = (totalWaterGoal ?? 0) - 0.2;
-    // }
-
-    totalWaterGoal = weight * 33;
-    return totalWaterGoal!;
+  // Factory constructor that returns the same instance
+  factory MyUser({
+    required String gender,
+    required int age,
+    required int weight,
+    required String wakeUpTime,
+    required String breakfastTime,
+    required String lunchTime,
+    required String dinnerTime,
+    required String bedTime,
+    Tracker? tracker,
+    String? unit,
+  }) {
+    _instance.gender = gender;
+    _instance.age = age;
+    _instance.weight = weight;
+    _instance.wakeUpTime = wakeUpTime;
+    _instance.breakfastTime = breakfastTime;
+    _instance.lunchTime = lunchTime;
+    _instance.dinnerTime = dinnerTime;
+    _instance.bedTime = bedTime;
+    _instance.tracker = tracker?? Tracker();
+    _instance.unit = unit;
+    return _instance;
   }
 
+  // Named constructor for creating the singleton instance internally
+  MyUser._internal();
+
+  // Attributes
+  String gender = '';
+  int age = 0;
+  int weight = 0;
+  String wakeUpTime = '';
+  String breakfastTime = '';
+  String lunchTime = '';
+  String dinnerTime = '';
+  String bedTime = '';
+  Tracker tracker = Tracker();
+  String? unit;
+
+  // // Method to calculate water goal
+  // int calculateWaterGoal() {
+  //   totalWaterGoal = weight * 33;
+  //   return totalWaterGoal!;
+  // }
+
+  static MyUser get instance => _instance;
+
+  // Method to edit profile details
   void editProfile({
     String? newGender,
     int? newAge,
@@ -57,10 +73,14 @@ class MyUser {
     if (newBedTime != null) bedTime = newBedTime;
 
     // Recalculate water goal after editing profile
-    calculateWaterGoal();
+    // calculateWaterGoal();
   }
 
-  // to map
+  // void drinkWater(int amount) {
+  //   totalWaterConsumed = totalWaterConsumed! + amount;
+  // }
+
+  // Convert to map
   Map<String, dynamic> toMap() {
     return {
       'gender': gender,
@@ -71,12 +91,14 @@ class MyUser {
       'lunchTime': lunchTime,
       'dinnerTime': dinnerTime,
       'bedTime': bedTime,
-      'totalWaterGoal': totalWaterGoal,
+      'tracker': json.encode(tracker.toMap()),
+      'unit': unit,
     };
   }
 
-  // from map
+  // Create a MyUser instance from a map
   factory MyUser.fromMap(Map<String, dynamic> map) {
+    log("here----------------------------");
     return MyUser(
       gender: map['gender'],
       age: map['age'],
@@ -86,7 +108,8 @@ class MyUser {
       lunchTime: map['lunchTime'],
       dinnerTime: map['dinnerTime'],
       bedTime: map['bedTime'],
-      totalWaterGoal: map['totalWaterGoal'],
+      tracker: Tracker.fromMap(json.decode(map['tracker'])),
+      unit: map['unit'],
     );
   }
 }

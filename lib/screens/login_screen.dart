@@ -12,6 +12,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../componnent/navigation_bar.dart';
+import '../logic/user.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -195,18 +196,25 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       // Get the authenticated user's ID
       String userId = FirebaseAuth.instance.currentUser!.uid;
+      log(userId);
 
       // Reference to the user's document in Firestore
       final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
 
       // Fetch user data from Firestore
       DocumentSnapshot<Map<String, dynamic>> snapshot = await userDoc.get();
-
+      log('second here');
       if (snapshot.exists) {
         Map<String, dynamic> userData = snapshot.data()!;
+        log(json.encode(userData));
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString("user", json.encode(userData));
         await prefs.setBool('isUserRegistered', true);
+
+        MyUser user = MyUser.fromMap(userData);
+        user.tracker.calculateWaterGoal(user.weight);
+
+        log(user.toString()); // didnt loged
 
         Navigator.pushReplacement(
           context,

@@ -1,47 +1,88 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_drink/values/color.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../logic/user.dart';
 
 class WaterIntakeScreen extends StatefulWidget {
-  static List<double> records = [];
-  static List<int> recordedTimesHour = [];
-  static List<int> recordedTimesMinute = [];
+  static List<int> records = [];
+  static List<String> recordedTimes = [];
 
   @override
   _WaterIntakeScreenState createState() => _WaterIntakeScreenState();
 
-  const WaterIntakeScreen({super.key});
+  WaterIntakeScreen({super.key});
 }
 
 class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
+  String? unit;
   double waterLevel = 50;
   DateTime? recordedTime;
+  final MyUser _user = MyUser.instance;
+
 
   void _onDragUpdate(DragUpdateDetails details) {
     setState(() {
       double newWaterLevel = waterLevel - details.delta.dy / 3;
-      waterLevel = newWaterLevel.clamp(0.0, 100.0);
+      waterLevel = newWaterLevel.clamp(5.0, 100.0);
     });
+  }
+
+  Future<void> _saveUserToSharedPrefs(MyUser user) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user', json.encode(user.toMap()));
+  }
+
+  // Function to Save User to Firestore
+  Future<void> _saveUserToFirestore(MyUser user) async {
+    try {
+      final userCollection = FirebaseFirestore.instance.collection('users');
+      String userId = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous'; // Get the user ID if available
+
+      await userCollection.doc(userId).set(user.toMap());
+
+      log('User saved to Firestore successfully.');
+    } catch (e) {
+      log('Failed to save user to Firestore: $e');
+    }
   }
 
   void _storeRecord() {
     recordedTime = DateTime.now();
-    int hours = recordedTime!.hour;
-    int minuetes = recordedTime!.minute;
-    WaterIntakeScreen.recordedTimesHour.add(hours);
-    WaterIntakeScreen.recordedTimesMinute.add(minuetes);
+    int hours = recordedTime!.hour > 12 ? recordedTime!.hour - 12 : recordedTime!.hour;
+    String minutes = recordedTime!.minute.toString();
+    if (recordedTime!.minute < 10) {
+      minutes = '0${recordedTime!.minute}';
+    }
 
-    log('$WaterIntakeScreen.recordedTimes');
-
-    double record = double.parse((waterLevel * 2).toStringAsFixed(1));
+    int record = unit == 'ml' ? (waterLevel * 2).truncate() : (waterLevel * 0.2).truncate()*10 ;
+    _user.tracker.drink(record);
+    _saveUserToSharedPrefs(_user);
+    _saveUserToFirestore(_user);
     setState(() {
-      WaterIntakeScreen.records.add(record);
+      WaterIntakeScreen.records.add(record); //
+      WaterIntakeScreen.recordedTimes.add('$hours:$minutes ${recordedTime!.hour > 12 ? 'PM' : 'AM'}');
     });
     log('Water intake records: ${WaterIntakeScreen.records.toString()}');
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Record saved: $record')),
     );
+  }
+
+  String _getAmount() {
+    // ml or letter
+    return unit == 'ml' ? '${(waterLevel * 2).toInt()} ml' : '${(waterLevel * 0.002).toStringAsFixed(2)} L';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    unit = _user.unit??'ml';
   }
 
   @override
@@ -126,7 +167,7 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
             ),
             SizedBox(height: screenHeight * 0.03),
             Text(
-              '${(waterLevel * 2).toInt()} ml',
+              _getAmount(),
               style: TextStyle(
                   fontSize: screenWidth * 0.12,
                   fontFamily: 'Poppins',
@@ -164,7 +205,10 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
                     borderRadius: BorderRadius.circular(50),
                   ),
                   child: ElevatedButton(
-                    onPressed: _storeRecord,
+                    onPressed: (){
+                      _storeRecord();
+                      Navigator.pop(context);
+                    },
 
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
@@ -219,6 +263,3 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
     );
   }
 }
-
-
-

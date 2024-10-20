@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import '../cubits/weather_cubit/weather_cubit.dart';
 import '../cubits/weather_cubit/weather_states.dart';
+import '../logic/tracker.dart';
 import '../values/color.dart';
 import '../tips/ai.dart';
 import '../tips/tip_screen.dart';
@@ -32,8 +33,8 @@ class TargetScreen extends StatefulWidget {
 class _TargetScreenState extends State<TargetScreen> {
   MyUser? _user;
   bool _showContent = false;
-  String _selectedUnit = '';
-  double? _quantity;
+  String _selectedUnit = 'ml';
+  int? _quantity;
   late final WeatherCubit weatherCubit;
   late final TipService
       tipService; // يجب تهيئة TipService بعد تهيئة weatherCubit
@@ -41,11 +42,9 @@ class _TargetScreenState extends State<TargetScreen> {
 
   @override
   void initState() {
-    super.initState();
-    _storeAndCalculateWaterGoal();
-    _selectedUnit = 'ml'; // Set default unit to 'ml'
-    _quantity = widget.initialQuantity;
+    super.initState(); // Set default unit to 'm'
 
+    _fetchUserData();
     // تهيئة weatherCubit وبدء جلب حالة الطقس
     weatherCubit = WeatherCubit();
 
@@ -70,8 +69,7 @@ class _TargetScreenState extends State<TargetScreen> {
   }
 
   // Function to store user inputs in SharedPreferences and calculate water goal and it is async to wait for the SharedPreferences to be ready
-  Future<void> _storeAndCalculateWaterGoal() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  void _fetchUserData() {
 
     // Store values from your widgets
     int age = Agewidget.selectedAge;
@@ -83,17 +81,18 @@ class _TargetScreenState extends State<TargetScreen> {
     String dinnerTime = '${MealWidget.dinnerHour}:${MealWidget.dinnerMinute} ${MealWidget.dinnerPeriod}';
     String bedTime = '${Sleepwidget.selectedHour}:${Sleepwidget.selectedMinute} ${Sleepwidget.selectedPeriod}';
 
-    _user = MyUser(gender: gender, weight: weight, age: age, wakeUpTime: wakeUpTime, bedTime: bedTime, breakfastTime: breakfastTime, lunchTime: lunchTime, dinnerTime: dinnerTime);
-
-    log('User data: $age, $weight, $gender, $wakeUpTime, $breakfastTime, $lunchTime, $dinnerTime, $bedTime');
-
-    // Calculate the daily water goal based on weight (default in ml)
     setState(() {
-      _quantity = _user!.calculateWaterGoal();
+      _user = MyUser(gender: gender, weight: weight, age: age, wakeUpTime: wakeUpTime, bedTime: bedTime, breakfastTime: breakfastTime, lunchTime: lunchTime, dinnerTime: dinnerTime,unit: _selectedUnit);
+      Tracker tracker = Tracker();
+      tracker.calculateWaterGoal(_user!.weight);
+      _user!.tracker = tracker;
+      _quantity = tracker.totalWaterGoal;
     });
-    // Store user to shared preferences
-    await prefs.setString("user", json.encode(_user!.toMap()));
-    await _saveUserToFirestore(_user!);
+  }
+
+  Future<void> _saveUserToSharedPrefs(MyUser user) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user', json.encode(user.toMap()));
   }
 
   // Function to Save User to Firestore
@@ -130,17 +129,17 @@ class _TargetScreenState extends State<TargetScreen> {
   }
 
   // بقية كود TargetScreen كما هو
-  void setQuantity(double quantity) {
+  void setQuantity(int quantity) {
     setState(() {
       _quantity = quantity;
     });
   }
 
-  double getDisplayedQuantity() {
+  String getDisplayedQuantity() {
     if (_selectedUnit == 'ml') {
-      return _quantity ?? 0.0;
+      return '$_quantity';
     } else {
-      return (_quantity ?? 0.0) / 1000;
+      return (_quantity! / 1000).toStringAsFixed(2);
     }
   }
 
@@ -201,6 +200,7 @@ class _TargetScreenState extends State<TargetScreen> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
+                      _user?.unit = 'ml';
                       _selectedUnit = 'ml';
                     });
                   },
@@ -235,6 +235,7 @@ class _TargetScreenState extends State<TargetScreen> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
+                      _user?.unit = 'L';
                       _selectedUnit = 'L';
                     });
                   },
@@ -321,6 +322,8 @@ class _TargetScreenState extends State<TargetScreen> {
                 child: Center(
                   child: GestureDetector(
                     onTap: (){
+                      _saveUserToSharedPrefs(_user!);
+                      _saveUserToFirestore(_user!);
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CustomNavigationBar()));
                     },
                     child: Text(
