@@ -40,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
       _checkUserAuthLocaly();
     } else {
       log('****************************online');
-      Future.delayed(const Duration(seconds: 3), () async { // added async
+      Future.delayed(const Duration(seconds: 2), () async { // added async
         if (FirebaseAuth.instance.currentUser == null) {
           Navigator.pushReplacement(
             context,
@@ -60,20 +60,25 @@ class _SplashScreenState extends State<SplashScreen> {
     try {
       // Get the authenticated user's ID
       String userId = FirebaseAuth.instance.currentUser!.uid;
+      log(userId);
 
       // Reference to the user's document in Firestore
       final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
 
       // Fetch user data from Firestore
       DocumentSnapshot<Map<String, dynamic>> snapshot = await userDoc.get();
-
+      log('second here');
       if (snapshot.exists) {
         Map<String, dynamic> userData = snapshot.data()!;
+        log(json.encode(userData));
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString("user", json.encode(userData));
         await prefs.setBool('isUserRegistered', true);
 
         MyUser user = MyUser.fromMap(userData);
+        user.tracker.calculateWaterGoal(user.weight);
+
+        log(user.toString()); // didnt loged
 
         Navigator.pushReplacement(
           context,
@@ -93,7 +98,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   // Check if the user has already entered their data
   Future<void> _checkUserAuthLocaly() async {
-    await Future.delayed(const Duration(seconds: 4));
+    await Future.delayed(const Duration(seconds: 3));
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     bool? isUserRegistered = prefs.getBool('isUserRegistered');

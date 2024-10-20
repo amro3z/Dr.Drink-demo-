@@ -37,9 +37,9 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
   void _updateWaterConsumed() {
     setState(() {
       // Refreshing the total water consumed value
-      _totalWaterGoal = _user.totalWaterGoal!;
-      _totalWaterConsumed = _user.totalWaterConsumed!;
-      _progress = _totalWaterConsumed / _totalWaterGoal;
+      _totalWaterGoal = _user.tracker!.totalWaterGoal!;
+      _totalWaterConsumed = _user.tracker!.totalWaterConsumed;
+      _progress = _user.tracker!.getProgress();
       _unit = _user.unit!;
 
     });

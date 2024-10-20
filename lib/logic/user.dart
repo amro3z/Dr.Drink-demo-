@@ -1,3 +1,10 @@
+import 'dart:convert';
+// import 'dart:math';
+
+import 'package:dr_drink/logic/tracker.dart';
+import 'dart:developer';
+import 'package:flutter/material.dart';
+
 class MyUser {
   // Singleton instance
   static final MyUser _instance = MyUser._internal();
@@ -12,8 +19,7 @@ class MyUser {
     required String lunchTime,
     required String dinnerTime,
     required String bedTime,
-    int? totalWaterGoal,
-    int? totalWaterConsumed=0,
+    Tracker? tracker,
     String? unit,
   }) {
     _instance.gender = gender;
@@ -24,8 +30,7 @@ class MyUser {
     _instance.lunchTime = lunchTime;
     _instance.dinnerTime = dinnerTime;
     _instance.bedTime = bedTime;
-    _instance.totalWaterGoal = totalWaterGoal;
-    _instance.totalWaterConsumed = totalWaterConsumed;
+    _instance.tracker = tracker?? Tracker();
     _instance.unit = unit;
     return _instance;
   }
@@ -42,15 +47,14 @@ class MyUser {
   String lunchTime = '';
   String dinnerTime = '';
   String bedTime = '';
-  int? totalWaterGoal;
-  int? totalWaterConsumed;
+  Tracker tracker = Tracker();
   String? unit;
 
-  // Method to calculate water goal
-  int calculateWaterGoal() {
-    totalWaterGoal = weight * 33;
-    return totalWaterGoal!;
-  }
+  // // Method to calculate water goal
+  // int calculateWaterGoal() {
+  //   totalWaterGoal = weight * 33;
+  //   return totalWaterGoal!;
+  // }
 
   static MyUser get instance => _instance;
 
@@ -69,12 +73,12 @@ class MyUser {
     if (newBedTime != null) bedTime = newBedTime;
 
     // Recalculate water goal after editing profile
-    calculateWaterGoal();
+    // calculateWaterGoal();
   }
 
-  void drinkWater(int amount) {
-    totalWaterConsumed = totalWaterConsumed! + amount;
-  }
+  // void drinkWater(int amount) {
+  //   totalWaterConsumed = totalWaterConsumed! + amount;
+  // }
 
   // Convert to map
   Map<String, dynamic> toMap() {
@@ -87,14 +91,14 @@ class MyUser {
       'lunchTime': lunchTime,
       'dinnerTime': dinnerTime,
       'bedTime': bedTime,
-      'totalWaterGoal': totalWaterGoal,
-      'totalWaterConsumed': totalWaterConsumed,
+      'tracker': json.encode(tracker.toMap()),
       'unit': unit,
     };
   }
 
   // Create a MyUser instance from a map
   factory MyUser.fromMap(Map<String, dynamic> map) {
+    log("here----------------------------");
     return MyUser(
       gender: map['gender'],
       age: map['age'],
@@ -104,8 +108,7 @@ class MyUser {
       lunchTime: map['lunchTime'],
       dinnerTime: map['dinnerTime'],
       bedTime: map['bedTime'],
-      totalWaterGoal: map['totalWaterGoal'],
-      totalWaterConsumed: map['totalWaterConsumed'],
+      tracker: Tracker.fromMap(json.decode(map['tracker'])),
       unit: map['unit'],
     );
   }

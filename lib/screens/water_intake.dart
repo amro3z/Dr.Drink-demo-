@@ -1,7 +1,11 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_drink/values/color.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../logic/user.dart';
 
@@ -30,6 +34,25 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
     });
   }
 
+  Future<void> _saveUserToSharedPrefs(MyUser user) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user', json.encode(user.toMap()));
+  }
+
+  // Function to Save User to Firestore
+  Future<void> _saveUserToFirestore(MyUser user) async {
+    try {
+      final userCollection = FirebaseFirestore.instance.collection('users');
+      String userId = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous'; // Get the user ID if available
+
+      await userCollection.doc(userId).set(user.toMap());
+
+      log('User saved to Firestore successfully.');
+    } catch (e) {
+      log('Failed to save user to Firestore: $e');
+    }
+  }
+
   void _storeRecord() {
     recordedTime = DateTime.now();
     log('Recorded time: $recordedTime');
@@ -40,7 +63,9 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
 
     log('$WaterIntakeScreen.recordedTimes');
     int record = unit == 'ml' ? (waterLevel * 2).truncate() : (waterLevel * 0.2).truncate()*10 ;
-    _user.drinkWater(record);
+    _user.tracker!.drink(record);
+    _saveUserToSharedPrefs(_user);
+    _saveUserToFirestore(_user);
     setState(() {
       WaterIntakeScreen.records.add(record); //
     });

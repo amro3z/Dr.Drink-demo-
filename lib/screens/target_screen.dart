@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import '../cubits/weather_cubit/weather_cubit.dart';
 import '../cubits/weather_cubit/weather_states.dart';
+import '../logic/tracker.dart';
 import '../values/color.dart';
 import '../tips/ai.dart';
 import '../tips/tip_screen.dart';
@@ -82,8 +83,10 @@ class _TargetScreenState extends State<TargetScreen> {
 
     setState(() {
       _user = MyUser(gender: gender, weight: weight, age: age, wakeUpTime: wakeUpTime, bedTime: bedTime, breakfastTime: breakfastTime, lunchTime: lunchTime, dinnerTime: dinnerTime,unit: _selectedUnit);
-
-      _quantity = _user!.calculateWaterGoal();
+      Tracker tracker = Tracker();
+      tracker.calculateWaterGoal(_user!.weight);
+      _user!.tracker = tracker;
+      _quantity = tracker.totalWaterGoal;
     });
   }
 
