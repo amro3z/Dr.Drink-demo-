@@ -54,6 +54,7 @@ dependencies:
   flutter_timezone: ^3.0.1
   rxdart: ^0.28.0
   connectivity_plus: ^6.0.5
+  smooth_page_indicator: ^1.2.0+3
 dev_dependencies:
   flutter_test:
     sdk: flutter

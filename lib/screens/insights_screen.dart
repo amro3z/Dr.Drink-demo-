@@ -19,10 +19,19 @@ class InsightsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(10), // تقدر تتحكم في الارتفاع هنا
+        preferredSize: const Size.fromHeight(40),
         child: AppBar(
-          backgroundColor: Colors.white, // الخلفية شفافة
-          elevation: 0, // مفيش ظل ولا تأثير
+          scrolledUnderElevation: 0,
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: const Text(
+            'INSIGHTS',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+            ),
+          ),
         ),
       ),
       body: const CustomScrollView(
