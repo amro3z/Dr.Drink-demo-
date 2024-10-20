@@ -1,6 +1,7 @@
 import 'dart:math' show Random;
 import 'package:dr_drink/screens/reminder.dart';
 import 'package:dr_drink/values/color.dart';
+import 'package:dr_drink/widgets/soundWidget.dart';
 import 'package:flutter/material.dart';
 // import 'function_profile.dart';
 
@@ -9,14 +10,17 @@ class ProfilePage extends StatefulWidget {
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
+  
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+    // late VoidCallback toggleTheme;
+  String selectedSound = 'Water drop 2';
+  double volume = 0.5;
+  bool vibrationEnabled = true;
   late TextEditingController _passwordController;
-  //  TextEditingController _goalController = TextEditingController();
-  // _PasswordScreenState createState() => _PasswordScreenState();
-  TextEditingController _goalController = TextEditingController();
-  // bool _obscureText = true;
+  final TextEditingController _goalController = TextEditingController();
+  
   @override
   Widget build(BuildContext context) {
     
@@ -147,15 +151,20 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
        const SizedBox(height:25 ),
-                        const Row(
-                          children: [
-                            Icon(Icons.volume_up_outlined,color:Colors.white),
-                            Spacer(flex: 1,),
-                            Text("Sounds and vibrations",style:TextStyle(color:Colors.white)),
-                            Spacer(flex:25,),
-                            Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
-                            // Spacer(),
-                          ],
+                        GestureDetector(
+                          onTap: (){
+                            showSoundSettings( context);
+                          },
+                          child: const Row(
+                            children: [
+                              Icon(Icons.volume_up_outlined,color:Colors.white),
+                              Spacer(flex: 1,),
+                              Text("Sounds and vibrations",style:TextStyle(color:Colors.white)),
+                              Spacer(flex:25,),
+                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
+                              // Spacer(),
+                            ],
+                          ),
                         ),
        const SizedBox(height:25 ),
                         GestureDetector(
@@ -178,7 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         const SizedBox(height:25 ),
                         GestureDetector(
                           onTap: (){
-                            
+                            showThemeChanger( context);
                           },
                           child: const Row(
                             children: [
@@ -286,13 +295,56 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
 
+void showThemeChanger(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Choose Theme',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              ListTile(
+                leading: const Icon(Icons.light_mode),
+                title: const Text('Light Theme'),
+                onTap: () {
+                  Navigator.pop(context); // غلق النافذة
+                  // toggleTheme(); // تفعيل الثيم الفاتح
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.dark_mode),
+                title: const Text('Dark Theme'),
+                onTap: () {
+                  Navigator.pop(context); // غلق النافذة
+                  // toggleTheme(); // تفعيل الثيم الداكن
+                },
+              ),
+            ],
+          ),
+        );
+      }
+       );
+  }
 
-
-
-
-
-
-
+void showSoundSettings(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return SoundSettingsContent();
+      },
+    );
+  }
 
  // ignore: non_constant_identifier_names
  void account_dialog(BuildContext context) {
