@@ -5,6 +5,7 @@ import '../componnent/record_card.dart';
 import '../logic/user.dart';
 import '../values/color.dart';
 import '../values/icons.dart';
+import '../logic/history.dart';
 
 class BuildMonthContent extends StatefulWidget {
   @override
@@ -13,28 +14,29 @@ class BuildMonthContent extends StatefulWidget {
 
 class _MonthTrackerScreenState extends State<BuildMonthContent> {
   final MyUser _user = MyUser.instance;
+  final History _history = History.instance;
   String? unit; // Default unit
-  int goal = 10000; // Daily water goal in ml
+  int goal = 4000; // Daily water goal in ml
 
   // Initialize a list of size 31 for monthly consumption (1 to 31)
-  List<int> monthlyConsumption = List.filled(31, 0);
+  // List<int> monthlyConsumption = List.filled(31, 0);
 
   @override
   void initState() {
     super.initState();
     // Populate the monthlyConsumption list with sample data for each day
-    monthlyConsumption[0] = 2000; // Day 1
-    monthlyConsumption[1] = 1800; // Day 2
-    monthlyConsumption[2] = 2200; // Day 3
-    monthlyConsumption[3] = 1600; // Day 4
-    monthlyConsumption[4] = 2000; // Day 5
-    monthlyConsumption[5] = 2400; // Day 6
-    monthlyConsumption[6] = 1800; // Day 7
-    monthlyConsumption[10] = 2500; // Day 11
-    monthlyConsumption[15] = 3000; // Day 16
-    monthlyConsumption[20] = 2100; // Day 21
-    monthlyConsumption[25] = 2600; // Day 26
-    monthlyConsumption[30] = 2800; // Day 31
+    // monthlyConsumption[0] = 2000; // Day 1
+    // monthlyConsumption[1] = 1800; // Day 2
+    // monthlyConsumption[2] = 2200; // Day 3
+    // monthlyConsumption[3] = 1600; // Day 4
+    // monthlyConsumption[4] = 2000; // Day 5
+    // monthlyConsumption[5] = 2400; // Day 6
+    // monthlyConsumption[6] = 1800; // Day 7
+    // monthlyConsumption[10] = 2500; // Day 11
+    // monthlyConsumption[15] = 3000; // Day 16
+    // monthlyConsumption[20] = 2100; // Day 21
+    // monthlyConsumption[25] = 2600; // Day 26
+    // monthlyConsumption[30] = 2800; // Day 31
 
     unit = _user.unit ?? 'ml';
   }
@@ -55,7 +57,7 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
               children: [
                 MyIcon.leftArrow,
                 Text(
-                  'This Week',
+                  'This Month',
                   style: TextStyle(
                     color: MyColor.blue,
                     fontFamily: 'Poppins',
@@ -182,7 +184,7 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
                               axisNameWidget: const Text(
                                 'Day',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 14),
+                                    fontWeight: FontWeight.bold, fontSize: 12),
                               ),
                               sideTitles: SideTitles(
                                 showTitles: true,
@@ -222,8 +224,8 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
     List<BarChartGroupData> barGroups = [];
     for (int i = 0; i < 31; i++) {
       double value = unit == 'ml'
-          ? monthlyConsumption[i].toDouble()
-          : monthlyConsumption[i] / 1000;
+          ? _history.monthlyConsumption[i].toDouble()
+          : _history.monthlyConsumption[i] / 1000;
 
       barGroups.add(
         BarChartGroupData(
@@ -243,14 +245,14 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
   }
 
   String _getTotalConsumption() {
-    int total = monthlyConsumption.fold(0, (sum, value) => sum + value);
+    int total = _history.monthlyConsumption.fold(0, (sum, value) => sum + value);
     double convertedTotal = unit == 'ml' ? total.toDouble() : total / 1000;
     return unit == 'ml' ? total.toString() : convertedTotal.toStringAsFixed(1);
   }
 
   String _getAverageConsumption() {
-    int total = monthlyConsumption.fold(0, (sum, value) => sum + value);
-    int count = monthlyConsumption.where((element) => element > 0).length;
+    int total = _history.monthlyConsumption.fold(0, (sum, value) => sum + value);
+    int count = _history.monthlyConsumption.where((element) => element > 0).length;
     double average = total / count; // Assuming all days of the month
     double convertedAverage = unit == 'ml' ? average : average / 1000;
     return unit == 'ml'
@@ -259,7 +261,7 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
   }
 
   double _getMaxYValue() {
-    int maxConsumed = monthlyConsumption.fold(0, (a, b) => a > b ? a : b);
+    int maxConsumed = _history.monthlyConsumption.fold(0, (a, b) => a > b ? a : b);
     int maxGoal = goal;
 
     double maxY =

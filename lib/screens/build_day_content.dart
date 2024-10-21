@@ -3,6 +3,7 @@ import 'package:dr_drink/screens/water_intake.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../componnent/record_card.dart';
+import '../logic/history.dart';
 import '../values/color.dart';
 import '../values/icons.dart';
 
@@ -13,24 +14,43 @@ class BuildDayContent extends StatefulWidget {
 
 class _WaterTrackerScreenState extends State<BuildDayContent> {
   final MyUser _user = MyUser.instance;
+  final History _history = History.instance;
   String? unit; // Default unit
   int goal = 2000; // Daily water goal in ml
 
   // Initialize a list of size 24 for hourly consumption
-  List<int> hourlyConsumption = List.filled(25, 0);
+  // List<int> hourlyConsumption = List.filled(24, 0);
 
   @override
   void initState() {
     super.initState();
     // Populate the hourlyConsumption list with sample data
-    hourlyConsumption[1] = 400;
-    hourlyConsumption[3] = 500;
-    hourlyConsumption[7] = 800;
-    hourlyConsumption[12] = 600;
-    hourlyConsumption[16] = 400;
-    hourlyConsumption[20] = 900;
-    hourlyConsumption[23] = 300;
+    // hourlyConsumption[0] = 100;
+    // hourlyConsumption[1] = 400;
+    // hourlyConsumption[2] = 300;
+    // hourlyConsumption[3] = 500;
+    // hourlyConsumption[4] = 200;
+    // hourlyConsumption[5] = 700;
+    // hourlyConsumption[6] = 800;
+    // hourlyConsumption[7] = 800;
+    // hourlyConsumption[8] = 900;
+    // hourlyConsumption[9] = 1000;
+    // hourlyConsumption[10] = 500;
+    // hourlyConsumption[11] = 600;
+    // hourlyConsumption[12] = 600;
+    // hourlyConsumption[13] = 700;
+    // hourlyConsumption[14] = 800;
+    // hourlyConsumption[15] = 900;
+    // hourlyConsumption[16] = 400;
+    // hourlyConsumption[17] = 500;
+    // hourlyConsumption[18] = 600;
+    // hourlyConsumption[19] = 700;
+    // hourlyConsumption[20] = 900;
+    // hourlyConsumption[21] = 1000;
+    // hourlyConsumption[22] = 200;
+    // hourlyConsumption[23] = 300;
 
+    goal = _user.tracker.totalWaterGoal!;
     unit = _user.unit ?? 'ml';
   }
 
@@ -179,13 +199,13 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
                                 axisNameWidget: const Text(
                                   'Hour',
                                   style: TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 14),
+                                      fontWeight: FontWeight.bold, fontSize: 12),
                                 ),
                                 sideTitles: SideTitles(
                                   showTitles: true,
                                   interval: 1,
                                   getTitlesWidget: (value, _) {
-                                    if (value % 4 == 0 && value != 0) {
+                                    if (value % 4 == 0 || value == 0 || value == 23) {
                                       return Text(
                                         value.toInt().toString(),
                                         style: TextStyle(fontSize: 12),
@@ -222,13 +242,13 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
                     height: 130,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: WaterIntakeScreen.records.length,
+                      itemCount: _history.records.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.only(right: 10),
                           child: RecordCard(
-                            quantity: WaterIntakeScreen.records[index],
-                            time: WaterIntakeScreen.recordedTimes[index],
+                            quantity: _history.records[index],
+                            time: _history.recordedTimes[index],
                             unit: unit!,
                           ),
                         );
@@ -246,10 +266,10 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
 
   List<BarChartGroupData> _buildBarGroups() {
     List<BarChartGroupData> barGroups = [];
-    for (int i = 0; i <= 24; i++) {
+    for (int i = 0; i < 24; i++) {
       double value = unit == 'ml'
-          ? hourlyConsumption[i].toDouble()
-          : hourlyConsumption[i] / 1000;
+          ? _history.hourlyConsumption[i].toDouble()
+          : _history.hourlyConsumption[i] / 1000;
 
       barGroups.add(
         BarChartGroupData(
@@ -269,7 +289,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
   }
 
   String _getTotalConsumption() {
-    int total = hourlyConsumption.fold(0, (sum, value) => sum + value);
+    int total = _history.hourlyConsumption.fold(0, (sum, value) => sum + value);
     double convertedTotal = unit == 'ml' ? total.toDouble() : total / 1000;
     return unit == 'ml' ? total.toString() : convertedTotal.toStringAsFixed(1);
   }
@@ -280,9 +300,9 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
   }
 
   String _getAveragePerHour() {
-    int total = hourlyConsumption.fold(0, (sum, value) => sum + value);
+    int total = _history.hourlyConsumption.fold(0, (sum, value) => sum + value);
     int hoursWithConsumption =
-        hourlyConsumption.where((value) => value > 0).length;
+        _history.hourlyConsumption.where((value) => value > 0).length;
 
     if (hoursWithConsumption == 0) return '0';
 
@@ -295,7 +315,9 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
   }
 
   double _getMaxYValue() {
-    double maxY = hourlyConsumption.reduce((a, b) => a > b ? a : b).toDouble();
+    int maxConsumed = _history.hourlyConsumption.fold(0, (a, b) => a > b ? a : b);
+    int maxGoal = goal;
+    double maxY = maxConsumed > maxGoal ? maxConsumed.toDouble() : maxGoal.toDouble();
     return unit == 'ml' ? maxY : maxY / 1000;
   }
 }

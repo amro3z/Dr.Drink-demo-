@@ -5,6 +5,7 @@ import '../componnent/record_card.dart';
 import '../logic/user.dart';
 import '../values/color.dart';
 import '../values/icons.dart';
+import '../logic/history.dart';
 
 class BuildWeekContent extends StatefulWidget {
   @override
@@ -13,24 +14,25 @@ class BuildWeekContent extends StatefulWidget {
 
 class _WeekTrackerScreenState extends State<BuildWeekContent> {
   final MyUser _user = MyUser.instance;
+  final History _history = History.instance;
   String? unit; // Default unit
   int maxYaxis = 4000; // amount of water in ml
   int avg = 2000; // Weekly average consumption in ml per day
 
   // Initialize a list of size 7 for weekly consumption (Sunday to Saturday)
-  List<int> weeklyConsumption = List.filled(7, 0);
+  // List<int> weeklyConsumption = List.filled(7, 0);
 
   @override
   void initState() {
     super.initState();
     // Populate the weeklyConsumption list with sample data (starting from Sunday)
-    weeklyConsumption[0] = 1800; // Sunday
-    weeklyConsumption[1] = 2000; // Monday
-    weeklyConsumption[2] = 1600; // Tuesday
-    weeklyConsumption[3] = 2200; // Wednesday
-    weeklyConsumption[4] = 1500; // Thursday
-    weeklyConsumption[5] = 1700; // Friday
-    weeklyConsumption[6] = 2200; // Saturday
+    // weeklyConsumption[0] = 1800; // Sunday
+    // weeklyConsumption[1] = 2000; // Monday
+    // weeklyConsumption[2] = 1600; // Tuesday
+    // weeklyConsumption[3] = 2200; // Wednesday
+    // weeklyConsumption[4] = 1500; // Thursday
+    // weeklyConsumption[5] = 1700; // Friday
+    // weeklyConsumption[6] = 2200; // Saturday
 
     unit = _user.unit??'ml';
   }
@@ -178,7 +180,7 @@ class _WeekTrackerScreenState extends State<BuildWeekContent> {
                               axisNameWidget: const Text(
                                 'Day',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 14),
+                                    fontWeight: FontWeight.bold, fontSize: 12),
                               ),
                               sideTitles: SideTitles(
                                 showTitles: true,
@@ -231,8 +233,8 @@ class _WeekTrackerScreenState extends State<BuildWeekContent> {
     List<BarChartGroupData> barGroups = [];
     for (int i = 0; i < 7; i++) {
       double value = unit == 'ml'
-          ? weeklyConsumption[i].toDouble()
-          : weeklyConsumption[i] / 1000;
+          ? _history.weeklyConsumption[i].toDouble()
+          : _history.weeklyConsumption[i] / 1000;
 
       barGroups.add(
         BarChartGroupData(
@@ -252,14 +254,14 @@ class _WeekTrackerScreenState extends State<BuildWeekContent> {
   }
 
   String _getTotalConsumption() {
-    int total = weeklyConsumption.fold(0, (sum, value) => sum + value);
+    int total = _history.weeklyConsumption.fold(0, (sum, value) => sum + value);
     double convertedTotal = unit == 'ml' ? total.toDouble() : total / 1000;
     return unit == 'ml' ? total.toString() : convertedTotal.toStringAsFixed(1);
   }
 
   String _getAverageConsumption() {
-    int total = weeklyConsumption.fold(0, (sum, value) => sum + value);
-    int count = weeklyConsumption.where((element) => element > 0).length;
+    int total = _history.weeklyConsumption.fold(0, (sum, value) => sum + value);
+    int count = _history.weeklyConsumption.where((element) => element > 0).length;
     double average = total / count;
     double convertedAverage = unit == 'ml' ? average : average / 1000;
     return unit == 'ml'
@@ -268,7 +270,7 @@ class _WeekTrackerScreenState extends State<BuildWeekContent> {
   }
 
   double _getMaxYValue() {
-    int maxConsumed = weeklyConsumption.fold(0, (a, b) => a > b ? a : b);
+    int maxConsumed = _history.weeklyConsumption.fold(0, (a, b) => a > b ? a : b);
     int maxGoal = maxYaxis;
 
     double maxY =
