@@ -253,6 +253,11 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
   String _getAverageConsumption() {
     int total = _history.monthlyConsumption.fold(0, (sum, value) => sum + value);
     int count = _history.monthlyConsumption.where((element) => element > 0).length;
+
+    if (count == 0) {
+      return '0';
+    }
+
     double average = total / count; // Assuming all days of the month
     double convertedAverage = unit == 'ml' ? average : average / 1000;
     return unit == 'ml'

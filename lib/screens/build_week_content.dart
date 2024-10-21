@@ -262,6 +262,11 @@ class _WeekTrackerScreenState extends State<BuildWeekContent> {
   String _getAverageConsumption() {
     int total = _history.weeklyConsumption.fold(0, (sum, value) => sum + value);
     int count = _history.weeklyConsumption.where((element) => element > 0).length;
+
+    if (count == 0) {
+      return '0';
+    }
+
     double average = total / count;
     double convertedAverage = unit == 'ml' ? average : average / 1000;
     return unit == 'ml'
