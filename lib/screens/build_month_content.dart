@@ -113,7 +113,7 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                'Average',
+                                'Average/day',
                                 style: TextStyle(
                                   color: MyColor.blue,
                                   fontFamily: 'Poppins',
@@ -254,7 +254,7 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
     double average = total / count; // Assuming all days of the month
     double convertedAverage = unit == 'ml' ? average : average / 1000;
     return unit == 'ml'
-        ? average.toStringAsFixed(1)
+        ? average.toStringAsFixed(0)
         : convertedAverage.toStringAsFixed(1);
   }
 

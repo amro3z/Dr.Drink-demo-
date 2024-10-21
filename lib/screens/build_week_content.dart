@@ -109,7 +109,7 @@ class _WeekTrackerScreenState extends State<BuildWeekContent> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                'Average',
+                                'Average/day',
                                 style: TextStyle(
                                   color: MyColor.blue,
                                   fontFamily: 'Poppins',
@@ -184,16 +184,31 @@ class _WeekTrackerScreenState extends State<BuildWeekContent> {
                                 showTitles: true,
                                 interval: 1,
                                 getTitlesWidget: (value, _) {
-                                  // Display only key days for better readability (1, 5, 10, etc.)
-                                  if (value % 5 == 0 || value == 1 || value == 31) {
-                                    return Text(
-                                      (value + 1)
-                                          .toInt()
-                                          .toString(), // Convert index to day number
-                                      style: TextStyle(fontSize: 12),
-                                    );
+                                  switch (value.toInt()) {
+                                    case 0:
+                                      return const Text('Sun',
+                                          style: TextStyle(fontSize: 12));
+                                    case 1:
+                                      return const Text('Mon',
+                                          style: TextStyle(fontSize: 12));
+                                    case 2:
+                                      return const Text('Tue',
+                                          style: TextStyle(fontSize: 12));
+                                    case 3:
+                                      return const Text('Wed',
+                                          style: TextStyle(fontSize: 12));
+                                    case 4:
+                                      return const Text('Thu',
+                                          style: TextStyle(fontSize: 12));
+                                    case 5:
+                                      return const Text('Fri',
+                                          style: TextStyle(fontSize: 12));
+                                    case 6:
+                                      return const Text('Sat',
+                                          style: TextStyle(fontSize: 12));
+                                    default:
+                                      return SizedBox();
                                   }
-                                  return SizedBox();
                                 },
                               ),
                             ),

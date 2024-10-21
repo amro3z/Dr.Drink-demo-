@@ -75,7 +75,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Total and Goal row
+                      // Total, Goal, and Average row
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Row(
@@ -85,7 +85,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Total',
+                                  'Total/Goal',
                                   style: TextStyle(
                                     color: MyColor.blue,
                                     fontFamily: 'Poppins',
@@ -94,7 +94,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
                                   ),
                                 ),
                                 Text(
-                                  '${_getTotalConsumption()} $unit',
+                                  '${_getTotalConsumption()}/${_getTotalGoal()} $unit',
                                   style: TextStyle(
                                     color: MyColor.blue,
                                     fontFamily: 'Poppins',
@@ -108,7 +108,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  'Goal',
+                                  'Average/hour',
                                   style: TextStyle(
                                     color: MyColor.blue,
                                     fontFamily: 'Poppins',
@@ -117,7 +117,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
                                   ),
                                 ),
                                 Text(
-                                  '${_getTotalGoal()} $unit',
+                                  '${_getAveragePerHour()} $unit',
                                   style: TextStyle(
                                     color: MyColor.blue,
                                     fontFamily: 'Poppins',
@@ -130,7 +130,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 10), // Add some space
+                      SizedBox(height: 10),
                       // BarChart
                       Expanded(
                         child: BarChart(
@@ -162,7 +162,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
                                       fontWeight: FontWeight.bold, fontSize: 14),
                                 ),
                                 sideTitles: SideTitles(
-                                  showTitles: true, // Enable left Y-axis
+                                  showTitles: true,
                                   reservedSize: 40,
                                   interval: (_getMaxYValue() / 4),
                                   getTitlesWidget: (value, _) {
@@ -183,8 +183,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
                                 ),
                                 sideTitles: SideTitles(
                                   showTitles: true,
-                                  interval:
-                                  1, // Preserve all hours, selectively show key ones
+                                  interval: 1,
                                   getTitlesWidget: (value, _) {
                                     if (value % 4 == 0 && value != 0) {
                                       return Text(
@@ -192,7 +191,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
                                         style: TextStyle(fontSize: 12),
                                       );
                                     }
-                                    return SizedBox(); // Hide other hours
+                                    return SizedBox();
                                   },
                                 ),
                               ),
@@ -280,11 +279,23 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
     return unit == 'ml' ? goal.toString() : convertedGoal.toStringAsFixed(1);
   }
 
-  double _getMaxYValue() {
-    int maxConsumed = hourlyConsumption.fold(0, (a, b) => a > b ? a : b);
-    int maxGoal = goal;
+  String _getAveragePerHour() {
+    int total = hourlyConsumption.fold(0, (sum, value) => sum + value);
+    int hoursWithConsumption =
+        hourlyConsumption.where((value) => value > 0).length;
 
-    double maxY = maxConsumed > maxGoal ? maxConsumed.toDouble() : maxGoal.toDouble();
+    if (hoursWithConsumption == 0) return '0';
+
+    double average = total / hoursWithConsumption;
+    double convertedAverage = unit == 'ml' ? average : average / 1000;
+
+    return unit == 'ml'
+        ? convertedAverage.toStringAsFixed(0)
+        : convertedAverage.toStringAsFixed(1);
+  }
+
+  double _getMaxYValue() {
+    double maxY = hourlyConsumption.reduce((a, b) => a > b ? a : b).toDouble();
     return unit == 'ml' ? maxY : maxY / 1000;
   }
 }
