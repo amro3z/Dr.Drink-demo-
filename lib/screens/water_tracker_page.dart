@@ -70,38 +70,41 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
           alignment: Alignment.center,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05, vertical: screenHeight * 0.03),
               child: Column(
                 children: [
                   SizedBox(height: screenHeight * 0.02),
                   Container(
                     width: double.infinity,
-                    height: screenHeight * 0.15,
+                    height: screenHeight * 0.13,
                     decoration: const BoxDecoration(
                       color: MyColor.lightblue,
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/icons/bot.png',
-                          width: screenWidth * 0.15,
-                        ),
-                        SizedBox(width: screenWidth * 0.05),
-                        Flexible(
-                          child: Text(
-                            'Drinking enough water\nboosts energy levels!',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: 'Poppins',
-                              fontSize: screenWidth * 0.05,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            softWrap: true,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: screenWidth*0.05),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/icons/bot.png',
+                            width: screenWidth * 0.13,
                           ),
-                        ),
-                      ],
+                          SizedBox(width: screenWidth * 0.05),
+                          Flexible(
+                            child: Text(
+                              'Drinking enough water\nboosts energy levels!',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: 'Poppins',
+                                fontSize: screenWidth * 0.05,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              softWrap: true,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -113,7 +116,7 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
 
                 top: screenHeight * 0.3,
                 child: CustomPaint(
-                  size: Size(screenWidth * 0.94, screenHeight * 0.25),
+                  size: Size(screenWidth * 0.78, screenHeight * 0.2),
                   painter: SemiCircleProgressPainter(_progress),
                 ),
               ),
@@ -123,7 +126,7 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
               child: CircleWithShadow(),
             ),
             Positioned(
-              top: screenHeight * 0.5,
+              top: screenHeight * 0.48,
               child: Column(
                 children: [
                   Row(
@@ -143,7 +146,7 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
                           color: Colors.black,
                           fontFamily: 'Poppins',
                           fontSize: screenWidth * 0.08,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w300,
                         ),
                       ),
                       Text(
@@ -164,7 +167,7 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
                       color: Colors.black,
                       fontFamily: 'Poppins',
                       fontSize: screenWidth * 0.05,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   SizedBox(height: screenHeight * 0.02),
@@ -180,17 +183,16 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
                     },
                     child: Image.asset(
                       'assets/icons/drink-cup.png',
-                      width: screenWidth * 0.15,
-                      height: screenHeight * 0.08,
+                      width: screenWidth * 0.13,
                     ),
                   ),
                 ],
               ),
             ),
             Positioned.fill(
-              top: screenHeight * 0.35,
+              top: screenHeight * 0.3,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -199,12 +201,12 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
                       opacity: 0.35,
                       child: Image.asset(
                         'assets/icons/water-drops.png',
-                        width: screenWidth * 0.07,
+                        width: screenWidth * 0.06,
                       ),
                     ),
                     Image.asset(
                       'assets/icons/water-drops.png',
-                      width: screenWidth * 0.07,
+                      width: screenWidth * 0.06,
                     ),
                   ],
                 ),
