@@ -60,6 +60,8 @@ class InsightsCard extends StatelessWidget {
   double right;
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
@@ -95,10 +97,10 @@ class InsightsCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(25),
               color: backcolor,
             ),
-            height: 200,
-            width: 150,
+            height: screenHeight * 0.45,
+            width: screenWidth * 0.43,
           ),
-          // وضع الصورة في منتصف المستطيل الكبير
+
           Positioned(
             top: top, // الصورة تبدأ من أعلى البطاقة
             left: left,
@@ -106,8 +108,8 @@ class InsightsCard extends StatelessWidget {
             right: right,
             child: Image(
               image: AssetImage(path),
-              width: 50,
-              height: 50,
+              width: screenWidth * 0.1,
+              height: screenHeight * 0.2,
               fit: BoxFit.contain, // لضمان أن الصورة مناسبة للحجم
             ),
           ),
@@ -118,7 +120,7 @@ class InsightsCard extends StatelessWidget {
             right: 0,
             child: Container(
               padding: const EdgeInsets.all(10),
-              height: 80, // تحديد ارتفاع ثابت للمستطيل الصغير
+              height: screenHeight * 0.08, // تحديد ارتفاع ثابت للمستطيل الصغير
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 color: cardcolor,
@@ -132,7 +134,7 @@ class InsightsCard extends StatelessWidget {
                   textAlign: TextAlign.start,
                   style: TextStyle(
                     color: textcolor,
-                    fontSize: 15,
+                    fontSize: screenWidth * 0.038,
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.bold,
                   ),
@@ -157,8 +159,11 @@ class ListCard extends StatefulWidget {
 class _ListCardState extends State<ListCard> {
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return SizedBox(
-      height: 230,
+      height: screenHeight * 0.3,
+      width: screenWidth,
       child: ListView.builder(
         scrollDirection: Axis.horizontal, // الاتجاه الأفقي
         itemCount: widget.categoryCard.length,
@@ -179,15 +184,16 @@ class MyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        titleBuiled(text: 'Water Drinking', top: 20),
+        titleBuiled(text: 'Water Drinking', context),
         ListCard(
           categoryCard: [
             InsightsCard(
-              bottom: 50,
+              bottom: screenHeight * 0.032,
               backcolor: MyColor.frow,
               cardcolor: MyColor.fcrow,
               path: "assets/image/avoid_mistake.png",
@@ -213,12 +219,13 @@ class MyCard extends StatelessWidget {
               title_6: "Skip Water Before Bed",
               description_6:
                   "Your body is still performing important functions such as repairing tissues and removing toxins. \n \nBesides, not drinking enough water before bed can lead to dehydration, which can cause headaches, dry mouth, and even impact your quality of sleep.",
-              title_7: "",
+              title_7: "Conclusion",
               description_7:
                   "In conclusion, drinking water is an important part of a healthy lifestyle, but it is important to avoid common water drinking mistakes. \n \nBy paying attention to the right amount, timing, and quality of your water, you can ensure that you are staying hydrated and protecting your health.",
             ),
             InsightsCard(
-              bottom: 38,
+              bottom: screenHeight * 0.0001,
+              top: screenHeight * 0.0015,
               backcolor: MyColor.frow,
               cardcolor: MyColor.fcrow,
               path: "assets/image/drinking_water.png",
@@ -244,12 +251,13 @@ class MyCard extends StatelessWidget {
               title_6: "General Time",
               description_6:
                   "Drinking water at specific times throughout the day can help with digestion, metabolism, hydration, and overall health. \n \nMake sure to drink enough water each day to meet your body's needs and always listen to your body's signals for thirst.",
-              title_7: "",
+              title_7: "Conclusion",
               description_7:
                   "Drinking water at the right times improves health by aiding digestion, boosting metabolism, and maintaining hydration. Start the day with water to rehydrate after sleep. Drinking before meals helps with fullness and digestion. Hydrating during exercise prevents fatigue. A small glass before bed ensures hydration without disrupting sleep.",
             ),
             InsightsCard(
-              bottom: 20,
+              bottom: screenHeight * 0.001,
+              top: screenHeight * 0.025,
               backcolor: MyColor.frow,
               cardcolor: MyColor.fcrow,
               path: "assets/image/replacing.png",
@@ -275,12 +283,13 @@ class MyCard extends StatelessWidget {
               title_6: "Improved Heart Function",
               description_6:
                   "Drinking more water instead of sugary beverages is associated with a lower risk of heart disease and a reduction in blood pressure. \n \nIt may also improve blood flow and increase the elasticity of blood vessels, both of which are important for heart health.",
-              title_7: "",
+              title_7: "Conclusion",
               description_7:
                   "In conclusion, replacing sugary or high-calorie beverages with water is a simple but powerful way to improve your overall health and well-being. By doing so, you can enjoy numerous benefits.",
             ),
             InsightsCard(
-              bottom: 20,
+              bottom: screenHeight * 0.001,
+              top: screenHeight * 0.03,
               backcolor: MyColor.frow,
               cardcolor: MyColor.fcrow,
               path: "assets/image/rb_13254.png",
@@ -312,11 +321,11 @@ class MyCard extends StatelessWidget {
             ),
           ],
         ),
-        titleBuiled(text: 'Beauty & Skincare'),
+        titleBuiled(text: 'Beauty & Skincare', context),
         ListCard(
           categoryCard: [
             InsightsCard(
-              bottom: 60,
+              bottom: screenHeight * 0.02,
               backcolor: MyColor.srow,
               cardcolor: MyColor.scrow,
               path: "assets/image/drinking water-cuate.png",
@@ -342,12 +351,12 @@ class MyCard extends StatelessWidget {
               title_6: 'Reduce Puffins',
               description_6:
                   "Staying hydrated helps to reduce water retention and reduce puffiness and swelling around the eyes and other areas of the face.",
-              title_7: '',
+              title_7: 'Conclusion',
               description_7:
                   'In addition to drinking water, you can also hydrate your skin by using a moisturizer and eating a healthy diet. Fruits and vegetables are rich in vitamins and minerals that can help to nourish your skin.',
             ),
             InsightsCard(
-              bottom: 80,
+              bottom: screenHeight * 0.05,
               backcolor: MyColor.srow,
               cardcolor: MyColor.scrow,
               path: "assets/image/drinking water-amico.png",
@@ -374,12 +383,12 @@ class MyCard extends StatelessWidget {
                   'Limit Your Intake of Beverages \nThat Can Dehydrate Your Skin',
               description_6:
                   "Certain drinks, such as alcohol and caffeinated beverages, can dehydrate your skin and lead to the development of wrinkles. Limit your intake of these beverages and make sure to drink water in between.",
-              title_7: '',
+              title_7: 'Conclusion',
               description_7:
                   'Drinking water is essential for achieving wrinkle-free skin. By following a consistent drinking water schedule, you can help your skin stay hydrated, supple, and youthful-looking.',
             ),
             InsightsCard(
-              bottom: 80,
+              bottom: screenHeight * 0.05,
               backcolor: MyColor.srow,
               cardcolor: MyColor.scrow,
               path: "assets/image/cherry drink-amico.png",
@@ -405,12 +414,12 @@ class MyCard extends StatelessWidget {
               title_4: 'Aloe Vera Juice',
               title_5: 'Lemon Juice',
               title_6: 'Green Juice',
-              title_7: '',
+              title_7: 'Conclusion',
               description_7:
                   'While these nutrient-packed juices are beneficial for the skin, they are not a substitute for a healthy and balanced diet. \n \nIncorporate these juices into your daily routine and pair them with a balanced diet and an effective skincare routine to achieve the healthy, glowing skin you deserve.',
             ),
             InsightsCard(
-              bottom: 48,
+              bottom: screenHeight * 0.015,
               backcolor: MyColor.srow,
               cardcolor: MyColor.scrow,
               path: "assets/image/hot_water.png",
@@ -436,20 +445,23 @@ class MyCard extends StatelessWidget {
               title_4: 'Blood Circulation',
               title_5: 'Increased Skin Elasticity',
               title_6: 'Relaxation',
-              title_7: '',
+              title_7: 'Conclusion',
               description_7:
                   'In conclusion, drinking water and using hot and cold water on your skin can provide a variety of benefits. \n \nHowever, it\'s important to be mindful of the temperature of the water you\'re using and to avoid extremes that could potentially harm your skin.',
             ),
           ],
         ),
-        const SizedBox(height: 10),
-        titleBuiled(text: 'Self-care'),
+        SizedBox(
+          height: screenHeight * 0.002,
+        ),
+        titleBuiled(text: 'Self-care', context),
         ListCard(
           categoryCard: [
             InsightsCard(
               backcolor: MyColor.trow,
               cardcolor: MyColor.tcrow,
-              bottom: 20,
+              bottom: screenHeight * 0.001,
+              top: screenHeight * 0.033,
               path: "assets/image/Insomnia-pana.png",
               text: 'Bedtime Drinks for Better Sleep',
               textcolor: MyColor.tnrow,
@@ -473,14 +485,14 @@ class MyCard extends StatelessWidget {
               title_4: 'Cocount Water',
               title_5: 'Nutmeg Tea',
               title_6: 'Banana Tea',
-              title_7: '',
+              title_7: 'Conclusion',
               description_7:
                   'Incorporating these drinks into your bedtime routine can help promote relaxation, reduce anxiety, and improve sleep quality. \n \nIf you are experiencing persistent sleep problems, it\'s always best to consult with a healthcare professional.',
             ),
             InsightsCard(
               backcolor: MyColor.trow,
               cardcolor: MyColor.tcrow,
-              bottom: 80,
+              bottom: screenHeight * 0.055,
               path: "assets/image/Mulled wine-amico.png",
               text: 'Impact of Alcohol on Your Body',
               textcolor: MyColor.tnrow,
@@ -504,16 +516,16 @@ class MyCard extends StatelessWidget {
               title_4: 'Caediovascular Disease',
               title_5: 'Poor Sleep',
               title_6: 'Weakened Immune System',
-              title_7: '',
+              title_7: 'Conclusion',
               description_7:
                   'Alcohol consumption can have both short-term and long-term effects on the body, and excessive drinking can lead to numerous health problems. \n \nYou need to be mindful of your alcohol consumption and talk to your doctor if you have concerns about your drinking habits.',
             ),
             InsightsCard(
               backcolor: MyColor.trow,
               cardcolor: MyColor.tcrow,
-              bottom: 65,
+              bottom: screenHeight * 0.033,
               path: "assets/image/Drinking tea-pana.png",
-              text: 'Herbal Teas for better Mental Health',
+              text: 'Herbal Teas for better\nMental Health',
               textcolor: MyColor.tnrow,
               description:
                   "When you try to find medicines to support your mental health, don't forget natural remedies. The best herbal teas for better mental health are here for you to feel calm and centered no matter what life throws your way.",
@@ -535,11 +547,12 @@ class MyCard extends StatelessWidget {
               title_4: 'Passionflower Tea',
               title_5: 'Green Tea',
               title_6: 'Rose Tea',
-              title_7: '',
+              title_7: 'Conclusion',
               description_7:
                   'Herbal teas can be a great way to support your mental health and promote relaxation. Chamomile, lavender, etc. are all great options to consider. \n \nSo why not brew up a cup of tea and take a moment to unwind?',
             ),
             InsightsCard(
+              bottom: screenHeight * 0.05,
               backcolor: MyColor.trow,
               cardcolor: MyColor.tcrow,
               path: "assets/image/Hydratation-amico.png",
@@ -564,21 +577,23 @@ class MyCard extends StatelessWidget {
               title_3: 'Improve Mood',
               title_4: 'Better Sleep',
               title_5: 'Provide Mindful Hydration',
-              title_6: '',
-              title_7: '',
+              title_6: 'Question',
+              title_7: 'Conclusion',
               description_7:
                   'By staying hydrated and making water a mindful activity, you can improve your overall well-being and feel more relaxed throughout the day. ',
             ),
           ],
         ),
-        const SizedBox(height: 10),
-        titleBuiled(text: 'Healthy Lifestyle'),
+        SizedBox(
+          height: screenHeight * 0.002,
+        ),
+        titleBuiled(text: 'Healthy Lifestyle', context),
         ListCard(
           categoryCard: [
             InsightsCard(
               backcolor: MyColor.forow,
               cardcolor: MyColor.focrow,
-              bottom: 61,
+              bottom: screenHeight * 0.025,
               path: "assets/image/Hydratation-cuate.png",
               text: 'Top Fat-Burning Drinks for Weight Loss',
               textcolor: MyColor.fonrow,
@@ -602,14 +617,14 @@ class MyCard extends StatelessWidget {
               title_4: 'Lemon Water',
               title_5: 'Ginger Tea',
               title_6: 'Cumin & Cinnamon Water',
-              title_7: '',
+              title_7: 'Conclusion',
               description_7:
                   'Incorporating these fat-burning drinks into your daily diet can be a great way to boost your metabolism and support your weight loss goals. \n \nHowever, remember that these drinks are not magic solutions and should be consumed as part of a balanced diet and active lifestyle.',
             ),
             InsightsCard(
               backcolor: MyColor.forow,
               cardcolor: MyColor.focrow,
-              bottom: 68,
+              bottom: screenHeight * 0.038,
               path: "assets/image/Hot beverage-pana.png",
               text: 'What to Drink During Fasting ?',
               textcolor: MyColor.fonrow,
@@ -633,14 +648,14 @@ class MyCard extends StatelessWidget {
               title_4: 'Lemon Water',
               title_5: 'Apple Cider Vinger',
               title_6: 'Cumin & Cinnamon Water',
-              title_7: '',
+              title_7: 'Conclusion',
               description_7:
                   'In conclusion, there are several options for what to drink during fasting, and each has its own unique benefits. \n \nRemember to listen to your body and choose the beverages that work best for you.',
             ),
             InsightsCard(
               backcolor: MyColor.forow,
               cardcolor: MyColor.focrow,
-              bottom: 35,
+              bottom: screenHeight * 0.007,
               path: "assets/image/Stretching exercises-rafiki.png",
               text: 'Drink Water to Lose Weight: How To',
               textcolor: MyColor.fonrow,
@@ -664,14 +679,14 @@ class MyCard extends StatelessWidget {
               title_4: 'Replace Sugary Drinks with Water',
               title_5: 'Drink When Feeling Hungry',
               title_6: 'Stay Hydrated Throughout Your Workout',
-              title_7: '',
+              title_7: 'Conclusion',
               description_7:
                   'By following these simple tips, you can help support your weight loss efforts and improve your overall health. \n \nRemember that drinking water is just one piece of the puzzle, and it should be combined with a healthy diet and regular exercise for the best results.',
             ),
             InsightsCard(
               backcolor: MyColor.forow,
               cardcolor: MyColor.focrow,
-              bottom: 33,
+              bottom: screenHeight * 0.003,
               path: "assets/image/Breathing exercise-rafiki.png",
               text: 'Benefits of Hydration for Exercise',
               textcolor: MyColor.fonrow,
@@ -701,21 +716,31 @@ class MyCard extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(
-          height: 10,
-        )
+        SizedBox(
+          height: screenHeight * 0.005,
+        ),
       ],
     );
   }
 }
 
-Widget titleBuiled({required String text, double? top = 20}) {
+Widget titleBuiled(
+  BuildContext context, {
+  required String text,
+}) {
+  double screenWidth = MediaQuery.of(context).size.width;
+  double screenHeight = MediaQuery.of(context).size.height;
   return Padding(
-    padding: EdgeInsets.only(bottom: 5, top: top ?? 0, left: 10),
+    padding: EdgeInsets.only(
+        bottom: screenHeight * 0.007,
+        top: screenHeight * 0.02,
+        left: screenHeight * 0.01),
     child: Text(
       text,
-      style: const TextStyle(
-          fontWeight: FontWeight.bold, fontSize: 16, fontFamily: "Poppins"),
+      style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: screenWidth * 0.045,
+          fontFamily: "Poppins"),
     ),
   );
 }

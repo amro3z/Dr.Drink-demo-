@@ -22,7 +22,6 @@ class SingleVisibleItemList extends StatefulWidget {
   final Color backgroundColor;
   final Color textColor;
   final Color notactivedotcolor;
-
   const SingleVisibleItemList({
     super.key,
     required this.title,
@@ -79,42 +78,42 @@ class _SingleVisibleItemListState extends State<SingleVisibleItemList> {
     String? imagePath,
     double? fontsize = 25,
   }) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return AnimatedOpacity(
       opacity: opacity,
       duration: const Duration(milliseconds: 300),
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.only(left: 8.0, top: 300),
+          padding: EdgeInsets.only(
+              left: screenWidth * 0.02, top: screenHeight * 0.31),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               imagePath == null
                   ? Container()
-                  : Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Image.asset(
-                        imagePath,
-                        color: widget.textColor,
-                        height: 30,
-                        width: 30,
-                      ),
+                  : Image.asset(
+                      imagePath,
+                      color: widget.textColor,
+                      height: screenHeight * 0.06,
+                      width: screenWidth * 0.07,
                     ),
               Text(
                 title,
                 textAlign: TextAlign.start,
                 style: TextStyle(
-                  fontSize: fontsize,
+                  fontSize: screenWidth * 0.07,
                   color: widget.textColor,
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: screenHeight * 0.01),
               Text(
                 description,
                 textAlign: TextAlign.left,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: screenWidth * 0.04,
                   color: widget.textColor,
                   fontFamily: 'Poppins',
                 ),
@@ -128,6 +127,8 @@ class _SingleVisibleItemListState extends State<SingleVisibleItemList> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     List<Widget Function(double)> itemBuilders = [
       (opacity) => buildItem(
             opacity: opacity,
@@ -242,8 +243,8 @@ class _SingleVisibleItemListState extends State<SingleVisibleItemList> {
               count: itemBuilders.length,
               axisDirection: Axis.vertical, // Set the axis to vertical
               effect: ExpandingDotsEffect(
-                dotHeight: 12,
-                dotWidth: 15,
+                dotHeight: screenWidth * 0.023,
+                dotWidth: screenHeight * 0.022,
                 activeDotColor: widget.textColor,
                 dotColor: widget.notactivedotcolor,
                 expansionFactor: 3, // Dot expansion factor
