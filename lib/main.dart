@@ -1,3 +1,4 @@
+import 'package:dr_drink/screens/insights_data.dart';
 import 'package:dr_drink/screens/insights_screen.dart';
 import 'package:dr_drink/screens/splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
