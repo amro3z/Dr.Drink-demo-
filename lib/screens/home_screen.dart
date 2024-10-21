@@ -20,14 +20,14 @@ class _HomePageState extends State<HomePage> {
   double _waterConsumed = 0; // Water consumed by the user
   // get the value from shared preferences
   double _waterGoal = 0; // Water goal for the user
-  
+
     @override
   void initState() {
     super.initState();
     getWaterConsumed();
     getWaterGoal();
   }
-  
+
   void _submitValue() {
     setState(() {
       try {
@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

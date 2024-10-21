@@ -1,23 +1,40 @@
+import 'package:dr_drink/screens/water_intake.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../componnent/record_card.dart';
+import '../logic/user.dart';
 import '../values/color.dart';
 import '../values/icons.dart';
+import '../logic/history.dart';
 
-class BuildWeekContent extends StatelessWidget {
-  final double goal;
-  final String unit;
-  final Map<int, double> waterConsumptionMap;
+class BuildWeekContent extends StatefulWidget {
+  @override
+  _WeekTrackerScreenState createState() => _WeekTrackerScreenState();
+}
 
-  const BuildWeekContent({
-    super.key,
-    required this.goal,
-    required this.unit,
-    required this.waterConsumptionMap,
-  });
+class _WeekTrackerScreenState extends State<BuildWeekContent> {
+  final MyUser _user = MyUser.instance;
+  final History _history = History.instance;
+  String? unit; // Default unit
+  int maxYaxis = 4000; // amount of water in ml
+  int avg = 2000; // Weekly average consumption in ml per day
 
-  double get total {
-    return waterConsumptionMap.values
-        .fold(0.0, (previousValue, element) => previousValue + element);
+  // Initialize a list of size 7 for weekly consumption (Sunday to Saturday)
+  // List<int> weeklyConsumption = List.filled(7, 0);
+
+  @override
+  void initState() {
+    super.initState();
+    // Populate the weeklyConsumption list with sample data (starting from Sunday)
+    // weeklyConsumption[0] = 1800; // Sunday
+    // weeklyConsumption[1] = 2000; // Monday
+    // weeklyConsumption[2] = 1600; // Tuesday
+    // weeklyConsumption[3] = 2200; // Wednesday
+    // weeklyConsumption[4] = 1500; // Thursday
+    // weeklyConsumption[5] = 1700; // Friday
+    // weeklyConsumption[6] = 2200; // Saturday
+
+    unit = _user.unit??'ml';
   }
 
   @override
@@ -25,271 +42,244 @@ class BuildWeekContent extends StatelessWidget {
     final scaleFactor = MediaQuery.of(context).textScaleFactor;
     final textHeadSize = scaleFactor * 20;
 
-    return Stack(
-      children: [
-        Positioned(
-          top: 20,
-          left: 0,
-          right: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              MyIcon.leftArrow,
-              Text(
-                'Today',
-                style: TextStyle(
-                  color: MyColor.blue,
-                  fontFamily: 'Poppins',
-                  fontSize: textHeadSize,
-                  fontWeight: FontWeight.w700,
+    return Container(
+      color: MyColor.white,
+      child: ListView(children: [
+        Column(
+          children: [
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                MyIcon.leftArrow,
+                Text(
+                  'This Week',
+                  style: TextStyle(
+                    color: MyColor.blue,
+                    fontFamily: 'Poppins',
+                    fontSize: textHeadSize,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                MyIcon.rightArrow,
+              ],
+            ),
+            SizedBox(height: 25),
+            Container(
+              height: 450,
+              decoration: ShapeDecoration(
+                color: const Color(0xFF2A6CE6).withOpacity(0.04),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
                 ),
               ),
-              MyIcon.rightArrow,
-            ],
-          ),
-        ),
-        Positioned(
-          top: 90,
-          left: 0,
-          right: 0,
-          child: Container(
-            height: 450,
-            decoration: ShapeDecoration(
-                color: MyColor.blue.withOpacity(0.04),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15))),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Total and Average row
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Total',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 18,
-                              color: MyColor.blue.withOpacity(0.4),
-                              fontWeight: FontWeight.w600,
-                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Total',
+                                style: TextStyle(
+                                  color: MyColor.blue,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: textHeadSize * 0.8,
+                                ),
+                              ),
+                              Text(
+                                '${_getTotalConsumption()} $unit',
+                                style: TextStyle(
+                                  color: MyColor.blue,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: textHeadSize * 0.7,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            '${total.toStringAsFixed(2)} $unit',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 18,
-                              color: MyColor.blue.withOpacity(0.9),
-                              fontWeight: FontWeight.w500,
-                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                'Average/day',
+                                style: TextStyle(
+                                  color: MyColor.blue,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: textHeadSize * 0.8,
+                                ),
+                              ),
+                              Text(
+                                '${_getAverageConsumption()} $unit',
+                                style: TextStyle(
+                                  color: MyColor.blue,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: textHeadSize * 0.7,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Goal',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 18,
-                              color: MyColor.blue.withOpacity(0.4),
-                              fontWeight: FontWeight.w600,
+                    SizedBox(height: 10), // Add some space
+                    // BarChart
+                    Expanded(
+                      child: BarChart(
+                        BarChartData(
+                          alignment: BarChartAlignment.spaceBetween,
+                          maxY: _getMaxYValue(),
+                          barGroups: _buildBarGroups(),
+                          gridData: FlGridData(
+                            show: true,
+                            horizontalInterval: (_getMaxYValue() / 4),
+                            getDrawingHorizontalLine: (value) => FlLine(
+                              color: Colors.grey.withOpacity(0.5),
+                              strokeWidth: 1,
                             ),
                           ),
-                          Text(
-                            '${goal.toStringAsFixed(2)} $unit',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 18,
-                              color: MyColor.blue.withOpacity(0.9),
-                              fontWeight: FontWeight.w500,
+                          titlesData: FlTitlesData(
+                            topTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            rightTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            leftTitles: AxisTitles(
+                              axisNameWidget: Text(
+                                unit!,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 14),
+                              ),
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                reservedSize: 40,
+                                interval: (_getMaxYValue() / 4),
+                                getTitlesWidget: (value, _) {
+                                  return Text(
+                                    unit == 'ml'
+                                        ? value.toInt().toString()
+                                        : value.toStringAsFixed(1),
+                                    style: const TextStyle(fontSize: 12),
+                                  );
+                                },
+                              ),
+                            ),
+                            bottomTitles: AxisTitles(
+                              axisNameWidget: const Text(
+                                'Day',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 12),
+                              ),
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                interval: 1,
+                                getTitlesWidget: (value, _) {
+                                  switch (value.toInt()) {
+                                    case 0:
+                                      return const Text('Sun',
+                                          style: TextStyle(fontSize: 12));
+                                    case 1:
+                                      return const Text('Mon',
+                                          style: TextStyle(fontSize: 12));
+                                    case 2:
+                                      return const Text('Tue',
+                                          style: TextStyle(fontSize: 12));
+                                    case 3:
+                                      return const Text('Wed',
+                                          style: TextStyle(fontSize: 12));
+                                    case 4:
+                                      return const Text('Thu',
+                                          style: TextStyle(fontSize: 12));
+                                    case 5:
+                                      return const Text('Fri',
+                                          style: TextStyle(fontSize: 12));
+                                    case 6:
+                                      return const Text('Sat',
+                                          style: TextStyle(fontSize: 12));
+                                    default:
+                                      return SizedBox();
+                                  }
+                                },
+                              ),
                             ),
                           ),
-                        ],
+                          borderData: FlBorderData(show: false),
+                        ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 64),
-                Expanded(
-                  child: BarChart(
-                    BarChartData(
-                      barTouchData: barTouchData,
-                      titlesData: getTitlesData(goal),
-                      borderData: borderData,
-                      barGroups: getBarGroups(),
-                      gridData: getGridData(), // Add grid data to show dividers
-                      alignment: BarChartAlignment.spaceAround,
-                      maxY: goal, // Make sure max Y matches the goal
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Configuration for Bar Touch Data
-  BarTouchData get barTouchData => BarTouchData(
-        enabled: false,
-        touchTooltipData: BarTouchTooltipData(
-          getTooltipColor: (group) => Colors.transparent,
-          tooltipPadding: EdgeInsets.zero,
-          tooltipMargin: 8,
-          getTooltipItem: (BarChartGroupData group, int groupIndex,
-              BarChartRodData rod, int rodIndex) {
-            return BarTooltipItem(
-              rod.toY.toStringAsFixed(1),
-              TextStyle(
-                color: MyColor.blue.withOpacity(0.2),
-                fontWeight: FontWeight.w500,
               ),
-            );
-          },
+            ),
+          ],
         ),
-      );
-
-  // Titles for the Y Axis (Left)
-  Widget getLeftTitles(double value, TitleMeta meta, double goal) {
-    final style = TextStyle(
-      color: MyColor.blue.withOpacity(0.5),
-      fontWeight: FontWeight.w500,
-      fontSize: 16,
-      fontFamily: 'Poppins',
-    );
-
-    String text = value.toStringAsFixed(1);
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 4,
-      child: Text(text, style: style),
+      ]),
     );
   }
 
-  // Titles for the X Axis (Bottom)
-  Widget getBottomTitles(double value, TitleMeta meta) {
-    final style = TextStyle(
-        color: MyColor.blue.withOpacity(0.5),
-        fontWeight: FontWeight.w500,
-        fontSize: 16,
-        fontFamily: 'Poppins');
-
-    String text = waterConsumptionMap.containsKey(value.toInt())
-        ? '${value.toInt()}' // Showing as hours (e.g., 8h, 12h)
-        : '';
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 4,
-      child: Text(text, style: style),
-    );
-  }
-
-  // Get Titles Data
-  FlTitlesData getTitlesData(double goal) {
-    double interval =
-        goal / 4; // Divide the goal into four intervals to have five labels
-
-    return FlTitlesData(
-      show: true,
-      bottomTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 50,
-          getTitlesWidget: getBottomTitles,
-        ),
-      ),
-      leftTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 50, // Adjusted to align y-axis titles
-          interval:
-              interval, // Set interval to evenly distribute from 0 to goal
-          getTitlesWidget: (value, meta) => getLeftTitles(value, meta, goal),
-        ),
-      ),
-      topTitles: const AxisTitles(
-        sideTitles: SideTitles(showTitles: false),
-      ),
-      rightTitles: const AxisTitles(
-        sideTitles: SideTitles(showTitles: false),
-      ),
-    );
-  }
-
-  // Configure Border Data
-  FlBorderData get borderData => FlBorderData(
-        show: true,
-        border: Border(
-          left: BorderSide(
-            color: MyColor.blue.withOpacity(0.2), // Set your desired color
-            width: 1, // Set the border width
-          ),
-          bottom: BorderSide(
-            color: MyColor.blue.withOpacity(0.2), // Set your desired color
-            width: 1, // Set the border width
-          ),
-          right: BorderSide.none, // No border on the right
-          top: BorderSide.none, // No border on the top
-        ),
-      );
-
-  // Configure Gradient for Bars
-  LinearGradient get _barsGradient => LinearGradient(
-        colors: [
-          Colors.white70.withOpacity(0.5),
-          MyColor.white,
-          MyColor.white,
-        ],
-        begin: Alignment.bottomCenter,
-        end: Alignment.topCenter,
-      );
-
-  // Generate dynamic Bar Groups Data
-  List<BarChartGroupData> getBarGroups() {
+  List<BarChartGroupData> _buildBarGroups() {
     List<BarChartGroupData> barGroups = [];
-    waterConsumptionMap.forEach((key, value) {
+    for (int i = 0; i < 7; i++) {
+      double value = unit == 'ml'
+          ? _history.weeklyConsumption[i].toDouble()
+          : _history.weeklyConsumption[i] / 1000;
+
       barGroups.add(
         BarChartGroupData(
-          x: key,
+          x: i,
           barRods: [
             BarChartRodData(
               toY: value,
-              gradient: _barsGradient,
-            )
+              width: 16,
+              color: Colors.blue,
+              borderRadius: BorderRadius.circular(4),
+            ),
           ],
-          showingTooltipIndicators: [0],
         ),
       );
-    });
+    }
     return barGroups;
   }
 
-  // Grid Data to show dividers for X-Axis and Y-Axis
-  FlGridData getGridData() {
-    return FlGridData(
-      show: true,
-      drawVerticalLine: true, // Enable vertical dividers
-      verticalInterval: 4, // Interval for x-axis grid lines
-      drawHorizontalLine: true, // Enable horizontal dividers
-      horizontalInterval: goal / 4, // Interval for y-axis grid lines
-      getDrawingHorizontalLine: (value) {
-        return const FlLine(
-          color: MyColor.white,
-          strokeWidth: 1,
-        );
-      },
-    );
+  String _getTotalConsumption() {
+    int total = _history.weeklyConsumption.fold(0, (sum, value) => sum + value);
+    double convertedTotal = unit == 'ml' ? total.toDouble() : total / 1000;
+    return unit == 'ml' ? total.toString() : convertedTotal.toStringAsFixed(1);
+  }
+
+  String _getAverageConsumption() {
+    int total = _history.weeklyConsumption.fold(0, (sum, value) => sum + value);
+    int count = _history.weeklyConsumption.where((element) => element > 0).length;
+
+    if (count == 0) {
+      return '0';
+    }
+
+    double average = total / count;
+    double convertedAverage = unit == 'ml' ? average : average / 1000;
+    return unit == 'ml'
+        ? average.toStringAsFixed(0)
+        : convertedAverage.toStringAsFixed(1);
+  }
+
+  double _getMaxYValue() {
+    int maxConsumed = _history.weeklyConsumption.fold(0, (a, b) => a > b ? a : b);
+    int maxGoal = maxYaxis;
+
+    double maxY =
+    maxConsumed > maxGoal ? maxConsumed.toDouble() : maxGoal.toDouble();
+    return unit == 'ml' ? maxY : maxY / 1000;
   }
 }
