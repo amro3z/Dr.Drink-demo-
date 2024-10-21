@@ -2,7 +2,10 @@ import 'dart:math' show Random;
 import 'package:dr_drink/screens/reminder.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:dr_drink/widgets/soundWidget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import 'login_screen.dart';
 // import 'function_profile.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -399,9 +402,13 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: const Text('Cancel',style: TextStyle(color:Colors.blue)),
               ),
               ElevatedButton(
-                onPressed: () {
-                  // function of save data
-                  Navigator.pop(context); // إغلاق المربع وحفظ القيمة
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                        (Route<dynamic> route) => false,
+                  );
                 },
                 child: const Text('Log Out',style: TextStyle(color:Colors.red),),
               ),
