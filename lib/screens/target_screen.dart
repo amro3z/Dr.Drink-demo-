@@ -118,17 +118,16 @@ class _TargetScreenState extends State<TargetScreen> {
         tips = fetchedTips;
       });
 
-      if (fetchedTips.isNotEmpty) {
-        Future.delayed(const Duration(seconds: 1, milliseconds: 500), () {
-          TipDisplay.showTipBottomSheet(context, fetchedTips[0]);
-        });
-      }
+      // if (fetchedTips.isNotEmpty) {
+      //   Future.delayed(const Duration(seconds: 1, milliseconds: 500), () {
+      //     TipDisplay.showTipBottomSheet(context, fetchedTips[0]);
+      //   });
+      // }
     } catch (e) {
       log('Error in fetching tips from service: $e'); // تسجيل أي خطأ يحدث هنا
     }
   }
 
-  // بقية كود TargetScreen كما هو
   void setQuantity(int quantity) {
     setState(() {
       _quantity = quantity;
@@ -335,6 +334,7 @@ class _TargetScreenState extends State<TargetScreen> {
                         fontFamily: 'Poppins',
                         fontSize: subTextFontSize,
                         fontWeight: FontWeight.w700,
+                        decoration: TextDecoration.none ,
                       ),
                     ),
                   ),
