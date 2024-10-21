@@ -7,11 +7,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../logic/history.dart';
 import '../logic/user.dart';
 
 class WaterIntakeScreen extends StatefulWidget {
-  static List<int> records = [];
-  static List<String> recordedTimes = [];
+  // static List<int> records = [];
+  // static List<String> recordedTimes = [];
 
   @override
   _WaterIntakeScreenState createState() => _WaterIntakeScreenState();
@@ -24,6 +25,8 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
   double waterLevel = 50;
   DateTime? recordedTime;
   final MyUser _user = MyUser.instance;
+  final History _history = History.instance;
+
 
 
   void _onDragUpdate(DragUpdateDetails details) {
@@ -52,6 +55,26 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
     }
   }
 
+  // function to save history to shared prefs
+  Future<void> _saveHistoryToSharedPrefs(History history) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('history', json.encode(history.toMap()));
+  }
+
+  // function to save history to firestore
+  Future<void> _saveHistoryToFirestore(History history) async {
+    try {
+      final historyCollection = FirebaseFirestore.instance.collection('history');
+      String userId = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous'; // Get the user ID if available
+
+      await historyCollection.doc(userId).set(history.toMap());
+
+      log('History saved to Firestore successfully.');
+    } catch (e) {
+      log('Failed to save history to Firestore: $e');
+    }
+  }
+
   void _storeRecord() {
     recordedTime = DateTime.now();
     int hours = recordedTime!.hour > 12 ? recordedTime!.hour - 12 : recordedTime!.hour;
@@ -62,15 +85,27 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
 
     int record = unit == 'ml' ? (waterLevel * 2).truncate() : (waterLevel * 0.2).truncate()*10 ;
     _user.tracker.drink(record);
+    _history.addRecord(record, '$hours:$minutes ${recordedTime!.hour > 12 ? 'PM' : 'AM'}');
+    _history.addHourlyConsumption(recordedTime!.hour, record);
+    _history.addWeeklyConsumption(recordedTime!.weekday, record);
+    _history.addMonthlyConsumption(recordedTime!.day, record);
+
     _saveUserToSharedPrefs(_user);
     _saveUserToFirestore(_user);
+    _saveHistoryToSharedPrefs(_history);
+    _saveHistoryToFirestore(_history);
     setState(() {
-      WaterIntakeScreen.records.add(record); //
-      WaterIntakeScreen.recordedTimes.add('$hours:$minutes ${recordedTime!.hour > 12 ? 'PM' : 'AM'}');
+      // _history.records.add(record); //
+      // _history.recordedTimes.add('$hours:$minutes ${recordedTime!.hour > 12 ? 'PM' : 'AM'}');
     });
-    log('Water intake records: ${WaterIntakeScreen.records.toString()}');
+    log('Water intake records: ${_history.records.toString()}');
+    // make a snackbar at top of the screen
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Record saved: $record')),
+      SnackBar(
+        content: Text('Recorded $record ${unit == 'ml' ? 'ml' : 'L'} at $hours:$minutes ${recordedTime!.hour > 12 ? 'PM' : 'AM'}'),
+        duration: const Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+      ),
     );
   }
 

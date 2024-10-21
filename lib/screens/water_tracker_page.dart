@@ -137,6 +137,14 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
                             fontFamily: 'Poppins',
                             fontSize: 35,
                             fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        ' $_unit',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'Poppins',
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500),
                       )
                     ],
                   ),
