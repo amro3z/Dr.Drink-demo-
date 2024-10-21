@@ -1,22 +1,14 @@
-import 'dart:convert';
 import 'dart:developer';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_drink/componnent/navigation_bar.dart';
 import 'package:dr_drink/screens/login_screen.dart';
-import 'package:dr_drink/widgets/welcomeWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-
-import '../logic/history.dart';
-import '../logic/user.dart';
-
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -31,28 +23,27 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     checkCredentials();
-
   }
 
   Future<void> checkCredentials() async {
-    final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
+    final List<ConnectivityResult> connectivityResult =
+        await (Connectivity().checkConnectivity());
     if (connectivityResult.contains(ConnectivityResult.none)) {
       log('****************************offline');
       _checkUserAuthLocaly();
     } else {
       log('****************************online');
-      Future.delayed(const Duration(seconds: 3), () async { // added async
+      Future.delayed(const Duration(seconds: 3), () {
         if (FirebaseAuth.instance.currentUser == null) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const LoginScreen()),
           );
         } else {
-          // User is authenticated, load their data from Firestore
-          // this is important for syncing data between devices
-          await _loadUserFromFirestoreAndStoreLocally();
-          await _loadHistoryFromFirestoreAndStoreLocally();
-
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => CustomNavigationBar()),
+          );
         }
       });
     }
@@ -60,22 +51,18 @@ class _SplashScreenState extends State<SplashScreen> {
 
   // Check if the user has already entered their data
   Future<void> _checkUserAuthLocaly() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 4));
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     bool? isUserRegistered = prefs.getBool('isUserRegistered');
 
-
     if (!mounted) return; // Check if the widget is still in the tree
 
     if (isUserRegistered == true) {
-      _loadUserFromSharedPrefs();
-      _loadHistoryFromSharedPrefs();
-
       // If user data exists, navigate to the TargetScreen (home screen)
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const CustomNavigationBar()),
+        MaterialPageRoute(builder: (context) => CustomNavigationBar()),
       );
     } else {
       // If no user data, navigate to GenderWidget (input screen)
@@ -86,87 +73,6 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  Future<void> _loadUserFromFirestoreAndStoreLocally() async {
-    try {
-      // Get the authenticated user's ID
-      String userId = FirebaseAuth.instance.currentUser!.uid;
-      log(userId);
-
-      // Reference to the user's document in Firestore
-      final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
-
-      // Fetch user data from Firestore
-      DocumentSnapshot<Map<String, dynamic>> snapshot = await userDoc.get();
-      log('second here');
-      if (snapshot.exists) {
-        Map<String, dynamic> userData = snapshot.data()!;
-        log(json.encode(userData));
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString("user", json.encode(userData));
-        await prefs.setBool('isUserRegistered', true);
-
-        MyUser user = MyUser.fromMap(userData);
-        user.tracker.calculateWaterGoal(user.weight);
-
-        log(user.toString()); // didnt loged
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const CustomNavigationBar()),
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const WelcomePage()),
-        );
-      }
-    } catch (e) {
-      log('Error loading user from Firestore: $e');
-    }
-  }
-
-  // load history from firestore
-  Future<void> _loadHistoryFromFirestoreAndStoreLocally() async {
-    try {
-      // Get the authenticated user's ID
-      String userId = FirebaseAuth.instance.currentUser!.uid;
-      log(userId);
-
-      // Reference to the user's document in Firestore
-      final historyDoc = FirebaseFirestore.instance.collection('history').doc(userId);
-
-      // Fetch user data from Firestore
-      DocumentSnapshot<Map<String, dynamic>> snapshot = await historyDoc.get();
-      log('second here');
-      if (snapshot.exists) {
-        Map<String, dynamic> historyData = snapshot.data()!;
-        log(json.encode(historyData));
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString("history", json.encode(historyData));
-
-        History history = History.fromMap(historyData);
-        log(history.toString()); // didnt loged
-      } else {
-        log('No history data found');
-      }
-    } catch (e) {
-      log('Error loading history from Firestore: $e');
-    }
-  }
-
-  // load user from shared prefs
-  Future<void> _loadUserFromSharedPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    MyUser user = MyUser.fromMap(json.decode(prefs.getString('user')!));
-    log("user loaded from shared prefs");
-  }
-
-  // load history from shared prefs
-  Future<void> _loadHistoryFromSharedPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    History history = History.fromMap(json.decode(prefs.getString('history')!));
-    log("history loaded from shared prefs");
-  }
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
