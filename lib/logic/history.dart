@@ -74,6 +74,7 @@ class History{
       'records': records,
       'recordedTimes': recordedTimes,
       'hourlyConsumption': hourlyConsumption,
+      'weeklyConsumption': weeklyConsumption,
       'monthlyConsumption': monthlyConsumption,
     };
   }
@@ -84,6 +85,7 @@ class History{
       records: List<int>.from(map['records']),
       recordedTimes: List<String>.from(map['recordedTimes']),
       hourlyConsumption: List<int>.from(map['hourlyConsumption']),
+      weeklyConsumption: List<int>.from(map['weeklyConsumption']),
       monthlyConsumption: List<int>.from(map['monthlyConsumption']),
     );
   }
