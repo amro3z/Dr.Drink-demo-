@@ -102,7 +102,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
                                   'Total/Goal',
@@ -125,7 +125,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
                               ],
                             ),
                             Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
                                   'Average/hour',

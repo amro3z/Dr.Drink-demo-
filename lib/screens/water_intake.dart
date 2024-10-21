@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_drink/values/color.dart';
@@ -7,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../componnent/record_card.dart';
 import '../logic/history.dart';
 import '../logic/user.dart';
 
@@ -119,6 +121,67 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
     super.initState();
     unit = _user.unit??'ml';
   }
+  void _showRecordsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Blur the background
+              BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  color: Colors.black.withOpacity(0.1),
+                ),
+              ),
+              // Dialog content
+              Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Water Intake History',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    // List of RecordCards
+                    SizedBox(
+                      height: 200, // Set the desired height for the list
+                      child: ListView.builder(
+                        itemCount: _history.records.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5.0),
+                            child: RecordCard(
+                              quantity: _history.records[index],
+                              time: _history.recordedTimes[index],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -281,10 +344,14 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
                     shape: CircleBorder(),
                   ),
                   child: Center(
-                    child: Image.asset(
-                      'assets/icons/history.png',
-                      width: screenWidth * 0.06,
-                      height: screenWidth * 0.06,
+                    child: GestureDetector(
+                      onTap:     _showRecordsDialog,
+
+                      child: Image.asset(
+                        'assets/icons/history.png',
+                        width: screenWidth * 0.06,
+                        height: screenWidth * 0.06,
+                      ),
                     ),
                   ),
                 ),

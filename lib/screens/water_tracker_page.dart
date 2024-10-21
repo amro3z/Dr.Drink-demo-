@@ -60,64 +60,70 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: MyColor.white,
-      body: Stack(
-        alignment: Alignment.center, // Align everything centrally
-        children: [
-          // Padding with the top section and message
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: [
-                const SizedBox(height: 55),
-                Container(
-                  width: double.infinity,
-                  height: 130,
-                  decoration: BoxDecoration(
-                    color: MyColor.lightblue,
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: MyColor.white,
+        body: Stack(
+          alignment: Alignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+              child: Column(
+                children: [
+                  SizedBox(height: screenHeight * 0.02),
+                  Container(
+                    width: double.infinity,
+                    height: screenHeight * 0.15,
+                    decoration: const BoxDecoration(
+                      color: MyColor.lightblue,
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/icons/bot.png',
+                          width: screenWidth * 0.15,
+                        ),
+                        SizedBox(width: screenWidth * 0.05),
+                        Flexible(
+                          child: Text(
+                            'Drinking enough water\nboosts energy levels!',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: 'Poppins',
+                              fontSize: screenWidth * 0.05,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            softWrap: true,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/icons/bot.png',
-                        width: 80,
-                        height: 80,
-                      ),
-                      const SizedBox(width: 22),
-                      const Text(
-                        'Drinking enough water\nboosts energy levels!',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: 'Poppins',
-                            fontSize: 22,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 60),
-              ],
-            ),
-          ),
-          Positioned(
-            top: 270,
-            child: CustomPaint(
-              size: const Size(395, 210),
-              painter: SemiCircleProgressPainter(
-                _progress,
+                ],
               ),
             ),
-          ),
-          Positioned(
-            top: 305,
-            child: CircleWithShadow(),
-          ),
-          Positioned(
-            top: 450,
-            child: Container(
+            Padding(
+              padding:  EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
+              child: Positioned(
+
+                top: screenHeight * 0.3,
+                child: CustomPaint(
+                  size: Size(screenWidth * 0.94, screenHeight * 0.25),
+                  painter: SemiCircleProgressPainter(_progress),
+                ),
+              ),
+            ),
+            Positioned(
+              top: screenHeight * 0.35,
+              child: CircleWithShadow(),
+            ),
+            Positioned(
+              top: screenHeight * 0.5,
               child: Column(
                 children: [
                   Row(
@@ -125,81 +131,66 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
                       Text(
                         getWaterConsumed(),
                         style: TextStyle(
-                            color: MyColor.blue,
-                            fontFamily: 'Poppins',
-                            fontSize: 35,
-                            fontWeight: FontWeight.w500),
+                          color: MyColor.blue,
+                          fontFamily: 'Poppins',
+                          fontSize: screenWidth * 0.08,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                       Text(
                         getWaterGoal(),
                         style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: 'Poppins',
-                            fontSize: 35,
-                            fontWeight: FontWeight.w500),
+                          color: Colors.black,
+                          fontFamily: 'Poppins',
+                          fontSize: screenWidth * 0.08,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                       Text(
                         ' $_unit',
                         style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: 'Poppins',
-                            fontSize: 24,
-                            fontWeight: FontWeight.w500),
-                      )
+                          color: Colors.black,
+                          fontFamily: 'Poppins',
+                          fontSize: screenWidth * 0.06,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ],
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
+                  SizedBox(height: screenHeight * 0.01),
                   Text(
                     'Daily Drink Target',
                     style: TextStyle(
                       color: Colors.black,
                       fontFamily: 'Poppins',
-                      fontSize: 18,
+                      fontSize: screenWidth * 0.05,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  // Text(
-                  //   '200ml',
-                  //   style: TextStyle(
-                  //       color: Colors.black,
-                  //       fontFamily: 'Poppins',
-                  //       fontSize: 17,
-                  //       fontWeight: FontWeight.w600),
-                  // ),
-                  SizedBox(
-                    height: 25,
-                  ),
+                  SizedBox(height: screenHeight * 0.02),
                   GestureDetector(
                     onTap: () async {
-                      // Navigate to WaterIntakeScreen and await result
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => WaterIntakeScreen(),
                         ),
                       );
-                      // Update the consumed water when returning
                       _updateWaterConsumed();
                     },
                     child: Image.asset(
                       'assets/icons/drink-cup.png',
-                      width: 60,
-                      height: 60,
+                      width: screenWidth * 0.15,
+                      height: screenHeight * 0.08,
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-          Positioned.fill(
-              top: 180,
+            Positioned.fill(
+              top: screenHeight * 0.35,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -208,20 +199,20 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
                       opacity: 0.35,
                       child: Image.asset(
                         'assets/icons/water-drops.png',
-                        width: 35,
-                        height: 35,
+                        width: screenWidth * 0.07,
                       ),
                     ),
                     Image.asset(
                       'assets/icons/water-drops.png',
-                      width: 35,
-                      height: 35,
+                      width: screenWidth * 0.07,
                     ),
                   ],
                 ),
-              ))
-        ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
-}
+  }
