@@ -1,334 +1,323 @@
-import 'package:dr_drink/componnent/record_card.dart';
-import 'package:dr_drink/screens/home_screen.dart';
+import 'package:dr_drink/logic/user.dart';
+import 'package:dr_drink/screens/water_intake.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../componnent/record_card.dart';
+import '../logic/history.dart';
 import '../values/color.dart';
+import '../values/icons.dart';
 
-class BuildDayContent extends StatelessWidget {
-  final double goal;
-  final String unit;
-  final int time = 4;
-  final List<int> hours;
-  final List<double> waterConsumptionList;
+class BuildDayContent extends StatefulWidget {
+  @override
+  _WaterTrackerScreenState createState() => _WaterTrackerScreenState();
+}
 
-  const BuildDayContent({
-    super.key,
-    required this.goal,
-    required this.unit,
-    required this.waterConsumptionList,
-    required this.hours,
-  });
+class _WaterTrackerScreenState extends State<BuildDayContent> {
+  final MyUser _user = MyUser.instance;
+  final History _history = History.instance;
+  String? unit; // Default unit
+  int goal = 2000; // Daily water goal in ml
 
-  double get total {
-    return waterConsumptionList.fold(0, (sum, item) => sum + item);
+  // Initialize a list of size 24 for hourly consumption
+  // List<int> hourlyConsumption = List.filled(24, 0);
+
+  @override
+  void initState() {
+    super.initState();
+    // Populate the hourlyConsumption list with sample data
+    // hourlyConsumption[0] = 100;
+    // hourlyConsumption[1] = 400;
+    // hourlyConsumption[2] = 300;
+    // hourlyConsumption[3] = 500;
+    // hourlyConsumption[4] = 200;
+    // hourlyConsumption[5] = 700;
+    // hourlyConsumption[6] = 800;
+    // hourlyConsumption[7] = 800;
+    // hourlyConsumption[8] = 900;
+    // hourlyConsumption[9] = 1000;
+    // hourlyConsumption[10] = 500;
+    // hourlyConsumption[11] = 600;
+    // hourlyConsumption[12] = 600;
+    // hourlyConsumption[13] = 700;
+    // hourlyConsumption[14] = 800;
+    // hourlyConsumption[15] = 900;
+    // hourlyConsumption[16] = 400;
+    // hourlyConsumption[17] = 500;
+    // hourlyConsumption[18] = 600;
+    // hourlyConsumption[19] = 700;
+    // hourlyConsumption[20] = 900;
+    // hourlyConsumption[21] = 1000;
+    // hourlyConsumption[22] = 200;
+    // hourlyConsumption[23] = 300;
+
+    goal = _user.tracker.totalWaterGoal!;
+    unit = _user.unit ?? 'ml';
   }
 
   @override
   Widget build(BuildContext context) {
-    // Fetch screen dimensions and scale factors
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
     final scaleFactor = MediaQuery.of(context).textScaleFactor;
     final textHeadSize = scaleFactor * 20;
 
-    return Stack(
-      children: [
-        Positioned(
-          top: screenHeight * 0.02,
-          left: 0,
-          right: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Container(
+      color: MyColor.white,
+      child: ListView(
+        children: [
+          Column(
             children: [
-              const Icon(Icons.arrow_back_ios),
-              Text(
-                'Today',
-                style: TextStyle(
-                  color: MyColor.blue,
-                  fontFamily: 'Poppins',
-                  fontSize: textHeadSize,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const Icon(Icons.arrow_forward_ios),
-            ],
-          ),
-        ),
-        Positioned(
-          top: screenHeight * 0.1,
-          left: 0,
-          right: 0,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                height: screenHeight * 0.4,
-                decoration: ShapeDecoration(
-                  color: MyColor.blue.withOpacity(0.04),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(screenHeight * 0.02),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: screenHeight * 0.02),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: screenWidth * 0.04),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Total',
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: screenWidth * 0.04,
-                                  color: MyColor.blue.withOpacity(0.4),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              Text(
-                                '${total.toStringAsFixed(2)} $unit',
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: screenWidth * 0.045,
-                                  color: MyColor.blue.withOpacity(0.9),
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: screenWidth * 0.04),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Goal',
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: screenWidth * 0.04,
-                                  color: MyColor.blue.withOpacity(0.4),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              Text(
-                                '${goal.toStringAsFixed(2)} $unit',
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: screenWidth * 0.045,
-                                  color: MyColor.blue.withOpacity(0.9),
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  MyIcon.leftArrow,
+                  Text(
+                    'Today',
+                    style: TextStyle(
+                      color: MyColor.blue,
+                      fontFamily: 'Poppins',
+                      fontSize: textHeadSize,
+                      fontWeight: FontWeight.w700,
                     ),
-                    SizedBox(height: screenHeight * 0.05),
-                    Expanded(
-                      child: BarChart(
-                        BarChartData(
-                          barTouchData: barTouchData,
-                          titlesData: getTitlesData(),
-                          borderData: borderData,
-                          barGroups: getBarGroups(),
-                          gridData: getGridData(),
-                          alignment: BarChartAlignment.spaceAround,
-                          maxY: goal,
+                  ),
+                  MyIcon.rightArrow,
+                ],
+              ),
+              SizedBox(height: 25),
+              Container(
+                height: 450,
+                decoration: ShapeDecoration(
+                  color: const Color(0xFF2A6CE6).withOpacity(0.04),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Total, Goal, and Average row
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Total/Goal',
+                                  style: TextStyle(
+                                    color: MyColor.blue,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: textHeadSize * 0.8,
+                                  ),
+                                ),
+                                Text(
+                                  '${_getTotalConsumption()}/${_getTotalGoal()} $unit',
+                                  style: TextStyle(
+                                    color: MyColor.blue,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: textHeadSize * 0.7,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Average/hour',
+                                  style: TextStyle(
+                                    color: MyColor.blue,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: textHeadSize * 0.8,
+                                  ),
+                                ),
+                                Text(
+                                  '${_getAveragePerHour()} $unit',
+                                  style: TextStyle(
+                                    color: MyColor.blue,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: textHeadSize * 0.7,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                    top: screenHeight * 0.02, bottom: screenHeight * 0.02),
-                child: Text(
-                  'Records',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: textHeadSize,
-                    color: MyColor.blue,
-                    fontWeight: FontWeight.w700,
+                      SizedBox(height: 10),
+                      // BarChart
+                      Expanded(
+                        child: BarChart(
+                          BarChartData(
+                            alignment: BarChartAlignment.spaceBetween,
+                            maxY: _getMaxYValue(),
+                            barGroups: _buildBarGroups(),
+                            gridData: FlGridData(
+                              show: true,
+                              horizontalInterval: (_getMaxYValue() / 4),
+                              getDrawingHorizontalLine: (value) => FlLine(
+                                color: Colors.grey.withOpacity(0.5),
+                                strokeWidth: 1,
+                              ),
+                            ),
+                            titlesData: FlTitlesData(
+                              topTitles: const AxisTitles(
+                                sideTitles:
+                                SideTitles(showTitles: false), // Hide top X-axis
+                              ),
+                              rightTitles: const AxisTitles(
+                                sideTitles:
+                                SideTitles(showTitles: false), // Hide right Y-axis
+                              ),
+                              leftTitles: AxisTitles(
+                                axisNameWidget: Text(
+                                  unit!,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold, fontSize: 14),
+                                ),
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  reservedSize: 40,
+                                  interval: (_getMaxYValue() / 4),
+                                  getTitlesWidget: (value, _) {
+                                    return Text(
+                                      unit == 'ml'
+                                          ? value.toInt().toString()
+                                          : value.toStringAsFixed(1),
+                                      style: const TextStyle(fontSize: 12),
+                                    );
+                                  },
+                                ),
+                              ),
+                              bottomTitles: AxisTitles(
+                                axisNameWidget: const Text(
+                                  'Hour',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold, fontSize: 12),
+                                ),
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  interval: 1,
+                                  getTitlesWidget: (value, _) {
+                                    if (value % 4 == 0 || value == 0 || value == 23) {
+                                      return Text(
+                                        value.toInt().toString(),
+                                        style: TextStyle(fontSize: 12),
+                                      );
+                                    }
+                                    return SizedBox();
+                                  },
+                                ),
+                              ),
+                            ),
+                            borderData: FlBorderData(show: false),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              // Records section
-              Row(
+              SizedBox(height: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: screenHeight * 0.15,
-                      child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: HomePage.interval,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding:
-                                  EdgeInsets.only(right: screenWidth * 0.04),
-                              child: RecordCard(
-                                quantity: waterConsumptionList[index],
-                                time: HomePage.formattedTime!,
-                              ),
-                            );
-                          }),
+                  Text(
+                    'Records',
+                    style: TextStyle(
+                      color: MyColor.blue,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w700,
+                      fontSize: textHeadSize,
                     ),
-                  )
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    height: 130,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _history.records.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: RecordCard(
+                            quantity: _history.records[index],
+                            time: _history.recordedTimes[index],
+                            unit: unit!,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ],
               ),
             ],
           ),
-        ),
-      ],
-    );
-  }
-
-  BarTouchData get barTouchData => BarTouchData(
-        enabled: false,
-        touchTooltipData: BarTouchTooltipData(
-          getTooltipColor: (group) => Colors.transparent,
-          tooltipPadding: EdgeInsets.zero,
-          tooltipMargin: 8,
-          getTooltipItem: (BarChartGroupData group, int groupIndex,
-              BarChartRodData rod, int rodIndex) {
-            return BarTooltipItem(
-              rod.toY.toStringAsFixed(1),
-              TextStyle(
-                color: MyColor.blue.withOpacity(0.2),
-                fontWeight: FontWeight.w500,
-              ),
-            );
-          },
-        ),
-      );
-
-  Widget getBottomTitles(double value, TitleMeta meta) {
-    final style = TextStyle(
-      color: MyColor.blue.withOpacity(0.5),
-      fontWeight: FontWeight.w500,
-      fontSize: 16,
-      fontFamily: 'Poppins',
-    );
-    String text = value.toInt().toString();
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 4,
-      child: Text(text, style: style),
-    );
-  }
-
-  // Y Axis Titles
-  Widget getLeftTitles(double value, TitleMeta meta) {
-    final style = TextStyle(
-      color: MyColor.blue.withOpacity(0.5),
-      fontWeight: FontWeight.w500,
-      fontSize: 16,
-      fontFamily: 'Poppins',
-    );
-
-    String text = value.toStringAsFixed(1);
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 4,
-      child: Text(text, style: style),
-    );
-  }
-
-  FlTitlesData getTitlesData() {
-    return FlTitlesData(
-      show: true,
-      bottomTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 50,
-          getTitlesWidget: getBottomTitles,
-        ),
-      ),
-      leftTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 50,
-          getTitlesWidget: getLeftTitles,
-        ),
-      ),
-      topTitles: const AxisTitles(
-        sideTitles: SideTitles(showTitles: false),
-      ),
-      rightTitles: const AxisTitles(
-        sideTitles: SideTitles(showTitles: false),
-      ),
-    );
-  }
-
-  FlBorderData get borderData => FlBorderData(
-        show: true,
-        border: Border(
-          left: BorderSide(
-            color: MyColor.blue.withOpacity(0.2),
-            width: 1,
-          ),
-          bottom: BorderSide(
-            color: MyColor.blue.withOpacity(0.2),
-            width: 1,
-          ),
-          right: BorderSide.none,
-          top: BorderSide.none,
-        ),
-      );
-
-  LinearGradient get _barsGradient => LinearGradient(
-        colors: [
-          Colors.white70.withOpacity(0.5),
-          MyColor.white,
-          MyColor.white,
         ],
-        begin: Alignment.bottomCenter,
-        end: Alignment.topCenter,
-      );
+      ),
+    );
+  }
 
-  // Generate the Bar Data
-  List<BarChartGroupData> getBarGroups() {
-    final barGroups = <BarChartGroupData>[];
+  List<BarChartGroupData> _buildBarGroups() {
+    List<BarChartGroupData> barGroups = [];
+    for (int i = 0; i < 24; i++) {
+      double value = unit == 'ml'
+          ? _history.hourlyConsumption[i].toDouble()
+          : _history.hourlyConsumption[i] / 1000;
 
-    for (int i = 0; i < waterConsumptionList.length && i < hours.length; i++) {
       barGroups.add(
         BarChartGroupData(
-          x: hours[i],
+          x: i,
           barRods: [
             BarChartRodData(
-              toY: waterConsumptionList[i],
-              gradient: _barsGradient,
+              toY: value,
+              width: 10,
+              color: Colors.blue,
+              borderRadius: BorderRadius.circular(4),
             ),
           ],
-          showingTooltipIndicators: [0],
         ),
       );
     }
     return barGroups;
   }
 
-  FlGridData getGridData() {
-    return FlGridData(
-      show: true,
-      drawVerticalLine: true,
-      verticalInterval: 4,
-      drawHorizontalLine: true,
-      horizontalInterval: goal / 4,
-      getDrawingHorizontalLine: (value) {
-        return const FlLine(
-          color: MyColor.white,
-          strokeWidth: 1,
-        );
-      },
-    );
+  String _getTotalConsumption() {
+    int total = _history.hourlyConsumption.fold(0, (sum, value) => sum + value);
+    double convertedTotal = unit == 'ml' ? total.toDouble() : total / 1000;
+    return unit == 'ml' ? total.toString() : convertedTotal.toStringAsFixed(1);
+  }
+
+  String _getTotalGoal() {
+    double convertedGoal = unit == 'ml' ? goal.toDouble() : goal / 1000;
+    return unit == 'ml' ? goal.toString() : convertedGoal.toStringAsFixed(1);
+  }
+
+  String _getAveragePerHour() {
+    int total = _history.hourlyConsumption.fold(0, (sum, value) => sum + value);
+    int hoursWithConsumption =
+        _history.hourlyConsumption.where((value) => value > 0).length;
+
+    if (hoursWithConsumption == 0) return '0';
+
+    double average = total / hoursWithConsumption;
+    double convertedAverage = unit == 'ml' ? average : average / 1000;
+
+    return unit == 'ml'
+        ? convertedAverage.toStringAsFixed(0)
+        : convertedAverage.toStringAsFixed(1);
+  }
+
+  double _getMaxYValue() {
+    int maxConsumed = _history.hourlyConsumption.fold(0, (a, b) => a > b ? a : b);
+    int maxGoal = goal;
+    double maxY = maxConsumed > maxGoal ? maxConsumed.toDouble() : maxGoal.toDouble();
+    return unit == 'ml' ? maxY : maxY / 1000;
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:dr_drink/widgets/welcomeWidget.dart';
@@ -19,6 +21,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final FocusNode _nameFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
   bool _isLoading = false;
+  bool _isPasswordVisible = false;
 
   @override
   void dispose() {
@@ -131,8 +134,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         TextInputType.visiblePassword,
                         _passwordFocusNode,
                         obscureText: true,
+                        isPasswordField: true, // Enable password field logic
                       ),
                       SizedBox(height: screenHeight * 0.06),
+
                       _isLoading
                           ? const Center(
                               child: CircularProgressIndicator(
@@ -228,14 +233,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       final credential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const WelcomePage(),
-          ),
-        );
-      }
+      await credential.user?.sendEmailVerification(); // Send verification email
+
+      // Show the waiting dialog while checking for verification
+      _showWaitingDialog(credential.user!);
     } on FirebaseAuthException catch (e) {
       setState(() {
         _isLoading = false;
@@ -260,6 +261,52 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
+  void _showWaitingDialog(User user) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent closing the dialog manually
+      builder: (context) {
+        return const AlertDialog(
+          title: Text('Waiting for Verification'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 20),
+              Text(
+                'Please verify your email by clicking the link sent to your inbox.',
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 10),
+              Text(
+                'This may take a few moments...',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    // Start checking if the email is verified every 3 seconds
+    Timer.periodic(const Duration(seconds: 3), (timer) async {
+      await user.reload(); // Refresh user state
+      final currentUser = FirebaseAuth.instance.currentUser;
+
+      if (currentUser != null && currentUser.emailVerified) {
+        timer.cancel(); // Stop the timer
+        Navigator.pop(context); // Close the dialog
+
+        // Navigate to the next page
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const WelcomePage()), // Replace with your main page
+        );
+      }
+    });
+  }
+
+
   void _showErrorDialog(String title, String description) {
     AwesomeDialog(
       context: context,
@@ -276,9 +323,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
       TextEditingController controller,
       IconData icon,
       TextInputType inputType,
-      FocusNode focusNode,
-      {bool obscureText = false,
-      FocusNode? nextFocusNode}) {
+      FocusNode focusNode, {
+        bool obscureText = false,
+        FocusNode? nextFocusNode,
+        bool isPasswordField = false, // New flag to detect password field
+      }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -296,7 +345,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           controller: controller,
           keyboardType: inputType,
           focusNode: focusNode,
-          obscureText: obscureText,
+          obscureText: isPasswordField ? !_isPasswordVisible : obscureText,
           onFieldSubmitted: (_) {
             if (nextFocusNode != null) {
               FocusScope.of(context).requestFocus(nextFocusNode);
@@ -305,18 +354,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: const TextStyle(color: Colors.grey),
+            prefixIcon: Icon(icon, color: MyColor.blue),
+            suffixIcon: isPasswordField
+                ? IconButton(
+              icon: Icon(
+                _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                color: MyColor.blue,
+              ),
+              onPressed: () {
+                setState(() {
+                  _isPasswordVisible = !_isPasswordVisible;
+                });
+              },
+            )
+                : null,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(
-                color: Color.fromRGBO(42, 108, 230, 1),
+                color: MyColor.blue,
                 width: 1.5,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: MyColor.blue, width: 1.5),
+              borderSide: const BorderSide(
+                color: MyColor.blue,
+                width: 1.5,
+              ),
             ),
-            prefixIcon: Icon(icon, color: MyColor.blue),
           ),
         ),
       ],

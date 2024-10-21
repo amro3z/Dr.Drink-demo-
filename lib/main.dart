@@ -7,18 +7,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:dr_drink/logic/notifications.dart';
 
-Future<void> requestPermissions() async {
-  if (await Permission.notification.isDenied) {
-    await Permission.notification.request();
-  }
-}
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LocalNotificationService.init();
-  await requestPermissions();
-  await Permission.ignoreBatteryOptimizations.request();
-  LocalNotificationService.showRepeatedNotification();
+
 
   try {
     await Firebase.initializeApp(

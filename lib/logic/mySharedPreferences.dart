@@ -27,7 +27,7 @@ class MySharedPreferences {
   }
 
   // Method to save user
-  Future<bool> saveUser(User user) async {
+  Future<bool> saveUser(MyUser user) async {
     setInt('age', user.age);
     setInt('weight', user.weight);
     setString('gender', user.gender);
@@ -40,7 +40,7 @@ class MySharedPreferences {
   }
 
   // Method to get user
-  Future<User?> getUser() async {
+  Future<MyUser?> getUser() async {
 
     // Retrieve the user data from SharedPreferences
     int? age = getInt('age');
@@ -58,7 +58,7 @@ class MySharedPreferences {
     if (gender.isEmpty || wakeUpTime.isEmpty || bedTime.isEmpty) {
       return null; // No user data stored
     }
-    return User(
+    return MyUser(
       age: age,
       weight: weight,
       gender: gender,
