@@ -16,12 +16,12 @@ class Profile {
   void editProfile(
       {String? newTheme,
       String? newSound,
-      bool? newVibraion,
+      bool? newVibration,
       String? newLanguage,
       String? newUnit}) {
     if (newTheme != null) theme = newTheme;
     if (newSound != null) notificationSound = newSound;
-    if (newVibraion != null) notificationVibration = newVibraion;
+    if (newVibration != null) notificationVibration = newVibration;
     if (newLanguage != null) language = newLanguage;
     if (newUnit != null) unit = newUnit;
   }

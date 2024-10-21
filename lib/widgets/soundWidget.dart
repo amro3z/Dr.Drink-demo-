@@ -10,7 +10,7 @@ class SoundSettingsContent extends StatefulWidget {
 }
 
 class _SoundSettingsContentState extends State<SoundSettingsContent> {
-  String selectedSound = 'Water drop 2';
+  String selectedSound = 'Default';
   double volume = 0.5;
   bool vibrationEnabled = true;
 
@@ -22,7 +22,7 @@ class _SoundSettingsContentState extends State<SoundSettingsContent> {
         mainAxisSize: MainAxisSize.min,
         children: [
           const Text(
-            'Sounds & Vibration',
+            'Notifications Sound',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 20),
@@ -32,6 +32,16 @@ class _SoundSettingsContentState extends State<SoundSettingsContent> {
             onChanged: (bool value1) {
               setState(() {
                 vibrationEnabled = value1;
+              });
+            },
+          ),
+          RadioListTile<String>(
+            title: Text('Default'),
+            value: 'Default',
+            groupValue: selectedSound,
+            onChanged: (String? value) {
+              setState(() {
+                selectedSound = value!;
               });
             },
           ),
@@ -64,16 +74,6 @@ class _SoundSettingsContentState extends State<SoundSettingsContent> {
                 selectedSound = value!;
               });
             },
-          ),
-          Slider(
-            value: volume,
-            onChanged: (double value) {
-              setState(() {
-                volume = value;
-              });
-            },
-            min: 0,
-            max: 1,
           ),
 
           SizedBox(height: 10),

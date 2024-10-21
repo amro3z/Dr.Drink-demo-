@@ -295,6 +295,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       if (currentUser != null && currentUser.emailVerified) {
         timer.cancel(); // Stop the timer
+
+        // Update the user's display name using the value from _nameController
+        String newName = _nameController.text;
+        await currentUser.updateDisplayName(newName);
+        await currentUser.reload(); // Ensure the update takes effect
+
         Navigator.pop(context); // Close the dialog
 
         // Navigate to the next page
