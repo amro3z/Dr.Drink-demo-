@@ -12,6 +12,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../componnent/navigation_bar.dart';
+import '../logic/history.dart';
 import '../logic/user.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -58,8 +59,8 @@ class _LoginScreenState extends State<LoginScreen> {
       await FirebaseAuth.instance.signInWithCredential(credential);
 
       if (userCredential.user != null) {
-
         _loadUserFromFirestoreAndStoreLocally();
+        _loadHistoryFromFirestoreAndStoreLocally();
       }
     } catch (e) {
       AwesomeDialog(
@@ -69,6 +70,74 @@ class _LoginScreenState extends State<LoginScreen> {
         title: 'Google Sign-In Failed',
         desc: e.toString(),
       ).show();
+    }
+  }
+
+  Future<void> _loadUserFromFirestoreAndStoreLocally() async {
+    try {
+      // Get the authenticated user's ID
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      log(userId);
+
+      // Reference to the user's document in Firestore
+      final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
+
+      // Fetch user data from Firestore
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await userDoc.get();
+      log('second here');
+      if (snapshot.exists) {
+        Map<String, dynamic> userData = snapshot.data()!;
+        log(json.encode(userData));
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString("user", json.encode(userData));
+        await prefs.setBool('isUserRegistered', true);
+
+        MyUser user = MyUser.fromMap(userData);
+        user.tracker.calculateWaterGoal(user.weight);
+
+        log(user.toString()); // didnt loged
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const CustomNavigationBar()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const WelcomePage()),
+        );
+      }
+    } catch (e) {
+      log('Error loading user from Firestore: $e');
+    }
+  }
+
+  // load history from firestore
+  Future<void> _loadHistoryFromFirestoreAndStoreLocally() async {
+    try {
+      // Get the authenticated user's ID
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      log(userId);
+
+      // Reference to the user's document in Firestore
+      final historyDoc = FirebaseFirestore.instance.collection('history').doc(userId);
+
+      // Fetch user data from Firestore
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await historyDoc.get();
+      log('second here');
+      if (snapshot.exists) {
+        Map<String, dynamic> historyData = snapshot.data()!;
+        log(json.encode(historyData));
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString("history", json.encode(historyData));
+
+        History history = History.fromMap(historyData);
+        log(history.toString()); // didnt loged
+      } else {
+        log('No history data found');
+      }
+    } catch (e) {
+      log('Error loading history from Firestore: $e');
     }
   }
 
@@ -192,44 +261,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<void> _loadUserFromFirestoreAndStoreLocally() async {
-    try {
-      // Get the authenticated user's ID
-      String userId = FirebaseAuth.instance.currentUser!.uid;
-      log(userId);
 
-      // Reference to the user's document in Firestore
-      final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
-
-      // Fetch user data from Firestore
-      DocumentSnapshot<Map<String, dynamic>> snapshot = await userDoc.get();
-      log('second here');
-      if (snapshot.exists) {
-        Map<String, dynamic> userData = snapshot.data()!;
-        log(json.encode(userData));
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString("user", json.encode(userData));
-        await prefs.setBool('isUserRegistered', true);
-
-        MyUser user = MyUser.fromMap(userData);
-        user.tracker.calculateWaterGoal(user.weight);
-
-        log(user.toString()); // didnt loged
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const CustomNavigationBar()),
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const WelcomePage()),
-        );
-      }
-    } catch (e) {
-      log('Error loading user from Firestore: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
