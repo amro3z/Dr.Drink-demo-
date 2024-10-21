@@ -76,9 +76,8 @@ class _DataWidgetState extends State<DataWidget>
       ),
       body: TabBarView(
         controller: _tabController,
-        physics: goPressed
-            ? null
-            : NeverScrollableScrollPhysics(), // منع السحب بين التبويبات إذا لم يُضغط على "Go"
+        physics:
+            NeverScrollableScrollPhysics(), // منع السحب بين التبويبات بشكل دائم
         children: [
           const Center(
             child: GenderWidget(),
