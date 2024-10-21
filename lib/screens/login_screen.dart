@@ -222,6 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
         // load user data to shared prefs
         _loadUserFromFirestoreAndStoreLocally();
+        _loadHistoryFromFirestoreAndStoreLocally();
 
         Navigator.pushReplacement(
           context,

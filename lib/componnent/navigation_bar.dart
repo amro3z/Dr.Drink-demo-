@@ -1,19 +1,10 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:dr_drink/screens/history_screen.dart';
-import 'package:dr_drink/screens/home_screen.dart';
 import 'package:dr_drink/screens/insights_screen.dart';
 import 'package:dr_drink/screens/profile_screen.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
-import 'package:dr_drink/screens/home_page.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../logic/notifications.dart';
-import '../logic/user.dart';
-import '../main.dart';
 import '../screens/water_tracker_page.dart';
 
 class CustomNavigationBar extends StatefulWidget {
@@ -95,23 +86,23 @@ class _NavigationBarState extends State<CustomNavigationBar> {
               NavigationDestination(
                   icon: Opacity(
                       opacity: currentPageIndex == 0 ? 1.0 : 0.5,
-                      child: Image.asset('assets/icons/raindrop.png')),
+                      child: Image.asset('assets/icons/raindrop.png', width: 24, height: 24,)),
                   label: ''),
               NavigationDestination(
                 icon: Opacity(
                     opacity: currentPageIndex == 1 ? 1.0 : 0.5,
-                    child: Image.asset('assets/icons/clock.png')),
+                    child: Image.asset('assets/icons/clock.png', width: 24, height: 24,)),
                 label: '',
               ),
               NavigationDestination(
                   icon: Opacity(
                       opacity: currentPageIndex == 2 ? 1.0 : 0.5,
-                      child: Image.asset('assets/icons/insights.png')),
+                      child: Image.asset('assets/icons/insights.png', width: 24, height: 24,)),
                   label: ''),
               NavigationDestination(
                   icon: Opacity(
                       opacity: currentPageIndex == 3 ? 1.0 : 0.5,
-                      child: Image.asset('assets/icons/avatar.png')),
+                      child: Image.asset('assets/icons/avatar.png', width: 24, height: 24,)),
                   label: ''),
             ],
           ),
