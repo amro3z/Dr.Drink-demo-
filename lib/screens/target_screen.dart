@@ -93,6 +93,7 @@ class _TargetScreenState extends State<TargetScreen> {
   Future<void> _saveUserToSharedPrefs(MyUser user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('user', json.encode(user.toMap()));
+    await prefs.setBool('isUserRegistered', true);
   }
 
   // Function to Save User to Firestore

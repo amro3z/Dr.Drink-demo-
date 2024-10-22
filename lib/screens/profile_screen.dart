@@ -5,6 +5,8 @@ import 'package:dr_drink/values/color.dart';
 import 'package:dr_drink/widgets/soundWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'login_screen.dart';
 // import 'function_profile.dart';
@@ -20,8 +22,6 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   // late VoidCallback toggleTheme;
   String selectedSound = 'Water drop 2';
-  double volume = 0.5;
-  bool vibrationEnabled = true;
   late TextEditingController _passwordController;
   final TextEditingController _goalController = TextEditingController();
 
@@ -39,20 +39,26 @@ class _ProfilePageState extends State<ProfilePage> {
                 onTap: (){
                   account_dialog(context);
                 },
-                child: const Column(
+                child: Column(
                   children: [
                     CircleAvatar(
                       radius: 30,
-                      backgroundColor:Color(0xFF6690DE),
-                      child:Icon(Icons.person,color:MyColor.blue,size:35 ,),
+                      backgroundColor: const Color(0xFF6690DE),
+                      backgroundImage: NetworkImage(
+                        FirebaseAuth.instance.currentUser?.photoURL ?? '',
+                      ),
+                      child: FirebaseAuth.instance.currentUser?.photoURL == null
+                          ? const Icon(Icons.person, color: MyColor.blue, size: 35)
+                          : null, // Show the photo if it exists, otherwise show the icon
                     ),
-                    SizedBox(height:10 ,),
+
+                    const SizedBox(height:10 ,),
                     Row(
 
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Data synchronization ",style:TextStyle(color:Colors.white)),
-                        Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
+                        Text(FirebaseAuth.instance.currentUser?.email ?? 'No Email',style:const TextStyle(color:Colors.white)),
+                        const Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
                       ],
                     ),
                   ],
@@ -76,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text("0.0 ",style:TextStyle(color:Colors.white,fontSize:25)),
+                              Text("0 ",style:TextStyle(color:Colors.white,fontSize:25)),
                               Text("ml",style:TextStyle(color:Colors.white)),
                             ],
                           ),
@@ -135,7 +141,72 @@ class _ProfilePageState extends State<ProfilePage> {
                             ],
                           ),
                         ),
+
                         const SizedBox(height:25 ),
+                        GestureDetector(
+                          onTap: (){
+                            showSoundSettings( context);
+                          },
+                          child: const Row(
+                            children: [
+                              Icon(Icons.volume_up_outlined,color:Colors.white),
+                              Spacer(flex: 1,),
+                              Text("Notifications Sound",style:TextStyle(color:Colors.white)),
+                              Spacer(flex:25,),
+                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
+                              // Spacer(),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height:25 ),
+                        GestureDetector(
+                          onTap: (){
+                            showThemeChanger( context);
+                          },
+                          child: const Row(
+                            children: [
+                              Icon(Icons.brush_outlined,color:Colors.white),
+                              Spacer(flex: 1,),
+                              Text("Themes",style:TextStyle(color:Colors.white)),
+                              Spacer(flex:25,),
+                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
+                              // Spacer(),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height:25 ),
+                        GestureDetector(
+                          onTap: (){
+                            showLanguageChanger(context);
+                          },
+                          child: const Row(
+                            children: [
+                              Icon(Icons.language,color:Colors.white),
+                              Spacer(flex: 1,),
+                              Text("Language",style:TextStyle(color:Colors.white)),
+                              Spacer(flex:25,),
+                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
+                              // Spacer(),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child:ClipRRect(borderRadius: BorderRadius.circular(50),
+                  child:Container(
+                    padding: const EdgeInsets.all(15),
+                    margin:const EdgeInsets.all(10),
+                    color:const Color(0xFF1D5ACE),
+                    child:  Column(
+
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment:CrossAxisAlignment.end,
+                      children: [
                         GestureDetector(
                           onTap: (){
                             dailyGoal_dialog(context);
@@ -157,22 +228,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         const SizedBox(height:25 ),
                         GestureDetector(
                           onTap: (){
-                            showSoundSettings( context);
-                          },
-                          child: const Row(
-                            children: [
-                              Icon(Icons.volume_up_outlined,color:Colors.white),
-                              Spacer(flex: 1,),
-                              Text("Sounds and vibrations",style:TextStyle(color:Colors.white)),
-                              Spacer(flex:25,),
-                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
-                              // Spacer(),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height:25 ),
-                        GestureDetector(
-                          onTap: (){
                             units_dialog(context);
                             // Profile.units_dialog(context);
                           },
@@ -182,41 +237,13 @@ class _ProfilePageState extends State<ProfilePage> {
                               Spacer(flex: 1,),
                               Text("Units ",style:TextStyle(color:Colors.white)),
                               Spacer(flex:25,),
-                              Text("ml,kg ",style:TextStyle(color:Colors.white)),
+                              Text("ml, L",style:TextStyle(color:Colors.white)),
                               Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
                               // Spacer(),
                             ],
                           ),
                         ),
                         const SizedBox(height:25 ),
-                        GestureDetector(
-                          onTap: (){
-                            showThemeChanger( context);
-                          },
-                          child: const Row(
-                            children: [
-                              Icon(Icons.brush_outlined,color:Colors.white),
-                              Spacer(flex: 1,),
-                              Text("Themes",style:TextStyle(color:Colors.white)),
-                              Spacer(flex:25,),
-                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
-                              // Spacer(),
-                            ],
-                          ),
-                        ),
-                      ],),),
-                ),),
-              Expanded(
-                child:ClipRRect(borderRadius: BorderRadius.circular(50),
-                  child:Container(
-                    padding: const EdgeInsets.all(15),
-                    margin:const EdgeInsets.all(10),
-                    color:const Color(0xFF1D5ACE),
-                    child:  Column(
-
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment:CrossAxisAlignment.end,
-                      children: [
                         GestureDetector(
                           onTap: (){
                             gender_dialog(context);
@@ -251,46 +278,12 @@ class _ProfilePageState extends State<ProfilePage> {
                             ],
                           ),
                         ),
-                        const SizedBox(height:25 ),
-                        GestureDetector(
-                          onTap: (){
-                            timer_dialog(context);
-                            // Profile.timer_dialog(context);
-                          },
-                          child: const Row(
-                            children: [
-                              Icon(Icons.timelapse_outlined,color:Colors.white),
-                              Spacer(flex: 1,),
-                              Text("Time Format",style:TextStyle(color:Colors.white)),
-                              Spacer(flex:25,),
-                              Text("Follow The System",style:TextStyle(color:Colors.white)),
-                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
-                              // Spacer(),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height:25 ),
-                        GestureDetector(
-                          onTap: (){
-                            days_dialog(context);
-                            // Profile.days_dialog(context);
-                          },
-                          child: const Row(
-                            children: [
-                              Icon(Icons.calendar_month_rounded,color:Colors.white),
-                              Spacer(flex: 1,),
-                              Text("First day of the week",style:TextStyle(color:Colors.white)),
-                              Spacer(flex:25,),
-                              Text("Sunday",style:TextStyle(color:Colors.white)),
-                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
 
-
-                              // Spacer(),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height:25 ),
-                      ],),),),),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -338,6 +331,45 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  void showLanguageChanger(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Choose Language',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.language),
+                  title: const Text('English'),
+                  onTap: () {
+                    Navigator.pop(context); // غلق النافذة
+                    // toggleTheme(); // تفعيل الثيم الفاتح
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.language),
+                  title: const Text('Arabic'),
+                  onTap: () {
+                    Navigator.pop(context); // غلق النافذة
+                    // toggleTheme(); // تفعيل الثيم الداكن
+                  },
+                ),
+              ],
+            ),
+          );
+        }
+    );
+  }
+
   void showSoundSettings(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -345,7 +377,7 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (BuildContext context) {
-        return SoundSettingsContent();
+        return const SoundSettingsContent();
       },
     );
   }
@@ -358,28 +390,60 @@ class _ProfilePageState extends State<ProfilePage> {
         {
           return AlertDialog(
             title: const Text('Account'),
-            content:SizedBox(
+            content: SizedBox(
               width: 70,
-              height: 200,
-
+              height: 250,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
 
-                  // حقل عرض كلمة المرور العشوائية
-                  TextField(
-                    controller: _passwordController,
-                    readOnly: true,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                      border: OutlineInputBorder(),
+                  // Email Field
+                  const Text(
+                    'Email',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  // النص الخاص بتغيير كلمة المرور
+                  const SizedBox(height: 4),
+                  TextFormField(
+                    initialValue: FirebaseAuth.instance.currentUser?.email ?? 'No email',
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                  ),
+
+
+                  const SizedBox(height: 16),
+
+                  // Username Field
+                  const Text(
+                    'Username',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  TextFormField(
+                    initialValue: FirebaseAuth.instance.currentUser?.displayName ?? 'No username',
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Change Password Link
                   Align(
-                    alignment: Alignment.centerRight,
+                    alignment: Alignment.topLeft,
                     child: GestureDetector(
                       onTap: _showChangePasswordDialog,
                       child: const Text(
@@ -387,57 +451,59 @@ class _ProfilePageState extends State<ProfilePage> {
                         style: TextStyle(
                           color: Colors.blue,
                           decoration: TextDecoration.underline,
+                          fontSize: 16,
                         ),
                       ),
                     ),
                   ),
                 ],
               ),
-
             ),
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context); // إغلاق المربع
+                  Navigator.pop(context);
                 },
-                child: const Text('Cancel',style: TextStyle(color:Colors.blue)),
+                child: const Text('Cancel', style: TextStyle(color: Colors.blue)),
               ),
               ElevatedButton(
                 onPressed: () async {
+                  try {
+                    final googleSignIn = GoogleSignIn();
+                    if (await googleSignIn.isSignedIn()) {
+                      await googleSignIn.signOut(); // Sign out from Google
+                    }
+                  } catch (e) {
+                    print("Error signing out from Google: $e");
+                  }
+
                   await FirebaseAuth.instance.signOut();
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  await prefs.setBool('isUserRegistered', false);
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => LoginScreen()),
                         (Route<dynamic> route) => false,
                   );
                 },
-                child: const Text('Log Out',style: TextStyle(color:Colors.red),),
+                child: const Text('Log Out', style: TextStyle(color: Colors.red)),
               ),
             ],
           );
+
         }
     );
   }
   @override
   void initState() {
     super.initState();
-    // إنشاء كلمة مرور عشوائية وضبطها في TextEditingController
-    String randomPassword = generateRandomPassword(10);
-    _passwordController = TextEditingController(text: randomPassword);
   }
   @override
   void dispose() {
     _passwordController.dispose();
     super.dispose();
   }
-  String generateRandomPassword(int length) {
-    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    Random random = Random();
-    return String.fromCharCodes(Iterable.generate(
-      length,
-          (_) => chars.codeUnitAt(random.nextInt(chars.length)),
-    ));
-  }
+
   void _showChangePasswordDialog() {
     showDialog(
       context: context,
@@ -487,9 +553,79 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+// ignore: non_constant_identifier_names
+  void weight_dialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context)
+        {
+          return AlertDialog(
+            title: const Text('Weight'),
+            content: SizedBox(
+              width: 50,
+              height: 100,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 70,
+                    height: 200,
+                    child: ListWheelScrollView.useDelegate(
+                      itemExtent:50,
+                      perspective: 0.005,
+                      diameterRatio: 0.4,
+                      childDelegate: ListWheelChildBuilderDelegate(
+                          childCount: 60,
+                          builder: (context,index){
+                            return Text((40+index).toString());
+                          }),
+                      // ignore: avoid_print
+                      //   onSelectedItemChanged: (value) => print(value),
+                      physics: const FixedExtentScrollPhysics(),
 
+                    ),
+                  ),
+                  SizedBox(
+                    width: 70,
+                    height: 200,
+                    child: ListWheelScrollView(
 
+                      // ignore: avoid_print
+                      // onSelectedItemChanged: (value) => print(value),
+                      itemExtent:50,
+                      perspective: 0.006,
+                      diameterRatio: 0.4,
+                      physics: const FixedExtentScrollPhysics(),
+                      children: const [
 
+                        Center(child: Text("kg")),
+                      ],
+                    ),
+                  ),
+
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // إغلاق المربع
+                },
+                child: const Text('Cancel',style: TextStyle(color:Colors.blue)),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  // function of save data
+                  Navigator.pop(context); // إغلاق المربع وحفظ القيمة
+                },
+                child: const Text('Save',style: TextStyle(color:Colors.blue),),
+              ),
+            ],
+          );
+        }
+    );
+  }
 
   void dailyGoal_dialog(BuildContext context) {
     showDialog(
@@ -504,7 +640,7 @@ class _ProfilePageState extends State<ProfilePage> {
               controller: _goalController,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
-                hintText: '90.0 Oz',
+                hintText: '2301 ml',
               ),
             ),
             actions: [
@@ -553,28 +689,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       diameterRatio: 0.4,
                       physics: const FixedExtentScrollPhysics(),
                       children: const [
-                        Center(child: Text("US Oz")),
-                        Center(child: Text("UK Oz")),
                         Center(child: Text("ml")),
+                        Center(child: Text("L")),
                       ],
                     ),
                   ),
-                  SizedBox(
-                    width: 70,
-                    child: ListWheelScrollView(
 
-                      // ignore: avoid_print
-                      // onSelectedItemChanged: (value) => print(value),
-                      itemExtent:50,
-                      perspective: 0.005,
-                      diameterRatio: 0.4,
-                      physics: const FixedExtentScrollPhysics(),
-                      children: const [
-                        Center(child: Text("lbs")),
-                        Center(child: Text("kg")),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -620,7 +740,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 const [
                   Center(child: Text("Male")),
                   Center(child: Text("Female")),
-                  Center(child: Text("Others")),
                 ],
               ),
             ),
@@ -643,283 +762,4 @@ class _ProfilePageState extends State<ProfilePage> {
         }
     );
   }
-
-// ignore: non_constant_identifier_names
-  void weight_dialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context)
-        {
-          return AlertDialog(
-            title: const Text('Weight'),
-            content: SizedBox(
-              width: 50,
-              height: 100,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 70,
-                    height: 200,
-                    child: ListWheelScrollView.useDelegate(
-                      itemExtent:50,
-                      perspective: 0.005,
-                      diameterRatio: 0.4,
-                      childDelegate: ListWheelChildBuilderDelegate(
-                          childCount: 60,
-                          builder: (context,index){
-                            return Text((50+index).toString());
-                          }),
-                      // ignore: avoid_print
-                      //   onSelectedItemChanged: (value) => print(value),
-                      physics: const FixedExtentScrollPhysics(),
-
-                    ),
-                  ),
-                  SizedBox(
-                    width: 70,
-                    height: 200,
-                    child: ListWheelScrollView(
-
-                      // ignore: avoid_print
-                      // onSelectedItemChanged: (value) => print(value),
-                      itemExtent:50,
-                      perspective: 0.006,
-                      diameterRatio: 0.4,
-                      physics: const FixedExtentScrollPhysics(),
-                      children: const [
-
-                        Center(child: Text("kg")),
-                        Center(child: Text("lbs")),
-                      ],
-                    ),
-                  ),
-
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // إغلاق المربع
-                },
-                child: const Text('Cancel',style: TextStyle(color:Colors.blue)),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // function of save data
-                  Navigator.pop(context); // إغلاق المربع وحفظ القيمة
-                },
-                child: const Text('Save',style: TextStyle(color:Colors.blue),),
-              ),
-            ],
-          );
-        }
-    );
-  }
-  // ignore: non_constant_identifier_names
-  void timer_dialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context)
-        {
-          return AlertDialog(
-            title: const Text('Gender'),
-            content:SizedBox(
-              width: 70,
-              height: 150,
-              child: ListWheelScrollView(
-                // ignore: avoid_print
-                //   onSelectedItemChanged: (value) => print(value),
-                itemExtent:50,
-                perspective: 0.006,
-                diameterRatio: 0.4,
-                physics: const FixedExtentScrollPhysics(),
-                children:
-                const [
-                  Center(child: Text("Follow The System")),
-                  Center(child: Text("24_hours")),
-                  Center(child: Text("12_hours")),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // إغلاق المربع
-                },
-                child: const Text('Cancel',style: TextStyle(color:Colors.blue)),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // function of save data
-                  Navigator.pop(context); // إغلاق المربع وحفظ القيمة
-                },
-                child: const Text('Save',style: TextStyle(color:Colors.blue),),
-              ),
-            ],
-          );
-        }
-    );
-  }
-
-// ignore: non_constant_identifier_names
-  void days_dialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context)
-        {
-          return AlertDialog(
-            title: const Text('Gender'),
-            content: DatePickerDialog(firstDate:DateTime(2000), lastDate:DateTime(2024),),
-
-
-
-            // final DateTime? picked = await showDatePicker(context: context, firstDate: DateTime(2000), lastDate: DateTime(2101)),
-            // content:showDatePicker(context: context, firstDate: firstDate, lastDate: lastDate) ,
-
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // إغلاق المربع
-                },
-                child: const Text('Cancel',style: TextStyle(color:Colors.blue)),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // function of save data
-                  Navigator.pop(context); // إغلاق المربع وحفظ القيمة
-                },
-                child: const Text('Save',style: TextStyle(color:Colors.blue),),
-              ),
-            ],
-          );
-        }
-    );
-  }
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Stack(
-//                                children: [
-//                                  TextField(
-//                   controller: _passwordController,
-//                   obscureText: _obscureText,
-//                   decoration: InputDecoration(
-//                     labelText: 'كلمة المرور',
-//                     border: OutlineInputBorder(),
-//                     suffixIcon: IconButton(
-//                       icon: Icon(
-//                         _obscureText ? Icons.visibility : Icons.visibility_off,
-//                       ),
-//                       onPressed: () {
-//                         setState(() {
-//                           _obscureText = !_obscureText;
-//                         });
-//                       },
-//                     ),
-//                   ),
-//                                  ),
-//                                  // SizedBox(height: 5,),
-//                                  // النص الصغير في الأسفل على اليمين
-//                                  Positioned(
-//                   right: 1,
-//                   bottom: -10,
-//                   child: Text(
-//                     'يجب أن تكون 6 أحرف على الأقل',
-//                     style: TextStyle(
-//                       fontSize: 12,
-//                       color: Colors.grey[600],
-//                     ),
-//                   ),
-//                                  ),
-//                                ],
-//                              ),
-
-//  Column(
-//   mainAxisSize: MainAxisSize.min,
-//   crossAxisAlignment: CrossAxisAlignment.start,
-//  children: [
-//   Text("choose .... ",style: TextStyle(fontSize: 20),),
-
-//    RadioListTile(
-//      activeColor: Colors.blue,
-//        title: Text("Us Oz"),
-//        value: "Us Oz",
-//       groupValue: value1 ,
-//        onChanged: (val){
-//         setState((){
-//          value1=val.toString();
-//         });
-//        }),
-
-//        RadioListTile(
-//          activeColor: Colors.blue,
-//        title: Text("Uk Oz"),
-//        value: "Uk Oz",
-//       groupValue: value1 ,
-//        onChanged: (val){
-//          setState((){
-//          value1=val.toString();
-//         });
-//        }),
-
-//    RadioListTile(
-//      activeColor: Colors.blue,
-//            title: Text("ml"),
-//            value: "ml",
-//           groupValue: value1 ,
-//            onChanged: (val){
-//              setState((){
-//          value1=val.toString();
-//         });
-//            }),
-
-//     Text("choose ....222 ",style: TextStyle(fontSize: 20),),
-
-//          RadioListTile(
-//      activeColor: Colors.blue,
-//        title: Text("kg"),
-//        value: "kg",
-//       groupValue: value2 ,
-//        onChanged: (val){
-//          setState((){
-//          value2=val.toString();
-//         });
-//        }),
-
-//        RadioListTile(
-//          activeColor: Colors.blue,
-//        title: Text("ibs"),
-//        value: "ibs",
-//       groupValue: value2 ,
-//        onChanged: (val){
-//          setState((){
-//          value2=val.toString();
-//         });
-//        }
-//        ),
-
-//  ],
-//               ),
-

@@ -53,13 +53,6 @@ class _ReminderState extends State<Reminder> {
                           color: Colors.black,
                         ),
                       ),
-                      Text(
-                        "Next: 06:00 PM (1h 27 min left)",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black,
-                        ),
-                      ),
                     ],
                   ),
                   const Spacer(
@@ -77,60 +70,8 @@ class _ReminderState extends State<Reminder> {
                 ],
               ),
             ),
-            Container(
-              height: 60,
-              color: Colors.white,
-              child: const Row(
-                children: [
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Text(
-                    "Reminder Mode",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
-                  Spacer(),
-                  Text(
-                    "Standard",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Color.fromARGB(122, 0, 0, 0),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Icon(
-                    Icons.edit,
-                    color: Color.fromARGB(122, 0, 0, 0),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            const Padding(
-              padding: EdgeInsets.only(left: 20.0),
-              child: Text(
-                "Can't receive reminder?",
-                style: TextStyle(
-                    color: Color.fromARGB(122, 0, 0, 0),
-                    decoration: TextDecoration.underline,
-                    decorationColor: Color.fromARGB(122, 0, 0, 0)),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
+
+
             CustomRow(
               swicht: Switch(
                 activeColor: Colors.blueAccent,
@@ -256,30 +197,14 @@ class _ReminderState extends State<Reminder> {
               label: "Before Sleep",
               time: const TimeOfDay(hour: 8, minute: 0),
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            CustomRow(
-              swicht: Switch(
-                activeColor: Colors.blueAccent,
-                value: reminderWeek,
-                onChanged: (value) {
-                  setState(() {
-                    reminderWeek = value;
-                  });
-                },
-              ),
-              label: "Reminder Week end mode ",
-              time: null,
-              isIcon: false,
-            ),
+
             const SizedBox(
               height: 20,
             ),
             const Padding(
               padding: EdgeInsets.only(left: 20.0),
               child: Text(
-                "Skip & Stop",
+                "Extra Features",
                 style: TextStyle(
                     color: Colors.blue,
                     fontSize: 16,
@@ -302,26 +227,7 @@ class _ReminderState extends State<Reminder> {
               label: "Stop when goal achieved",
               isIcon: false,
             ),
-            CustomRow(
-              swicht: Switch(
-                activeColor: Colors.blueAccent,
-                value: smartSkip,
-                onChanged: (value) {
-                  setState(() {
-                    smartSkip = value;
-                  });
-                },
-              ),
-              label: "Smart Skip",
-              text: const Text(
-                "1 hour",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Color.fromARGB(122, 0, 0, 0),
-                ),
-              ),
-            )
+
           ],
         ),
       ),
