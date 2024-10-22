@@ -14,14 +14,17 @@ class GenderWidget extends StatefulWidget {
 class _GenderWidgetState extends State<GenderWidget> {
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(top: 30.0, left: 10),
+            Padding(
+              padding: EdgeInsets.only(
+                  top: screenHeight * 0.035, left: screenWidth * 0.025),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -29,16 +32,15 @@ class _GenderWidgetState extends State<GenderWidget> {
                   style: TextStyle(
                     fontFamily: "Poppins",
                     fontWeight: FontWeight.bold,
-                    fontSize: 27,
+                    fontSize: screenWidth * 0.065,
                   ),
                 ),
               ),
             ),
-            const SizedBox(
-              height: 200,
+            SizedBox(
+              height: screenHeight * 0.22,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 AnimatedGender(
                     path: "assets/image/man.png",

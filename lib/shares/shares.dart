@@ -221,7 +221,10 @@ Widget buildMealTimeSection(
     required ValueChanged<int> onHourChanged,
     required ValueChanged<int> onMinuteChanged,
     required ValueChanged<String> onPeriodChanged,
+      required BuildContext context,
     final double fontSize = 30.0}) {
+  double screenWidth = MediaQuery.of(context).size.width;
+  double screenHeight = MediaQuery.of(context).size.height;
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: [
@@ -246,8 +249,8 @@ Widget buildMealTimeSection(
           ),
         ],
       ),
-      const SizedBox(
-        width: 80,
+      SizedBox(
+        width: screenWidth * 0.042,
       ),
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -325,8 +328,8 @@ class AnimatedGender extends StatelessWidget {
           children: [
             Image.asset(
               path,
-              width: 200,
-              height: 200,
+              width: 180,
+              height: 180,
             ),
             Text(
               text,

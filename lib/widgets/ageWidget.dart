@@ -28,12 +28,15 @@ class _AgewidgetState extends State<Agewidget> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 30.0, left: 10),
+          Padding(
+            padding: EdgeInsets.only(
+                top: screenHeight * 0.035, left: screenWidth * 0.025),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -41,13 +44,13 @@ class _AgewidgetState extends State<Agewidget> {
                 style: TextStyle(
                   fontFamily: "Poppins",
                   fontWeight: FontWeight.bold,
-                  fontSize: 27,
+                  fontSize: screenWidth * 0.065,
                 ),
               ),
             ),
           ),
-          const SizedBox(
-            height: 200,
+          SizedBox(
+            height: screenHeight * 0.22,
           ),
           WheelList(
             start: 12,

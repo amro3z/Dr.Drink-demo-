@@ -81,12 +81,15 @@ class _MealWidgetState extends State<MealWidget> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 30.0, left: 10),
+          Padding(
+            padding: EdgeInsets.only(
+                top: screenHeight * 0.035, left: screenWidth * 0.025),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -94,12 +97,12 @@ class _MealWidgetState extends State<MealWidget> {
                 style: TextStyle(
                   fontFamily: "Poppins",
                   fontWeight: FontWeight.bold,
-                  fontSize: 27,
+                  fontSize: screenWidth * 0.065,
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 30),
+          SizedBox(height: screenHeight * 0.045),
           _buildBreakfastTime(),
           const Spacer(
             flex: 1,
@@ -142,7 +145,7 @@ class _MealWidgetState extends State<MealWidget> {
         setState(() {
           MealWidget.breakfastPeriod = value;
         });
-      },
+      }, context: context,
     );
   }
 
@@ -171,7 +174,7 @@ class _MealWidgetState extends State<MealWidget> {
         setState(() {
           MealWidget.lunchPeriod = value;
         });
-      },
+      }, context: context,
     );
   }
 
@@ -200,7 +203,7 @@ class _MealWidgetState extends State<MealWidget> {
         setState(() {
           MealWidget.dinnerPeriod = value;
         });
-      },
+      }, context: context,
     );
   }
 }
