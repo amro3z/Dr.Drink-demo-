@@ -1,5 +1,7 @@
 
-import 'dart:math' show Random;
+import 'dart:developer';
+
+import 'package:dr_drink/logic/profile.dart';
 import 'package:dr_drink/screens/reminder.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:dr_drink/widgets/soundWidget.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../logic/user.dart';
 import 'login_screen.dart';
 // import 'function_profile.dart';
 
@@ -21,6 +24,8 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   // late VoidCallback toggleTheme;
+  final MyUser _user = MyUser.instance;
+  final Profile _profile = Profile.instance;
   String selectedSound = 'Water drop 2';
   late TextEditingController _passwordController;
   final TextEditingController _goalController = TextEditingController();
@@ -75,15 +80,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       padding: const EdgeInsets.all(15),
                       margin:const EdgeInsets.all(10),
                       color:const Color(0xFF1D5ACE),
-                      child: const Column(
+                      child: Column(
                         crossAxisAlignment:CrossAxisAlignment.start,
                         children: [
                           Icon(Icons.water_drop,color:Colors.white),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text("0 ",style:TextStyle(color:Colors.white,fontSize:25)),
-                              Text("ml",style:TextStyle(color:Colors.white)),
+                              Text('${_profile.totalAmount}',style:TextStyle(color:Colors.white,fontSize:25)),
+                              Text(' ${_user.unit}',style:TextStyle(color:Colors.white)),
                             ],
                           ),
                           Text("Total amount drunk",style:TextStyle(color:Colors.white60)),
@@ -96,15 +101,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       padding: const EdgeInsets.all(15),
                       margin:const EdgeInsets.all(10),
                       color:const Color(0xFF1D5ACE),
-                      child: const Column(
+                      child: Column(
                         crossAxisAlignment:CrossAxisAlignment.start,
                         children: [
                           Icon(Icons.calendar_today_rounded,color:Colors.white),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text(" 0 ",style:TextStyle(color:Colors.white,fontSize:25)),
-                              Text("days",style:TextStyle(color:Colors.white)),
+                              Text('${_profile.totalDays}',style:TextStyle(color:Colors.white,fontSize:25)),
+                              Text(" days",style:TextStyle(color:Colors.white)),
 
                             ],
                           ),
@@ -212,14 +217,14 @@ class _ProfilePageState extends State<ProfilePage> {
                             dailyGoal_dialog(context);
                             // Profile.dailyGoal_dialog(context);
                           },
-                          child: const Row(
+                          child: Row(
                             children: [
                               Icon(Icons.water_drop,color:Colors.white),
                               Spacer(flex: 1,),
                               Text("Daily goal",style:TextStyle(color:Colors.white)),
                               Spacer(flex:25,),
-                              Text("2301",style:TextStyle(color:Colors.white)),
-                              Text("ml ",style:TextStyle(color:Colors.white)),
+                              Text('${_user.unit == 'ml' ? _user.tracker.totalWaterGoal : _user.tracker.totalWaterGoal! / 1000}',style:TextStyle(color:Colors.white)),
+                              Text(' ${_user.unit}',style:TextStyle(color:Colors.white)),
                               Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
                               // Spacer(),
                             ],
@@ -293,82 +298,99 @@ class _ProfilePageState extends State<ProfilePage> {
 
 
   void showThemeChanger(BuildContext context) {
+    const List<String> languages = ['Light Theme', 'Dark Theme'];
+    const List<Icon> icons = [Icon(Icons.wb_sunny), Icon(Icons.nightlight_round)];
+
     showModalBottomSheet(
-        context: context,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        builder: (context) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Choose Theme',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.light_mode),
-                  title: const Text('Light Theme'),
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Choose Theme',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              // Loop through the available languages to create the list tiles
+              ...languages.map((theme) {
+                bool isSelected = _profile.theme == theme;
+
+                return ListTile(
+                  leading: icons[languages.indexOf(theme)],
+                  iconColor: isSelected ? MyColor.blue : Colors.black,
+                  title: Text(
+                    theme,
+                    style: TextStyle(
+                      color: isSelected ? MyColor.blue : Colors.black,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
                   onTap: () {
-                    Navigator.pop(context); // غلق النافذة
-                    // toggleTheme(); // تفعيل الثيم الفاتح
+                    // Update the selected language
+                    _profile.theme = theme;
+                    Navigator.pop(context); // Close the dialog
                   },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.dark_mode),
-                  title: const Text('Dark Theme'),
-                  onTap: () {
-                    Navigator.pop(context); // غلق النافذة
-                    // toggleTheme(); // تفعيل الثيم الداكن
-                  },
-                ),
-              ],
-            ),
-          );
-        }
+                );
+              }),
+            ],
+          ),
+        );
+      },
     );
   }
 
   void showLanguageChanger(BuildContext context) {
+    const List<String> languages = ['English', 'Arabic'];
+
     showModalBottomSheet(
-        context: context,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        builder: (context) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Choose Language',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-                ListTile(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Choose Language',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              // Loop through the available languages to create the list tiles
+              ...languages.map((language) {
+                bool isSelected = _profile.language == language;
+
+                return ListTile(
                   leading: const Icon(Icons.language),
-                  title: const Text('English'),
+                  iconColor: isSelected ? MyColor.blue : Colors.black,
+                  title: Text(
+                    language,
+                    style: TextStyle(
+                      color: isSelected ? MyColor.blue : Colors.black,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
                   onTap: () {
-                    Navigator.pop(context); // غلق النافذة
-                    // toggleTheme(); // تفعيل الثيم الفاتح
+                    // Update the selected language
+                    _profile.language = language;
+                    Navigator.pop(context); // Close the dialog
                   },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.language),
-                  title: const Text('Arabic'),
-                  onTap: () {
-                    Navigator.pop(context); // غلق النافذة
-                    // toggleTheme(); // تفعيل الثيم الداكن
-                  },
-                ),
-              ],
-            ),
-          );
-        }
+                );
+              }),
+            ],
+          ),
+        );
+      },
     );
   }
+
+
 
   void showSoundSettings(BuildContext context) {
     showModalBottomSheet(
@@ -449,7 +471,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: const Text(
                         'Change Password',
                         style: TextStyle(
-                          color: Colors.blue,
+                          color: MyColor.blue,
                           decoration: TextDecoration.underline,
                           fontSize: 16,
                         ),
@@ -464,7 +486,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('Cancel', style: TextStyle(color: Colors.blue)),
+                child: const Text('Cancel', style: TextStyle(color: MyColor.blue)),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -494,6 +516,7 @@ class _ProfilePageState extends State<ProfilePage> {
         }
     );
   }
+
   @override
   void initState() {
     super.initState();
@@ -509,7 +532,7 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Change Password',style: TextStyle(color:Colors.blue)),
+          title: const Text('Change Password',style: TextStyle(color:MyColor.blue)),
           content: const Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -538,92 +561,18 @@ class _ProfilePageState extends State<ProfilePage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel',style: TextStyle(color:Colors.blue)),
+              child: const Text('Cancel',style: TextStyle(color:MyColor.blue)),
             ),
             TextButton(
               onPressed: () {
                 // منطق تغيير كلمة المرور هنا
                 Navigator.of(context).pop();
               },
-              child: const Text('Sumbit',style: TextStyle(color:Colors.blue),),
+              child: const Text('Sumbit',style: TextStyle(color:MyColor.blue),),
             ),
           ],
         );
       },
-    );
-  }
-
-// ignore: non_constant_identifier_names
-  void weight_dialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context)
-        {
-          return AlertDialog(
-            title: const Text('Weight'),
-            content: SizedBox(
-              width: 50,
-              height: 100,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 70,
-                    height: 200,
-                    child: ListWheelScrollView.useDelegate(
-                      itemExtent:50,
-                      perspective: 0.005,
-                      diameterRatio: 0.4,
-                      childDelegate: ListWheelChildBuilderDelegate(
-                          childCount: 60,
-                          builder: (context,index){
-                            return Text((40+index).toString());
-                          }),
-                      // ignore: avoid_print
-                      //   onSelectedItemChanged: (value) => print(value),
-                      physics: const FixedExtentScrollPhysics(),
-
-                    ),
-                  ),
-                  SizedBox(
-                    width: 70,
-                    height: 200,
-                    child: ListWheelScrollView(
-
-                      // ignore: avoid_print
-                      // onSelectedItemChanged: (value) => print(value),
-                      itemExtent:50,
-                      perspective: 0.006,
-                      diameterRatio: 0.4,
-                      physics: const FixedExtentScrollPhysics(),
-                      children: const [
-
-                        Center(child: Text("kg")),
-                      ],
-                    ),
-                  ),
-
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // إغلاق المربع
-                },
-                child: const Text('Cancel',style: TextStyle(color:Colors.blue)),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // function of save data
-                  Navigator.pop(context); // إغلاق المربع وحفظ القيمة
-                },
-                child: const Text('Save',style: TextStyle(color:Colors.blue),),
-              ),
-            ],
-          );
-        }
     );
   }
 
@@ -639,8 +588,8 @@ class _ProfilePageState extends State<ProfilePage> {
             content: TextField(
               controller: _goalController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                hintText: '2301 ml',
+              decoration: InputDecoration(
+                hintText: '${_user.unit == 'ml' ? _user.tracker.totalWaterGoal : _user.tracker.totalWaterGoal! / 1000} ${_user.unit}',
               ),
             ),
             actions: [
@@ -648,14 +597,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: () {
                   Navigator.pop(context); // إغلاق المربع
                 },
-                child: const Text('Cancel',style: TextStyle(color:Colors.blue)),
+                child: const Text('Cancel',style: TextStyle(color:MyColor.blue)),
               ),
               ElevatedButton(
                 onPressed: () {
                   // function of save data
                   Navigator.pop(context); // إغلاق المربع وحفظ القيمة
                 },
-                child: const Text('Save',style: TextStyle(color:Colors.blue),),
+                child: const Text('Save',style: TextStyle(color:MyColor.blue),),
               ),
             ],
           );
@@ -665,101 +614,211 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void units_dialog(BuildContext context) {
+    // List of available units
+    final units = ["ml", "L"];
+
+    // Find the index of the current unit
+    int initialIndex = units.indexOf(_user.unit!);
+
+    // Create the controller with the initial item
+    FixedExtentScrollController controller =
+    FixedExtentScrollController(initialItem: initialIndex);
+
     showDialog(
-        context: context,
-        builder: (context)
-        {
-          return AlertDialog(
-            title: const Text('units'),
-            content:SizedBox(
-              height: 150,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 70,
-                    height: 200,
-                    child: ListWheelScrollView(
-
-                      // ignore: avoid_print
-                      // onSelectedItemChanged: (value) => print(value),
-                      itemExtent:50,
-                      perspective: 0.006,
-                      diameterRatio: 0.4,
-                      physics: const FixedExtentScrollPhysics(),
-                      children: const [
-                        Center(child: Text("ml")),
-                        Center(child: Text("L")),
-                      ],
-                    ),
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Units'),
+          content: SizedBox(
+            height: 150,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 70,
+                  height: 200,
+                  child: ListWheelScrollView(
+                    controller: controller,
+                    itemExtent: 50,
+                    perspective: 0.006,
+                    diameterRatio: 0.4,
+                    physics: const FixedExtentScrollPhysics(),
+                    children: units
+                        .map((unit) => Center(child: Text(unit)))
+                        .toList(),
                   ),
-
-                ],
-              ),
+                ),
+              ],
             ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // إغلاق المربع
-                },
-                child: const Text('Cancel',style: TextStyle(color:Colors.blue)),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // function of save data
-                  Navigator.pop(context); // إغلاق المربع وحفظ القيمة
-                },
-                child: const Text('Save',style: TextStyle(color:Colors.blue),),
-              ),
-            ],
-          );
-        }
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+              child: const Text('Cancel', style: TextStyle(color: MyColor.blue)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Get the current selected index from the controller
+                int selectedIndex = controller.selectedItem;
+
+                setState(() {
+                  // Update the _user.unit with the selected value
+                  _user.unit = units[selectedIndex];
+                });
+
+                // Close the dialog
+                Navigator.pop(context);
+              },
+              child: const Text('Save', style: TextStyle(color: MyColor.blue)),
+            ),
+          ],
+        );
+      },
     );
   }
 
   // ignore: non_constant_identifier_names
   void gender_dialog(BuildContext context) {
+    // List of genders
+    final genders = ["Male", "Female"];
+
+    // Find the index of the current gender
+    int initialIndex = genders.indexOf(_user.gender);
+
+    // Create the controller with the initial item
+    FixedExtentScrollController controller =
+    FixedExtentScrollController(initialItem: initialIndex);
+
     showDialog(
-        context: context,
-        builder: (context)
-        {
-          return AlertDialog(
-            title: const Text('Gender'),
-            content:SizedBox(
-              width: 70,
-              height: 200,
-              child: ListWheelScrollView(
-                // ignore: avoid_print
-                //   onSelectedItemChanged: (value) => print(value),
-                itemExtent:50,
-                perspective: 0.006,
-                diameterRatio: 0.4,
-                physics: const FixedExtentScrollPhysics(),
-                children:
-                const [
-                  Center(child: Text("Male")),
-                  Center(child: Text("Female")),
-                ],
-              ),
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Gender'),
+          content: SizedBox(
+            width: 70,
+            height: 200,
+            child: ListWheelScrollView(
+              controller: controller,
+              itemExtent: 50,
+              perspective: 0.006,
+              diameterRatio: 0.4,
+              physics: const FixedExtentScrollPhysics(),
+              children: genders
+                  .map((gender) => Center(child: Text(gender)))
+                  .toList(),
             ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // إغلاق المربع
-                },
-                child: const Text('Cancel',style: TextStyle(color:Colors.blue)),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // function of save data
-                  Navigator.pop(context); // إغلاق المربع وحفظ القيمة
-                },
-                child: const Text('Save',style: TextStyle(color:Colors.blue),),
-              ),
-            ],
-          );
-        }
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+              child: const Text('Cancel', style: TextStyle(color: MyColor.blue)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Get the current selected index from the controller
+                int selectedIndex = controller.selectedItem;
+
+                // Update _user.gender with the selected value
+                _user.gender = genders[selectedIndex];
+
+                log(_user.toMap().toString());
+
+                // Close the dialog
+                Navigator.pop(context);
+              },
+              child: const Text('Save', style: TextStyle(color: MyColor.blue)),
+            ),
+          ],
+        );
+      },
     );
   }
+
+
+  // ignore: non_constant_identifier_names
+  void weight_dialog(BuildContext context) {
+    // Initialize the range for weight (from 40 to 200)
+    const int minWeight = 40;
+    const int maxWeight = 200;
+
+    // Calculate the initial index based on the current weight
+    int initialIndex = _user.weight - minWeight;
+
+    // Create the controller with the initial index
+    FixedExtentScrollController controller =
+    FixedExtentScrollController(initialItem: initialIndex);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Weight'),
+          content: SizedBox(
+            width: 50,
+            height: 100,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 70,
+                  height: 200,
+                  child: ListWheelScrollView.useDelegate(
+                    controller: controller,
+                    itemExtent: 50,
+                    perspective: 0.005,
+                    diameterRatio: 0.4,
+                    physics: const FixedExtentScrollPhysics(),
+                    childDelegate: ListWheelChildBuilderDelegate(
+                      childCount: maxWeight - minWeight + 1,
+                      builder: (context, index) {
+                        return Center(
+                          child: Text(
+                            (minWeight + index).toString(),
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 70,
+                  height: 200,
+                  child: Center(child: Text("kg", style: TextStyle(fontSize: 18))),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+              child: const Text('Cancel', style: TextStyle(color: MyColor.blue)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Get the selected weight from the controller
+                int selectedWeight = minWeight + controller.selectedItem;
+
+                // Update _user.weight with the selected value
+                _user.weight = selectedWeight;
+
+                log(_user.toMap().toString());
+
+                Navigator.pop(context); // Close the dialog
+              },
+              child: const Text('Save', style: TextStyle(color: MyColor.blue)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }

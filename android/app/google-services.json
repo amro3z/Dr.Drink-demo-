@@ -12,7 +12,20 @@
           "package_name": "com.example.dr_drink"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "710563306562-rvsp9fi6b0dgi3m60efibncag4bv8j6c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dr_drink",
+            "certificate_hash": "e8880261e49ce2f3f71e0969ce32eed3a342133b"
+          }
+        },
+        {
+          "client_id": "710563306562-p0vd8mja9mhulf4sjn2r170t6dtqfmh8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyABLxq1U60vAWE5cIqyqSjb0MIudKiWKQ4"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "710563306562-p0vd8mja9mhulf4sjn2r170t6dtqfmh8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

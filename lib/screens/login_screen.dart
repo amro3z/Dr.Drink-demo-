@@ -97,6 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
         log(user.toString()); // didnt loged
 
+        // await Future.delayed(const Duration(seconds: 3)); // loading screen here
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const CustomNavigationBar()),
@@ -220,7 +221,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (credential.user != null) {
 
-        // load user data to shared prefs
+        // need to be changed
+        ///
+        /// ////
+        /// ////
         _loadUserFromFirestoreAndStoreLocally();
         _loadHistoryFromFirestoreAndStoreLocally();
 

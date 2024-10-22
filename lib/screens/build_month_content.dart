@@ -26,135 +26,17 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
   Widget build(BuildContext context) {
     final scaleFactor = MediaQuery.of(context).textScaleFactor;
     final textHeadSize = scaleFactor * 20;
-    final containerHeight = MediaQuery.of(context).size.height * 0.5;
 
     return Container(
       color: MyColor.white,
       child: ListView(
-        padding: const EdgeInsets.all(16.0), // Add padding for better spacing
         children: [
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  MyIcon.leftArrow,
-                  Text(
-                    'This Month',
-                    style: TextStyle(
-                      color: MyColor.blue,
-                      fontFamily: 'Poppins',
-                      fontSize: textHeadSize,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  MyIcon.rightArrow,
-                ],
-              ),
-              const SizedBox(height: 25),
-              Container(
-                height: containerHeight,
-                decoration: ShapeDecoration(
-                  color: const Color(0xFF2A6CE6).withOpacity(0.04),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Total and Average row
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildConsumptionColumn('Total', _getTotalConsumption()),
-                            _buildConsumptionColumn('Average', _getAverageConsumption()),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      // BarChart
-                      Expanded(
-                        child: BarChart(
-                          BarChartData(
-                            alignment: BarChartAlignment.spaceAround,
-                            maxY: _getMaxYValue(),
-                            barGroups: _buildBarGroups(),
-                            gridData: FlGridData(
-                              show: true,
-                              horizontalInterval: (_getMaxYValue() / 4),
-                              getDrawingHorizontalLine: (value) => FlLine(
-                                color: Colors.grey.withOpacity(0.5),
-                                strokeWidth: 1,
-                              ),
-                            ),
-                            titlesData: FlTitlesData(
-                              topTitles: const AxisTitles(
-                                sideTitles: SideTitles(showTitles: false),
-                              ),
-                              rightTitles: const AxisTitles(
-                                sideTitles: SideTitles(showTitles: false),
-                              ),
-                              leftTitles: AxisTitles(
-                                axisNameWidget: Text(
-                                  unit!,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                sideTitles: SideTitles(
-                                  showTitles: true,
-                                  reservedSize: 40,
-                                  interval: (_getMaxYValue() / 4),
-                                  getTitlesWidget: (value, _) {
-                                    return Text(
-                                      unit == 'ml'
-                                          ? value.toInt().toString()
-                                          : value.toStringAsFixed(1),
-                                      style: const TextStyle(fontSize: 12),
-                                    );
-                                  },
-                                ),
-                              ),
-                              bottomTitles: AxisTitles(
-                                axisNameWidget: const Text(
-                                  'Day',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                sideTitles: SideTitles(
-                                  showTitles: true,
-                                  interval: 1,
-                                  getTitlesWidget: (value, _) {
-                                    // Display key days for better readability
-                                    if ([0, 4, 9, 14, 19, 24, 30].contains(value.toInt())) {
-                                      return Text(
-                                        (value + 1).toInt().toString(),
-                                        style: const TextStyle(fontSize: 12),
-                                      );
-                                    }
-                                    return const SizedBox();
-                                  },
-                                ),
-                              ),
-                            ),
-                            borderData: FlBorderData(show: false),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              SizedBox(height: 10),
+              _buildHeader(textHeadSize),
+              SizedBox(height: 25),
+              _buildChartContainer(textHeadSize),
             ],
           ),
         ],
@@ -162,9 +44,62 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
     );
   }
 
-  Column _buildConsumptionColumn(String title, String consumption) {
+  Widget _buildHeader(double textHeadSize) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        MyIcon.leftArrow,
+        Text(
+          'This Month',
+          style: TextStyle(
+            color: MyColor.blue,
+            fontFamily: 'Poppins',
+            fontSize: textHeadSize,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        MyIcon.rightArrow,
+      ],
+    );
+  }
+
+  Widget _buildChartContainer(double textHeadSize) {
+    return Container(
+      height: 450,
+      decoration: ShapeDecoration(
+        color: MyColor.blue.withOpacity(0.04),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildStatsRow(textHeadSize),
+            SizedBox(height: 10),
+            _buildBarChart(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatsRow(double textHeadSize) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildStatColumn('Total', '${_getTotalConsumption()} $unit', textHeadSize),
+          _buildStatColumn('Average', '${_getAverageConsumption()} $unit', textHeadSize),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatColumn(String title, String value, double textHeadSize) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           title,
@@ -172,19 +107,94 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
             color: MyColor.blue,
             fontFamily: 'Poppins',
             fontWeight: FontWeight.w600,
-            fontSize: 16,
+            fontSize: textHeadSize * 0.8,
           ),
         ),
         Text(
-          consumption,
+          value,
           style: TextStyle(
             color: MyColor.blue,
             fontFamily: 'Poppins',
             fontWeight: FontWeight.w400,
-            fontSize: 14,
+            fontSize: textHeadSize * 0.7,
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildBarChart() {
+    return Expanded(
+      child: BarChart(
+        BarChartData(
+          alignment: BarChartAlignment.spaceBetween,
+          maxY: _getMaxYValue(),
+          barGroups: _buildBarGroups(),
+          gridData: FlGridData(
+            show: true,
+            horizontalInterval: (_getMaxYValue() / 4),
+            getDrawingHorizontalLine: (value) => FlLine(
+              color: Colors.grey.withOpacity(0.5),
+              strokeWidth: 1,
+            ),
+            verticalInterval: 1,
+            getDrawingVerticalLine: (value) => FlLine(
+              color: Colors.transparent,
+              strokeWidth: 0,
+            ),
+          ),
+          titlesData: FlTitlesData(
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            leftTitles: AxisTitles(
+              axisNameWidget: Text(
+                '',
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 14, fontFamily: 'Poppins'),
+              ),
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 40,
+                interval: (_getMaxYValue() / 4),
+                getTitlesWidget: (value, _) {
+                  return Text(
+                    unit == 'ml'
+                        ? value.toInt().toString()
+                        : value.toStringAsFixed(1),
+                    style: const TextStyle(fontSize: 12),
+                  );
+                },
+              ),
+            ),
+            bottomTitles: AxisTitles(
+              axisNameWidget: const Text(
+                '',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 12),
+              ),
+              sideTitles: SideTitles(
+                showTitles: true,
+                interval: 1,
+                getTitlesWidget: (value, _) {
+                  // Display key days for better readability
+                  if ([0, 4, 9, 14, 19, 24, 30].contains(value.toInt())) {
+                    return Text(
+                      (value + 1).toInt().toString(),
+                      style: const TextStyle(fontSize: 12),
+                    );
+                  }
+                  return const SizedBox();
+                },
+              ),
+            ),
+          ),
+          borderData: FlBorderData(show: false),
+        ),
+      ),
     );
   }
 
@@ -201,8 +211,15 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
           barRods: [
             BarChartRodData(
               toY: value,
-              width: 16,
-              color: Colors.blue,
+              width: 6,
+              gradient: LinearGradient(
+                colors: [
+                  Colors.blue, // Top color
+                  Colors.blue.withOpacity(0.5), // Bottom color
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
               borderRadius: BorderRadius.circular(4),
             ),
           ],

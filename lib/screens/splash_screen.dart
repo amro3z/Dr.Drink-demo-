@@ -50,8 +50,8 @@ class _SplashScreenState extends State<SplashScreen> {
         } else {
           // User is authenticated, load their data from Firestore
           // this is important for syncing data between devices
-          await _loadUserFromFirestoreAndStoreLocally();
-          await _loadHistoryFromFirestoreAndStoreLocally();
+          _loadUserFromFirestoreAndStoreLocally();
+          _loadHistoryFromFirestoreAndStoreLocally();
 
         }
       });
@@ -69,6 +69,12 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!mounted) return; // Check if the widget is still in the tree
 
     if (isUserRegistered == true) {
+
+      // need to be changed
+      ///
+      /// ///
+      /// ////
+      /// ///
       _loadUserFromSharedPrefs();
       _loadHistoryFromSharedPrefs();
 

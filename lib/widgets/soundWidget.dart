@@ -1,4 +1,9 @@
-
+import 'package:dr_drink/values/color.dart';
+import 'package:dr_drink/values/color.dart';
+import 'package:dr_drink/values/color.dart';
+import 'package:dr_drink/values/color.dart';
+import 'package:dr_drink/values/color.dart';
+import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 
 class SoundSettingsContent extends StatefulWidget {
@@ -11,8 +16,6 @@ class SoundSettingsContent extends StatefulWidget {
 
 class _SoundSettingsContentState extends State<SoundSettingsContent> {
   String selectedSound = 'Default';
-  double volume = 0.5;
-  bool vibrationEnabled = true;
 
   @override
   Widget build(BuildContext context) {
@@ -28,17 +31,19 @@ class _SoundSettingsContentState extends State<SoundSettingsContent> {
           const SizedBox(height: 20),
           SwitchListTile(
             title: Text('Sound effect'),
-            value: vibrationEnabled,
+            value: true,
+            activeColor: MyColor.blue, // Change active switch color to blue
             onChanged: (bool value1) {
               setState(() {
-                vibrationEnabled = value1;
+                // Update switch state here
               });
             },
           ),
           RadioListTile<String>(
-            title: Text('Default'),
+            title: const Text('Default'),
             value: 'Default',
             groupValue: selectedSound,
+            activeColor: MyColor.blue, // Change radio button color to blue
             onChanged: (String? value) {
               setState(() {
                 selectedSound = value!;
@@ -49,6 +54,7 @@ class _SoundSettingsContentState extends State<SoundSettingsContent> {
             title: Text('Water 1'),
             value: 'Water drop 1',
             groupValue: selectedSound,
+            activeColor: MyColor.blue, // Change radio button color to blue
             onChanged: (String? value) {
               setState(() {
                 selectedSound = value!;
@@ -59,6 +65,7 @@ class _SoundSettingsContentState extends State<SoundSettingsContent> {
             title: Text('Water 2'),
             value: 'Water drop 2',
             groupValue: selectedSound,
+            activeColor: MyColor.blue, // Change radio button color to blue
             onChanged: (String? value) {
               setState(() {
                 selectedSound = value!;
@@ -69,19 +76,31 @@ class _SoundSettingsContentState extends State<SoundSettingsContent> {
             title: Text('Water 3'),
             value: 'Water 3',
             groupValue: selectedSound,
+            activeColor: MyColor.blue, // Change radio button color to blue
             onChanged: (String? value) {
               setState(() {
                 selectedSound = value!;
               });
             },
           ),
-
           SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('Done'),
+          Align(
+            alignment: Alignment.centerRight, // Align the button to the right
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                backgroundColor: MyColor.blue, // Button background color
+              ),
+              child: Text(
+                'Done',
+                style: TextStyle(
+                  color: Colors.white, // Button text color to white
+                ),
+              ),
+            ),
           ),
         ],
       ),
