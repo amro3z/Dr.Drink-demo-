@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../componnent/record_card.dart';
 import '../logic/history.dart';
+import '../logic/profile.dart';
 import '../logic/user.dart';
 
 class WaterIntakeScreen extends StatefulWidget {
@@ -25,6 +26,7 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
   DateTime? recordedTime;
   final MyUser _user = MyUser.instance;
   final History _history = History.instance;
+  final Profile _profile = Profile.instance;
 
   void _onDragUpdate(DragUpdateDetails details) {
     setState(() {
@@ -82,12 +84,15 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
     _history.addRecord(record, '$hours:$minutes ${recordedTime!.hour > 12 ? 'PM' : 'AM'}');
     _history.addHourlyConsumption(recordedTime!.hour, record);
     _history.addWeeklyConsumption(recordedTime!.weekday, record);
-    _history.addMonthlyConsumption(recordedTime!.day, record);
+    _history.addMonthlyConsumption(recordedTime!.day - 1, record);
+    _profile.addAmount(record);
 
     _saveUserToSharedPrefs(_user);
     _saveUserToFirestore(_user);
     _saveHistoryToSharedPrefs(_history);
     _saveHistoryToFirestore(_history);
+    // saveProfile
+    // saveProfile
     setState(() {});
     log('Water intake records: ${_history.records.toString()}');
 
@@ -131,7 +136,7 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
-                    'History',
+                    'Records',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

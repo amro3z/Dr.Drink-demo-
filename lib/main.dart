@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dr_drink/screens/insights_data.dart';
 import 'package:dr_drink/screens/insights_screen.dart';
 import 'package:dr_drink/screens/splash_screen.dart';
@@ -13,7 +15,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LocalNotificationService.init();
 
-
   try {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
@@ -21,9 +22,9 @@ void main() async {
             appId: '1:710563306562:android:d894e4e55beb2b6c5fe1db',
             messagingSenderId: '710563306562',
             projectId: 'drink-daily-app'));
-    print('Firebase successfully connected!');
+    log('Firebase successfully connected!');
   } catch (e) {
-    print('Firebase connection error: $e');
+    log('Firebase connection error: $e');
   }
 
   runApp(const Main());
@@ -39,13 +40,14 @@ class Main extends StatefulWidget {
 class _MainState extends State<Main> {
   @override
   void initState() {
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user == null) {
-        print('User is currently signed out!');
-      } else {
-        print('User is signed in!');
-      }
-    });
+    super.initState();
+    // FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    //   if (user == null) {
+    //     print('User is currently signed out!');
+    //   } else {
+    //     print('User is signed in!');
+    //   }
+    // });
   }
 
   @override

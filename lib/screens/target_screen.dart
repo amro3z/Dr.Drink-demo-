@@ -324,6 +324,10 @@ class _TargetScreenState extends State<TargetScreen> {
                 child: Center(
                   child: GestureDetector(
                     onTap: (){
+                      // need to be changed as they take time which make the navigation to home slow
+                      //
+                      ///
+                      /// //
                       _saveUserToSharedPrefs(_user!);
                       _saveUserToFirestore(_user!);
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CustomNavigationBar()));
