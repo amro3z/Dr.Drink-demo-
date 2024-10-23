@@ -44,27 +44,27 @@ class _WaterTrackerState extends State<WaterTracker> {
               painter: SemiCircleProgressPainter(progress),
             ),
             // Centered text inside the semi-circle
-            Column(
+            const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   '1500/3000ml',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 8),
-                const Text(
+                SizedBox(height: 8),
+                Text(
                   'Daily Drink Target',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.black54,
                   ),
                 ),
-                const SizedBox(height: 4),
-                const Text(
+                SizedBox(height: 4),
+                Text(
                   '200ml',
                   style: TextStyle(
                     fontSize: 18,
@@ -130,11 +130,4 @@ class SemiCircleProgressPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true; // Always repaint for simplicity
   }
-}
-
-void main() {
-  runApp(const MaterialApp(
-    home: WaterTracker(),
-    debugShowCheckedModeBanner: false,
-  ));
 }

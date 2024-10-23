@@ -1,3 +1,4 @@
+import 'package:dr_drink/values/color.dart';
 import 'package:dr_drink/widgets/dataWidget.dart';
 import 'package:flutter/material.dart';
 
@@ -6,6 +7,8 @@ class WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -20,38 +23,38 @@ class WelcomePage extends StatelessWidget {
             },
             child: Image.asset(
               "assets/image/go.png",
-              width: 40,
-              height: 40,
+              width: screenWidth * 0.09,
+              height: screenWidth * 0.09,
             ),
           )
         ],
       ),
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Spacer(
+            const Spacer(
               flex: 1,
             ),
-            Image(
+            const Image(
               image: AssetImage(
                 "assets/image/bot 1.png",
               ),
             ),
             SizedBox(
-              height: 20,
+              height: screenHeight * 0.02,
             ),
             Text(
               "Hello,",
               style: TextStyle(
-                  fontSize: 27,
+                  fontSize: screenWidth * 0.065,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Poppins'),
             ),
             Text(
               "welcome to your smart water",
               style: TextStyle(
-                fontSize: 27,
+                fontSize: screenWidth * 0.06,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.bold,
               ),
@@ -59,7 +62,7 @@ class WelcomePage extends StatelessWidget {
             Text(
               "reminder",
               style: TextStyle(
-                fontSize: 25,
+                fontSize: screenWidth * 0.06,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.bold,
               ),
@@ -67,7 +70,7 @@ class WelcomePage extends StatelessWidget {
             Text(
               "Here comes a few simple questions before we can",
               style: TextStyle(
-                fontSize: 15,
+                fontSize: screenWidth * 0.035,
                 fontFamily: 'Poppins',
               ),
             ),
@@ -77,9 +80,9 @@ class WelcomePage extends StatelessWidget {
                 Text(
                   "personalize",
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: screenWidth * 0.035,
                     fontFamily: 'Poppins',
-                    color: Colors.blue,
+                    color: MyColor.blue,
                   ),
                 ),
                 Padding(
@@ -87,7 +90,7 @@ class WelcomePage extends StatelessWidget {
                   child: Text(
                     "your daily",
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: screenWidth * 0.035,
                       fontFamily: 'Poppins',
                     ),
                   ),
@@ -97,15 +100,15 @@ class WelcomePage extends StatelessWidget {
                   child: Text(
                     "goal schedule",
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: screenWidth * 0.035,
                       fontFamily: 'Poppins',
-                      color: Colors.blue,
+                      color: MyColor.blue,
                     ),
                   ),
                 ),
               ],
             ),
-            Spacer(
+            const Spacer(
               flex: 2,
             ),
           ],

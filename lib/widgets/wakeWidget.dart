@@ -42,13 +42,16 @@ class _WakewidgetState extends State<Wakewidget> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
         child: Column(
           children: [
-            const Padding(
-              padding: EdgeInsets.only(top: 30, left: 10),
+            Padding(
+              padding: EdgeInsets.only(
+                  top: screenHeight * 0.035, left: screenWidth * 0.025),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -56,13 +59,13 @@ class _WakewidgetState extends State<Wakewidget> {
                   style: TextStyle(
                     fontFamily: "Poppins",
                     fontWeight: FontWeight.bold,
-                    fontSize: 27,
+                    fontSize: screenWidth * 0.065,
                   ),
                 ),
               ),
             ),
-            const SizedBox(
-              height: 200,
+            SizedBox(
+              height: screenHeight * 0.22,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -70,7 +73,7 @@ class _WakewidgetState extends State<Wakewidget> {
               children: [
                 // Wheel for hours (12-hour format)
                 TimeWheel(
-                  height: 400,
+                  height: screenHeight * 0.45,
                   controller: hourController, // استخدم المتحكم
                   selectedItem: Wakewidget.selectedHour,
                   start: 1,
@@ -82,12 +85,12 @@ class _WakewidgetState extends State<Wakewidget> {
                   },
                 ),
                 // Separator
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
                     ":",
                     style: TextStyle(
-                      fontSize: 40,
+                      fontSize: screenWidth * 0.15,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
@@ -95,7 +98,7 @@ class _WakewidgetState extends State<Wakewidget> {
                 ),
                 // Wheel for minutes
                 TimeWheel(
-                  height: 400,
+                  height: screenHeight * 0.45,
                   controller: minuteController, // استخدم المتحكم
                   selectedItem: Wakewidget.selectedMinute,
                   start: 0,
@@ -109,7 +112,7 @@ class _WakewidgetState extends State<Wakewidget> {
                 ),
                 // Wheel for AM/PM
                 AmPmWheel(
-                  height: 200,
+                  height: screenHeight * 0.22,
                   controller: periodController, // استخدم المتحكم
                   selectedItem: Wakewidget.selectedPeriod,
                   onSelectedItemChanged: (selected) {
