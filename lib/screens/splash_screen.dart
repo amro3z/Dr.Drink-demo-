@@ -25,8 +25,16 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-
+    listenToNotificationStream();
     checkCredentials();
+  }
+
+  void listenToNotificationStream(){
+    LocalNotificationService.streamController.stream.listen( (notificationResponse)
+    {
+      log(notificationResponse.payload!.toString());
+    },
+    );
   }
 
   Future<void> checkCredentials() async {
@@ -36,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
       _checkUserAuthLocaly();
     } else {
       log('****************************online');
-      Future.delayed(const Duration(seconds: 3), () async { // added async
+      Future.delayed(const Duration(seconds: 1), () async { // added async
         if (FirebaseAuth.instance.currentUser == null) {
           Navigator.pushReplacement(
             context,
@@ -51,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   // Check if the user has already entered their data
   Future<void> _checkUserAuthLocaly() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 1));
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     bool? isUserRegistered = prefs.getBool('isUserRegistered');
@@ -131,6 +139,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final logoWidth = screenWidth * 0.5;

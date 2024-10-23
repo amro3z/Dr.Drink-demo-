@@ -14,6 +14,7 @@ import 'package:dr_drink/logic/notifications.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await LocalNotificationService.init();
 
   try {
     await Firebase.initializeApp(
@@ -52,7 +53,6 @@ class _MainState extends State<Main> {
 
   @override
   Widget build(BuildContext context) {
-    LocalNotificationService.init();
 
     return BlocProvider(
       create: (context) =>
