@@ -10,11 +10,16 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import '../cubits/weather_cubit/weather_cubit.dart';
+import '../cubits/weather_cubit/weather_states.dart';
 import '../logic/notifications.dart';
 import '../logic/user.dart';
+import '../tips/ai.dart';
 
 
 class SplashScreen extends StatefulWidget {
+  static List<String> tips = [];
+
   const SplashScreen({super.key});
 
   @override
@@ -22,11 +27,46 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  late final WeatherCubit weatherCubit;
+  late final TipService tipService; // يجب تهيئة TipService بعد تهيئة weatherCubit
   @override
   void initState() {
     super.initState();
     listenToNotificationStream();
     checkCredentials();
+
+    weatherCubit = WeatherCubit();
+
+    // تهيئة TipService بعد تهيئة weatherCubit
+    tipService = TipService(weatherCubit: weatherCubit);
+
+    weatherCubit.getWeather(); // جلب حالة الطقس
+
+    // إضافة مستمع لتحميل بيانات الطقس قبل استدعاء fetchTipsFromService
+    weatherCubit.stream.listen((state) {
+      if (state is WeatherLoadedState) {
+        fetchTipsFromService(); // جلب النصائح بعد تحميل الطقس
+      }
+    });
+  }
+
+
+  Future<void> fetchTipsFromService() async {
+    try {
+      List<String> fetchedTips = await tipService.fetchTips();
+
+      setState(() {
+        SplashScreen.tips = fetchedTips;
+      });
+
+      // if (fetchedTips.isNotEmpty) {
+      //   Future.delayed(const Duration(seconds: 1), () {
+      //     TipDisplay.showTipBottomSheet(context, fetchedTips[0]);
+      //   });
+      // }
+    } catch (e) {
+      log('Error in fetching tips from service: $e'); // تسجيل أي خطأ يحدث هنا
+    }
   }
 
   void listenToNotificationStream(){

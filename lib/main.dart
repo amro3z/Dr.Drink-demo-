@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dr_drink/screens/insights_data.dart';
 import 'package:dr_drink/screens/insights_screen.dart';
 import 'package:dr_drink/screens/splash_screen.dart';
+import 'package:dr_drink/widgets/genderWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -59,7 +60,7 @@ class _MainState extends State<Main> {
           WeatherCubit()..getWeather(), // تأكد من استدعاء getWeather هنا
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: SplashScreen(),
+        home: GenderWidget(),
       ),
     );
   }

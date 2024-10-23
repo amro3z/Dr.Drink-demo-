@@ -41,6 +41,7 @@ class _GenderWidgetState extends State<GenderWidget> {
               height: screenHeight * 0.22,
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 AnimatedGender(
                     path: "assets/image/man.png",
@@ -53,6 +54,7 @@ class _GenderWidgetState extends State<GenderWidget> {
                         GenderWidget.gender = "Male";
                       });
                     }),
+                SizedBox(width: screenWidth*0.1,),
                 AnimatedGender(
                     path: "assets/image/Female.png",
                     text: "Female",

@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:dr_drink/cubits/weather_cubit/weather_cubit.dart';
 import 'package:dr_drink/cubits/weather_cubit/weather_states.dart';
+import 'package:dr_drink/screens/splash_screen.dart';
 import 'package:dr_drink/screens/water_intake.dart';
 import 'package:dr_drink/tips/ai.dart';
 import 'package:dr_drink/tips/tip_screen.dart';
@@ -23,54 +24,45 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
   int _totalWaterConsumed = 0;
   double _progress = 0.0;
   String _unit = 'ml';
+  List<String> tips = []; // Store tips here
+  late final TipService tipService;
   late final WeatherCubit weatherCubit;
-  late final TipService
-      tipService; // يجب تهيئة TipService بعد تهيئة weatherCubit
-  List<String> tips = [];
 
   @override
   void initState() {
     super.initState();
-    // Tracker tracker = Tracker(cupSize: 200, totalWaterGoal: user.calculateWaterGoal());
     _updateWaterConsumed();
     weatherCubit = WeatherCubit();
-
-    // تهيئة TipService بعد تهيئة weatherCubit
     tipService = TipService(weatherCubit: weatherCubit);
 
-    weatherCubit.getWeather(); // جلب حالة الطقس
-
-    // إضافة مستمع لتحميل بيانات الطقس قبل استدعاء fetchTipsFromService
+    // Fetch weather and use it to load tips
+    weatherCubit.getWeather();
     weatherCubit.stream.listen((state) {
       if (state is WeatherLoadedState) {
-        fetchTipsFromService(); // جلب النصائح بعد تحميل الطقس
+        fetchTips(); // Fetch tips when weather data is loaded
       }
     });
   }
 
-  Future<void> fetchTipsFromService() async {
+  // Function to fetch tips from the service
+  Future<void> fetchTips() async {
     try {
       List<String> fetchedTips = await tipService.fetchTips();
-
       setState(() {
-        tips = fetchedTips;
+        tips = fetchedTips; // Update the tips list
       });
-
-      if (fetchedTips.isNotEmpty) {
-        Future.delayed(const Duration(seconds: 1), () {
-          TipDisplay.showTipBottomSheet(context, fetchedTips[0]);
-        });
-      }
     } catch (e) {
-      log('Error in fetching tips from service: $e'); // تسجيل أي خطأ يحدث هنا
+      log('Error fetching tips: $e');
+      setState(() {
+        tips = ['Error fetching tips. Stay hydrated!']; // Error fallback
+      });
     }
   }
 
-  // Function to update the consumed water when coming back
+  // Function to update the consumed water when returning to the screen
   void _updateWaterConsumed() {
     setState(() {
       log(_user.toMap().toString());
-      // Refreshing the total water consumed value
       _totalWaterGoal = _user.tracker.totalWaterGoal!;
       _totalWaterConsumed = _user.tracker.totalWaterConsumed;
       _progress = _user.tracker.getProgress();
@@ -78,6 +70,7 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
     });
   }
 
+  // Helper methods to format water consumption and goals
   String getWaterConsumed() {
     return _unit == 'ml'
         ? '$_totalWaterConsumed'
@@ -103,8 +96,9 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
           children: [
             Padding(
               padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth * 0.05,
-                  vertical: screenHeight * 0.03),
+                horizontal: screenWidth * 0.05,
+                vertical: screenHeight * 0.03,
+              ),
               child: Column(
                 children: [
                   SizedBox(height: screenHeight * 0.02),
@@ -117,7 +111,7 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
                     ),
                     child: Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                      EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -128,7 +122,7 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
                           SizedBox(width: screenWidth * 0.05),
                           Flexible(
                             child: Text(
-                              'Drinking enough water\nboosts energy levels!',
+                              tips.isNotEmpty ? tips[0] : 'Loading tips...',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontFamily: 'Poppins',
