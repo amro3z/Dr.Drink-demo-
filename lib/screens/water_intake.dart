@@ -1,13 +1,17 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dr_drink/screens/splash_screen.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../component/record_card.dart';
+import '../cubits/weather_cubit/weather_cubit.dart';
+import '../cubits/weather_cubit/weather_states.dart';
 import '../logic/history.dart';
 import '../logic/user.dart';
+import '../tips/ai.dart';
 
 class WaterIntakeScreen extends StatefulWidget {
   @override
@@ -21,6 +25,43 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
   double waterLevel = 50;
   DateTime? recordedTime;
   final MyUser _user = MyUser.instance;
+
+  List<String> tips = []; // Store tips here
+  late final TipService tipService;
+  late final WeatherCubit weatherCubit;
+
+  @override
+  void initState() {
+    unit = _user.profile.unit ?? 'ml';
+
+    weatherCubit = WeatherCubit();
+    tipService = TipService(weatherCubit: weatherCubit);
+
+    // Fetch weather and use it to load tips
+    weatherCubit.getWeather();
+    weatherCubit.stream.listen((state) {
+      if (state is WeatherLoadedState) {
+        fetchTips(); // Fetch tips when weather data is loaded
+      }
+    });
+  }
+
+  // Function to fetch tips from the service
+  Future<void> fetchTips() async {
+    try {
+      List<String> fetchedTips = await tipService.fetchTips();
+      setState(() {
+        tips = fetchedTips; // Update the tips list
+      });
+    } catch (e) {
+      log('Error fetching tips: $e');
+      setState(() {
+        tips = ['Error fetching tips. Stay hydrated!']; // Error fallback
+      });
+    }
+  }
+
+
 
   void _onDragUpdate(DragUpdateDetails details) {
     setState(() {
@@ -81,36 +122,30 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
     return unit == 'ml' ? '${(waterLevel * 2).toInt()} ml' : '${(waterLevel * 0.002).toStringAsFixed(2)} L';
   }
 
-  @override
-  void initState() {
-    super.initState();
-    unit = _user.profile.unit ?? 'ml';
-  }
-
   void _showRecordsBottomSheet() {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
+      isScrollControlled: true, // Allows the BottomSheet to adjust height properly
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       backgroundColor: MyColor.white,
       builder: (BuildContext context) {
         return DraggableScrollableSheet(
-          expand: false,
-          initialChildSize: 0.3,
-          maxChildSize: 0.4,
-          minChildSize: 0.2,
+          expand: false, // Allows the sheet to be draggable
+          initialChildSize: 0.4, // Start with 40% of the screen height
+          maxChildSize: 0.8, // Can be dragged to 80% of the screen height
+          minChildSize: 0.3, // Minimum height when minimized
           builder: (context, scrollController) {
             return Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     'Records',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Poppins',
                     ),
@@ -118,12 +153,11 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
                   const SizedBox(height: 10),
                   Expanded(
                     child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      controller: scrollController,
+                      controller: scrollController, // Attach scroll controller
                       itemCount: _user.history.records.length,
                       itemBuilder: (context, index) {
                         return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          padding: const EdgeInsets.symmetric(vertical: 8),
                           child: RecordCard(
                             quantity: _user.history.records[index],
                             time: _user.history.recordedTimes[index],
@@ -172,7 +206,8 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
                     SizedBox(width: screenWidth * 0.05),
                     Flexible(
                       child: Text(
-                        'Staying hydrated helps\nimprove focus and concentration!',
+                        tips.isNotEmpty ? tips[0] : 'Loading tips...',
+
                         style: TextStyle(
                             color: Colors.black,
                             fontFamily: 'Poppins',
