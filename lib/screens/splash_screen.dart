@@ -69,11 +69,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (isUserRegistered == true) {
 
-      // need to be changed
-      ///
-      /// ///
-      /// ////
-      /// ///
       await _loadUserFromSharedPrefs();
 
       // If user data exists, navigate to the TargetScreen (home screen)

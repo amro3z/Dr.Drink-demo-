@@ -1,7 +1,5 @@
-
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_drink/screens/reminder_screen.dart';
 import 'package:dr_drink/values/color.dart';
@@ -11,17 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../logic/user.dart';
 import 'login_screen.dart';
-// import 'function_profile.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
-
 }
 
 Future<void> _saveUserToSharedPrefs(MyUser user) async {
@@ -737,7 +732,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // ignore: non_constant_identifier_names
   void gender_dialog(BuildContext context) {
     // List of genders
     final genders = ["Male", "Female"];
@@ -799,8 +793,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-
-  // ignore: non_constant_identifier_names
   void weight_dialog(BuildContext context) {
     // Initialize the range for weight (from 40 to 200)
     const int minWeight = 40;
