@@ -36,7 +36,6 @@ class Storage {
     if (isUserRegistered == true) {
       // Load user and history from shared prefs
       await _loadUserFromSharedPrefs();
-      await _loadHistoryFromSharedPrefs();
       return true; // User data exists
     } else {
       return false; // User data does not exist
@@ -62,7 +61,7 @@ class Storage {
         await prefs.setBool('isUserRegistered', true);
 
         MyUser user = MyUser.fromMap(userData);
-        user.tracker.calculateWaterGoal(user.weight);
+        user.tracker.calculateWaterGoal(user.data.weight!);
 
         log(user.toString());
         return true; // User data loaded successfully
@@ -75,34 +74,6 @@ class Storage {
     }
   }
 
-  // Load history from Firestore
-  Future<void> loadHistoryFromFirestoreAndStoreLocally() async {
-    try {
-      String userId = FirebaseAuth.instance.currentUser!.uid;
-      log(userId);
-
-      // Reference to the user's document in Firestore
-      final historyDoc = FirebaseFirestore.instance.collection('history').doc(userId);
-
-      // Fetch history data from Firestore
-      DocumentSnapshot<Map<String, dynamic>> snapshot = await historyDoc.get();
-      log('second here');
-      if (snapshot.exists) {
-        Map<String, dynamic> historyData = snapshot.data()!;
-        log(json.encode(historyData));
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString("history", json.encode(historyData));
-
-        History history = History.fromMap(historyData);
-        log(history.toString());
-      } else {
-        log('No history data found');
-      }
-    } catch (e) {
-      log('Error loading history from Firestore: $e');
-    }
-  }
-
   // Load user from shared prefs
   Future<void> _loadUserFromSharedPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -110,10 +81,22 @@ class Storage {
     log("User loaded from shared prefs");
   }
 
-  // Load history from shared prefs
-  Future<void> _loadHistoryFromSharedPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    History history = History.fromMap(json.decode(prefs.getString('history')!));
-    log("History loaded from shared prefs");
+  Future<void> saveUserToFirestore(MyUser user) async {
+    try {
+      final userCollection = FirebaseFirestore.instance.collection('users');
+      String userId = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+
+      await userCollection.doc(userId).set(user.toMap());
+
+      log('User saved to Firestore successfully.');
+    } catch (e) {
+      log('Failed to save user to Firestore: $e');
+    }
   }
+
+  Future<void> saveUserToSharedPrefs(MyUser user) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user', json.encode(user.toMap()));
+  }
+
 }

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_drink/screens/sign_up_screen.dart';
@@ -10,13 +9,19 @@ import 'package:flutter/material.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../componnent/navigation_bar.dart';
-import '../logic/history.dart';
+import '../component/navigation_bar.dart';
+import '../logic/account.dart';
 import '../logic/user.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  static Future<void> saveAccount(String name, String email, String url) async {
+    Account account = Account(email: email, userName: name, photoURL: url);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("account", json.encode(account.toMap()));
+  }
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -59,8 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await FirebaseAuth.instance.signInWithCredential(credential);
 
       if (userCredential.user != null) {
-        _loadUserFromFirestoreAndStoreLocally();
-        _loadHistoryFromFirestoreAndStoreLocally();
+        await _loadUserFromFirestoreAndStoreLocally();
       }
     } catch (e) {
       AwesomeDialog(
@@ -93,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await prefs.setBool('isUserRegistered', true);
 
         MyUser user = MyUser.fromMap(userData);
-        user.tracker.calculateWaterGoal(user.weight);
+        user.tracker.calculateWaterGoal(user.data.weight!);
 
         log(user.toString()); // didnt loged
 
@@ -103,6 +107,11 @@ class _LoginScreenState extends State<LoginScreen> {
           MaterialPageRoute(builder: (context) => const CustomNavigationBar()),
         );
       } else {
+        LoginScreen.saveAccount(
+            FirebaseAuth.instance.currentUser!.displayName ?? 'User',
+            FirebaseAuth.instance.currentUser!.email ?? 'test@gmail.com',
+            FirebaseAuth.instance.currentUser!.photoURL ?? ''
+        );
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const WelcomePage()),
@@ -110,35 +119,6 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       log('Error loading user from Firestore: $e');
-    }
-  }
-
-  // load history from firestore
-  Future<void> _loadHistoryFromFirestoreAndStoreLocally() async {
-    try {
-      // Get the authenticated user's ID
-      String userId = FirebaseAuth.instance.currentUser!.uid;
-      log(userId);
-
-      // Reference to the user's document in Firestore
-      final historyDoc = FirebaseFirestore.instance.collection('history').doc(userId);
-
-      // Fetch user data from Firestore
-      DocumentSnapshot<Map<String, dynamic>> snapshot = await historyDoc.get();
-      log('second here');
-      if (snapshot.exists) {
-        Map<String, dynamic> historyData = snapshot.data()!;
-        log(json.encode(historyData));
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString("history", json.encode(historyData));
-
-        History history = History.fromMap(historyData);
-        log(history.toString()); // didnt loged
-      } else {
-        log('No history data found');
-      }
-    } catch (e) {
-      log('Error loading history from Firestore: $e');
     }
   }
 
@@ -225,8 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ///
         /// ////
         /// ////
-        _loadUserFromFirestoreAndStoreLocally();
-        _loadHistoryFromFirestoreAndStoreLocally();
+        await _loadUserFromFirestoreAndStoreLocally();
 
         Navigator.pushReplacement(
           context,
@@ -460,14 +439,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             width: 24,
                             height: 24,
                           ),
-                          SizedBox(width: screenWidth * 0.03),
+                          SizedBox(width: screenWidth * 0.04),
                           const Text(
                             'Login with Google',
                             style: TextStyle(
                                 fontFamily: 'Poppins',
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16),
+                                fontSize: 12),
                           ),
                         ],
                       ),

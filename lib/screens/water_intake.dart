@@ -1,16 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../componnent/record_card.dart';
+import '../component/record_card.dart';
 import '../logic/history.dart';
-import '../logic/profile.dart';
 import '../logic/user.dart';
 
 class WaterIntakeScreen extends StatefulWidget {
@@ -25,8 +21,6 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
   double waterLevel = 50;
   DateTime? recordedTime;
   final MyUser _user = MyUser.instance;
-  final History _history = History.instance;
-  final Profile _profile = Profile.instance;
 
   void _onDragUpdate(DragUpdateDetails details) {
     setState(() {
@@ -53,24 +47,6 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
     }
   }
 
-  Future<void> _saveHistoryToSharedPrefs(History history) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('history', json.encode(history.toMap()));
-  }
-
-  Future<void> _saveHistoryToFirestore(History history) async {
-    try {
-      final historyCollection = FirebaseFirestore.instance.collection('history');
-      String userId = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
-
-      await historyCollection.doc(userId).set(history.toMap());
-
-      log('History saved to Firestore successfully.');
-    } catch (e) {
-      log('Failed to save history to Firestore: $e');
-    }
-  }
-
   void _storeRecord() {
     recordedTime = DateTime.now();
     int hours = recordedTime!.hour > 12 ? recordedTime!.hour - 12 : recordedTime!.hour;
@@ -81,20 +57,16 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
 
     int record = unit == 'ml' ? (waterLevel * 2).truncate() : (waterLevel * 0.2).truncate() * 10;
     _user.tracker.drink(record);
-    _history.addRecord(record, '$hours:$minutes ${recordedTime!.hour > 12 ? 'PM' : 'AM'}');
-    _history.addHourlyConsumption(recordedTime!.hour, record);
-    _history.addWeeklyConsumption(recordedTime!.weekday, record);
-    _history.addMonthlyConsumption(recordedTime!.day - 1, record);
-    _profile.addAmount(record);
+    _user.history.addRecord(record, '$hours:$minutes ${recordedTime!.hour > 12 ? 'PM' : 'AM'}');
+    _user.history.addHourlyConsumption(recordedTime!.hour, record);
+    _user.history.addWeeklyConsumption(recordedTime!.weekday, record);
+    _user.history.addMonthlyConsumption(recordedTime!.day - 1, record);
+    _user.profile.addAmount(record);
 
     _saveUserToSharedPrefs(_user);
     _saveUserToFirestore(_user);
-    _saveHistoryToSharedPrefs(_history);
-    _saveHistoryToFirestore(_history);
-    // saveProfile
-    // saveProfile
     setState(() {});
-    log('Water intake records: ${_history.records.toString()}');
+    log('Water intake records: ${_user.history.records.toString()}');
 
     // ScaffoldMessenger.of(context).showSnackBar(
     //   SnackBar(
@@ -112,7 +84,7 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
   @override
   void initState() {
     super.initState();
-    unit = _user.unit ?? 'ml';
+    unit = _user.profile.unit ?? 'ml';
   }
 
   void _showRecordsBottomSheet() {
@@ -126,7 +98,7 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
       builder: (BuildContext context) {
         return DraggableScrollableSheet(
           expand: false,
-          initialChildSize: 0.25,
+          initialChildSize: 0.3,
           maxChildSize: 0.4,
           minChildSize: 0.2,
           builder: (context, scrollController) {
@@ -148,13 +120,13 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       controller: scrollController,
-                      itemCount: _history.records.length,
+                      itemCount: _user.history.records.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           child: RecordCard(
-                            quantity: _history.records[index],
-                            time: _history.recordedTimes[index],
+                            quantity: _user.history.records[index],
+                            time: _user.history.recordedTimes[index],
                           ),
                         );
                       },
@@ -198,13 +170,13 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
                       width: screenWidth * 0.13,
                     ),
                     SizedBox(width: screenWidth * 0.05),
-                    const Flexible(
+                    Flexible(
                       child: Text(
                         'Staying hydrated helps\nimprove focus and concentration!',
                         style: TextStyle(
                             color: Colors.black,
                             fontFamily: 'Poppins',
-                            fontSize: 22,
+                            fontSize: screenWidth * 0.05,
                             fontWeight: FontWeight.w500),
                       ),
                     ),

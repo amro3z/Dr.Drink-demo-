@@ -41,7 +41,7 @@ class _SoundSettingsContentState extends State<SoundSettingsContent> {
           ),
           RadioListTile<String>(
             title: const Text('Default'),
-            value: 'Default',
+            value: '',
             groupValue: selectedSound,
             activeColor: MyColor.blue, // Change radio button color to blue
             onChanged: (String? value) {
@@ -51,8 +51,8 @@ class _SoundSettingsContentState extends State<SoundSettingsContent> {
             },
           ),
           RadioListTile<String>(
-            title: Text('Water 1'),
-            value: 'Water drop 1',
+            title: Text('Water drop'),
+            value: 'water-drop',
             groupValue: selectedSound,
             activeColor: MyColor.blue, // Change radio button color to blue
             onChanged: (String? value) {
@@ -62,8 +62,8 @@ class _SoundSettingsContentState extends State<SoundSettingsContent> {
             },
           ),
           RadioListTile<String>(
-            title: Text('Water 2'),
-            value: 'Water drop 2',
+            title: Text('Water bubble'),
+            value: 'water-bubble',
             groupValue: selectedSound,
             activeColor: MyColor.blue, // Change radio button color to blue
             onChanged: (String? value) {
@@ -73,8 +73,8 @@ class _SoundSettingsContentState extends State<SoundSettingsContent> {
             },
           ),
           RadioListTile<String>(
-            title: Text('Water 3'),
-            value: 'Water 3',
+            title: Text('Water pouring'),
+            value: 'water-pouring',
             groupValue: selectedSound,
             activeColor: MyColor.blue, // Change radio button color to blue
             onChanged: (String? value) {

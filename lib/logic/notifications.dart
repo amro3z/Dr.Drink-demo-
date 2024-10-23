@@ -41,15 +41,16 @@ class LocalNotificationService {
       importance: Importance.max,
       priority: Priority.high,
       ticker: 'ticker',
+      sound: RawResourceAndroidNotificationSound('water_drop'),
     );
     NotificationDetails details = const NotificationDetails(
       android: android,
     );
     await flutterLocalNotificationsPlugin.periodicallyShow(
       1,
-      'Water Reminder',
+      'Drink Daily',
       'Time to drink water! Stay hydrated 💧',
-      RepeatInterval.hourly,
+      RepeatInterval.everyMinute,
       details,
       payload: "Payload Data",
     );

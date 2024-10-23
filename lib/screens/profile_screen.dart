@@ -1,12 +1,14 @@
 
+import 'dart:convert';
 import 'dart:developer';
 
-import 'package:dr_drink/logic/profile.dart';
-import 'package:dr_drink/screens/reminder.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dr_drink/screens/reminder_screen.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:dr_drink/widgets/soundWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,10 +24,27 @@ class ProfilePage extends StatefulWidget {
 
 }
 
+Future<void> _saveUserToSharedPrefs(MyUser user) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('user', json.encode(user.toMap()));
+}
+
+Future<void> _saveUserToFirestore(MyUser user) async {
+  try {
+    final userCollection = FirebaseFirestore.instance.collection('users');
+    String userId = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
+
+    await userCollection.doc(userId).set(user.toMap());
+
+    log('User saved to Firestore successfully.');
+  } catch (e) {
+    log('Failed to save user to Firestore: $e');
+  }
+}
+
 class _ProfilePageState extends State<ProfilePage> {
   // late VoidCallback toggleTheme;
   final MyUser _user = MyUser.instance;
-  final Profile _profile = Profile.instance;
   String selectedSound = 'Water drop 2';
   late TextEditingController _passwordController;
   final TextEditingController _goalController = TextEditingController();
@@ -42,7 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               GestureDetector(
                 onTap: (){
-                  account_dialog(context);
+                  accountDialog(context);
                 },
                 child: Column(
                   children: [
@@ -50,9 +69,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       radius: 30,
                       backgroundColor: const Color(0xFF6690DE),
                       backgroundImage: NetworkImage(
-                        FirebaseAuth.instance.currentUser?.photoURL ?? '',
+                        _user.account.photoURL,
                       ),
-                      child: FirebaseAuth.instance.currentUser?.photoURL == null
+                      child: _user.account.photoURL == ''
                           ? const Icon(Icons.person, color: MyColor.blue, size: 35)
                           : null, // Show the photo if it exists, otherwise show the icon
                     ),
@@ -62,7 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(FirebaseAuth.instance.currentUser?.email ?? 'No Email',style:const TextStyle(color:Colors.white)),
+                        Text(_user.account.email ?? 'No Email',style:const TextStyle(color:Colors.white)),
                         const Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
                       ],
                     ),
@@ -87,8 +106,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text('${_profile.totalAmount}',style:TextStyle(color:Colors.white,fontSize:25)),
-                              Text(' ${_user.unit}',style:TextStyle(color:Colors.white)),
+                              Text('${_user.profile.totalAmount}',style:TextStyle(color:Colors.white,fontSize:25)),
+                              Text(' ${_user.profile.unit}',style:TextStyle(color:Colors.white)),
                             ],
                           ),
                           Text("Total amount drunk",style:TextStyle(color:Colors.white60)),
@@ -108,7 +127,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text('${_profile.totalDays}',style:TextStyle(color:Colors.white,fontSize:25)),
+                              Text('${_user.profile.totalDays}',style:TextStyle(color:Colors.white,fontSize:25)),
                               Text(" days",style:TextStyle(color:Colors.white)),
 
                             ],
@@ -135,6 +154,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             Navigator.of(context).push(
                                 MaterialPageRoute(builder:(context)=> const Reminder()));
                           },
+                          behavior: HitTestBehavior.opaque,
                           child: const Row(
                             children: [
                               Icon(Icons.notifications,color:Colors.white),
@@ -152,6 +172,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           onTap: (){
                             showSoundSettings( context);
                           },
+                          behavior: HitTestBehavior.opaque,
                           child: const Row(
                             children: [
                               Icon(Icons.volume_up_outlined,color:Colors.white),
@@ -169,6 +190,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           onTap: (){
                             showThemeChanger( context);
                           },
+                          behavior: HitTestBehavior.opaque,
                           child: const Row(
                             children: [
                               Icon(Icons.brush_outlined,color:Colors.white),
@@ -185,6 +207,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           onTap: (){
                             showLanguageChanger(context);
                           },
+                          behavior: HitTestBehavior.opaque,
                           child: const Row(
                             children: [
                               Icon(Icons.language,color:Colors.white),
@@ -217,14 +240,15 @@ class _ProfilePageState extends State<ProfilePage> {
                             dailyGoal_dialog(context);
                             // Profile.dailyGoal_dialog(context);
                           },
+                          behavior: HitTestBehavior.opaque,
                           child: Row(
                             children: [
                               Icon(Icons.water_drop,color:Colors.white),
                               Spacer(flex: 1,),
                               Text("Daily goal",style:TextStyle(color:Colors.white)),
                               Spacer(flex:25,),
-                              Text('${_user.unit == 'ml' ? _user.tracker.totalWaterGoal : _user.tracker.totalWaterGoal! / 1000}',style:TextStyle(color:Colors.white)),
-                              Text(' ${_user.unit}',style:TextStyle(color:Colors.white)),
+                              Text('${_user.profile.unit == 'ml' ? _user.tracker.totalWaterGoal : _user.tracker.totalWaterGoal! / 1000}',style:TextStyle(color:Colors.white)),
+                              Text(' ${_user.profile.unit}',style:TextStyle(color:Colors.white)),
                               Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
                               // Spacer(),
                             ],
@@ -236,6 +260,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             units_dialog(context);
                             // Profile.units_dialog(context);
                           },
+                          behavior: HitTestBehavior.opaque,
                           child: const Row(
                             children: [
                               Icon(Icons.local_drink,color:Colors.white),
@@ -254,6 +279,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             gender_dialog(context);
                             //  Profile.gender_dialog(context);
                           },
+                          behavior: HitTestBehavior.opaque,
                           child: const Row(
                             children: [
                               Icon(Icons.person,color:Colors.white),
@@ -272,6 +298,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             weight_dialog(context);
                             //  Profile.weight_dialog(context);
                           },
+                          behavior: HitTestBehavior.opaque,
                           child: const Row(
                             children: [
                               Icon(Icons.line_weight_sharp,color:Colors.white),
@@ -296,116 +323,17 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-
-  void showThemeChanger(BuildContext context) {
-    const List<String> languages = ['Light Theme', 'Dark Theme'];
-    const List<Icon> icons = [Icon(Icons.wb_sunny), Icon(Icons.nightlight_round)];
-
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Choose Theme',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              // Loop through the available languages to create the list tiles
-              ...languages.map((theme) {
-                bool isSelected = _profile.theme == theme;
-
-                return ListTile(
-                  leading: icons[languages.indexOf(theme)],
-                  iconColor: isSelected ? MyColor.blue : Colors.black,
-                  title: Text(
-                    theme,
-                    style: TextStyle(
-                      color: isSelected ? MyColor.blue : Colors.black,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    ),
-                  ),
-                  onTap: () {
-                    // Update the selected language
-                    _profile.theme = theme;
-                    Navigator.pop(context); // Close the dialog
-                  },
-                );
-              }),
-            ],
-          ),
-        );
-      },
-    );
+  @override
+  void initState() {
+    super.initState();
+  }
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
   }
 
-  void showLanguageChanger(BuildContext context) {
-    const List<String> languages = ['English', 'Arabic'];
-
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Choose Language',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              // Loop through the available languages to create the list tiles
-              ...languages.map((language) {
-                bool isSelected = _profile.language == language;
-
-                return ListTile(
-                  leading: const Icon(Icons.language),
-                  iconColor: isSelected ? MyColor.blue : Colors.black,
-                  title: Text(
-                    language,
-                    style: TextStyle(
-                      color: isSelected ? MyColor.blue : Colors.black,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    ),
-                  ),
-                  onTap: () {
-                    // Update the selected language
-                    _profile.language = language;
-                    Navigator.pop(context); // Close the dialog
-                  },
-                );
-              }),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-
-
-  void showSoundSettings(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (BuildContext context) {
-        return const SoundSettingsContent();
-      },
-    );
-  }
-
-  // ignore: non_constant_identifier_names
-  void account_dialog(BuildContext context) {
+  void accountDialog(BuildContext context) {
     showDialog(
         context: context,
         builder: (context)
@@ -429,7 +357,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 4),
                   TextFormField(
-                    initialValue: FirebaseAuth.instance.currentUser?.email ?? 'No email',
+                    initialValue: _user.account.email ?? 'No email',
                     readOnly: true,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -452,7 +380,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 4),
                   TextFormField(
-                    initialValue: FirebaseAuth.instance.currentUser?.displayName ?? 'No username',
+                    initialValue: _user.account.userName ?? 'No username',
                     readOnly: true,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -517,16 +445,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
-  @override
-  void dispose() {
-    _passwordController.dispose();
-    super.dispose();
-  }
-
   void _showChangePasswordDialog() {
     showDialog(
       context: context,
@@ -576,6 +494,115 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  void showSoundSettings(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return const SoundSettingsContent();
+      },
+    );
+  }
+
+  void showThemeChanger(BuildContext context) {
+    const List<String> languages = ['Light Theme', 'Dark Theme'];
+    const List<Icon> icons = [Icon(Icons.wb_sunny), Icon(Icons.nightlight_round)];
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Choose Theme',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              // Loop through the available languages to create the list tiles
+              ...languages.map((theme) {
+                bool isSelected = _user.profile.theme == theme;
+
+                return ListTile(
+                  leading: icons[languages.indexOf(theme)],
+                  iconColor: isSelected ? MyColor.blue : Colors.black,
+                  title: Text(
+                    theme,
+                    style: TextStyle(
+                      color: isSelected ? MyColor.blue : Colors.black,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  onTap: () {
+                    // Update the selected language
+                    _user.profile.theme = theme;
+                    _saveUserToSharedPrefs(_user);
+                    _saveUserToFirestore(_user);
+                    Navigator.pop(context); // Close the dialog
+                  },
+                );
+              }),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void showLanguageChanger(BuildContext context) {
+    const List<String> languages = ['English', 'Arabic'];
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Choose Language',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              // Loop through the available languages to create the list tiles
+              ...languages.map((language) {
+                bool isSelected = _user.profile.language == language;
+
+                return ListTile(
+                  leading: const Icon(Icons.language),
+                  iconColor: isSelected ? MyColor.blue : Colors.black,
+                  title: Text(
+                    language,
+                    style: TextStyle(
+                      color: isSelected ? MyColor.blue : Colors.black,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  onTap: () {
+                    // Update the selected language
+                    _user.profile.language = language;
+                    _saveUserToSharedPrefs(_user);
+                    _saveUserToFirestore(_user);
+                    Navigator.pop(context); // Close the dialog
+                  },
+                );
+              }),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   void dailyGoal_dialog(BuildContext context) {
     showDialog(
 
@@ -588,8 +615,12 @@ class _ProfilePageState extends State<ProfilePage> {
             content: TextField(
               controller: _goalController,
               keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly, // Accept only digits
+                LengthLimitingTextInputFormatter(_user.profile.unit == 'ml'? 4 : 1),    // Limit to 4 digits
+              ],
               decoration: InputDecoration(
-                hintText: '${_user.unit == 'ml' ? _user.tracker.totalWaterGoal : _user.tracker.totalWaterGoal! / 1000} ${_user.unit}',
+                hintText: '${_user.profile.unit == 'ml' ? _user.tracker.totalWaterGoal : _user.tracker.totalWaterGoal! / 1000} ${_user.profile.unit}',
               ),
             ),
             actions: [
@@ -601,7 +632,31 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               ElevatedButton(
                 onPressed: () {
+                  if (_user.profile.unit == 'ml') {
+                    if (int.parse(_goalController.text) < 1000) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('The goal cannot be less than 1000 ml'),
+                        ),
+                      );
+                      return;
+                    }
+                  } else {
+                    if (int.parse(_goalController.text) < 1) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('The goal cannot be less than 1 L' ),
+                        ),
+                      );
+                      return;
+                    }
+                  }
                   // function of save data
+                  setState(() {
+                    _user.tracker.totalWaterGoal = int.parse(_goalController.text);
+                  });
+                  _saveUserToSharedPrefs(_user);
+                  _saveUserToFirestore(_user);
                   Navigator.pop(context); // إغلاق المربع وحفظ القيمة
                 },
                 child: const Text('Save',style: TextStyle(color:MyColor.blue),),
@@ -618,7 +673,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final units = ["ml", "L"];
 
     // Find the index of the current unit
-    int initialIndex = units.indexOf(_user.unit!);
+    int initialIndex = units.indexOf(_user.profile.unit);
 
     // Create the controller with the initial item
     FixedExtentScrollController controller =
@@ -664,9 +719,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 int selectedIndex = controller.selectedItem;
 
                 setState(() {
-                  // Update the _user.unit with the selected value
-                  _user.unit = units[selectedIndex];
+                  // Update the _user.profile.unit with the selected value
+                  _user.profile.unit = units[selectedIndex];
                 });
+
+                _saveUserToSharedPrefs(_user);
+                _saveUserToFirestore(_user);
 
                 // Close the dialog
                 Navigator.pop(context);
@@ -685,7 +743,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final genders = ["Male", "Female"];
 
     // Find the index of the current gender
-    int initialIndex = genders.indexOf(_user.gender);
+    int initialIndex = genders.indexOf(_user.data.gender!);
 
     // Create the controller with the initial item
     FixedExtentScrollController controller =
@@ -723,9 +781,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 int selectedIndex = controller.selectedItem;
 
                 // Update _user.gender with the selected value
-                _user.gender = genders[selectedIndex];
+                _user.data.gender = genders[selectedIndex];
 
                 log(_user.toMap().toString());
+
+                _saveUserToSharedPrefs(_user);
+                _saveUserToFirestore(_user);
 
                 // Close the dialog
                 Navigator.pop(context);
@@ -746,7 +807,7 @@ class _ProfilePageState extends State<ProfilePage> {
     const int maxWeight = 200;
 
     // Calculate the initial index based on the current weight
-    int initialIndex = _user.weight - minWeight;
+    int initialIndex = _user.data.weight! - minWeight;
 
     // Create the controller with the initial index
     FixedExtentScrollController controller =
@@ -807,9 +868,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 int selectedWeight = minWeight + controller.selectedItem;
 
                 // Update _user.weight with the selected value
-                _user.weight = selectedWeight;
+                _user.data.weight = selectedWeight;
 
                 log(_user.toMap().toString());
+
+                _saveUserToSharedPrefs(_user);
+                _saveUserToFirestore(_user);
 
                 Navigator.pop(context); // Close the dialog
               },

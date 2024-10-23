@@ -5,13 +5,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import '../cubits/weather_cubit/weather_cubit.dart';
-import '../cubits/weather_cubit/weather_states.dart';
+import '../logic/account.dart';
+import '../logic/data.dart';
+import '../logic/history.dart';
+import '../logic/profile.dart';
 import '../logic/tracker.dart';
 import '../values/color.dart';
 import '../tips/ai.dart';
-import '../tips/tip_screen.dart';
-
-import '../componnent/navigation_bar.dart';
 import '../logic/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dr_drink/widgets/ageWidget.dart';
@@ -19,7 +19,7 @@ import 'package:dr_drink/widgets/weightWidget.dart';
 import 'package:dr_drink/widgets/genderWidget.dart';
 import 'package:dr_drink/widgets/wakeWidget.dart';
 import 'package:dr_drink/widgets/sleepWidget.dart';
-import '../widgets/mealWidget.dart';
+import 'package:dr_drink/component/navigation_bar.dart';
 
 class TargetScreen extends StatefulWidget {
   final double? initialQuantity = 50; // just for test
@@ -27,65 +27,70 @@ class TargetScreen extends StatefulWidget {
   const TargetScreen({super.key});
 
   @override
-  State<TargetScreen> createState() => _TargetScreenState(); // التصحيح هنا
+  State<TargetScreen> createState() => _TargetScreenState();
 }
 
 class _TargetScreenState extends State<TargetScreen> {
   MyUser? _user;
+  Account? _account;
   bool _showContent = false;
   String _selectedUnit = 'ml';
   int? _quantity;
   late final WeatherCubit weatherCubit;
-  late final TipService
-      tipService; // يجب تهيئة TipService بعد تهيئة weatherCubit
+  late final TipService tipService;
   List<String> tips = [];
 
   @override
   void initState() {
     super.initState(); // Set default unit to 'm'
-
-    _fetchUserData();
-    // تهيئة weatherCubit وبدء جلب حالة الطقس
-    weatherCubit = WeatherCubit();
-
-    // تهيئة TipService بعد تهيئة weatherCubit
-    tipService = TipService(weatherCubit: weatherCubit);
-
-    weatherCubit.getWeather(); // جلب حالة الطقس
-
-    // إضافة مستمع لتحميل بيانات الطقس قبل استدعاء fetchTipsFromService
-    weatherCubit.stream.listen((state) {
-      if (state is WeatherLoadedState) {
-        fetchTipsFromService(); // جلب النصائح بعد تحميل الطقس
-      }
-    });
-
-    // إظهار محتوى الشاشة بعد 3 ثوانٍ
     Future.delayed(const Duration(seconds: 3), () {
       setState(() {
         _showContent = true;
       });
     });
+    // load account from shared preferences
+    _loadAccountFromSharedPrefs();
+
+    _fetchUserData();
+
+
+
+  }
+
+  // Load account from shared preferences
+  Future<void> _loadAccountFromSharedPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accountJson = prefs.getString('account');
+    if (accountJson != null) {
+      setState(() {
+        _account = Account.fromMap(json.decode(accountJson));
+      });
+    }
   }
 
   // Function to store user inputs in SharedPreferences and calculate water goal and it is async to wait for the SharedPreferences to be ready
-  void _fetchUserData() {
+  Future<void> _fetchUserData() async {
 
     // Store values from your widgets
     int age = Agewidget.selectedAge;
     int weight = Weightwidget.selectedWeight;
     String gender = GenderWidget.gender;
     String wakeUpTime = '${Wakewidget.selectedHour}:${Wakewidget.selectedMinute} ${Wakewidget.selectedPeriod}';
-    String breakfastTime = '${MealWidget.breakfastHour}:${MealWidget.breakfastMinute} ${MealWidget.breakfastPeriod}';
-    String lunchTime = '${MealWidget.lunchHour}:${MealWidget.lunchMinute} ${MealWidget.lunchPeriod}';
-    String dinnerTime = '${MealWidget.dinnerHour}:${MealWidget.dinnerMinute} ${MealWidget.dinnerPeriod}';
     String bedTime = '${Sleepwidget.selectedHour}:${Sleepwidget.selectedMinute} ${Sleepwidget.selectedPeriod}';
 
+    await _loadAccountFromSharedPrefs();
+
     setState(() {
-      _user = MyUser(gender: gender, weight: weight, age: age, wakeUpTime: wakeUpTime, bedTime: bedTime, breakfastTime: breakfastTime, lunchTime: lunchTime, dinnerTime: dinnerTime,unit: _selectedUnit);
+      Data data = Data(gender: gender, weight: weight, age: age, wakeUpTime: wakeUpTime, bedTime: bedTime);
+      Profile profile = Profile(unit: _selectedUnit);
+      History history = History();
       Tracker tracker = Tracker();
-      tracker.calculateWaterGoal(_user!.weight);
-      _user!.tracker = tracker;
+      tracker.calculateWaterGoal(weight);
+      log(_account!.toMap().toString());
+      _user = MyUser(account: _account,data: data, profile: profile, history: history, tracker: tracker);
+
+      _saveUserToSharedPrefs(_user!);
+      _saveUserToFirestore(_user!);
       _quantity = tracker.totalWaterGoal;
     });
   }
@@ -107,25 +112,6 @@ class _TargetScreenState extends State<TargetScreen> {
       log('User saved to Firestore successfully.');
     } catch (e) {
       log('Failed to save user to Firestore: $e');
-    }
-  }
-
-  // دالة لجلب النصائح من TipService
-  Future<void> fetchTipsFromService() async {
-    try {
-      List<String> fetchedTips = await tipService.fetchTips();
-
-      setState(() {
-        tips = fetchedTips;
-      });
-
-      // if (fetchedTips.isNotEmpty) {
-      //   Future.delayed(const Duration(seconds: 1, milliseconds: 500), () {
-      //     TipDisplay.showTipBottomSheet(context, fetchedTips[0]);
-      //   });
-      // }
-    } catch (e) {
-      log('Error in fetching tips from service: $e'); // تسجيل أي خطأ يحدث هنا
     }
   }
 
@@ -151,7 +137,6 @@ class _TargetScreenState extends State<TargetScreen> {
     final textFontSize = screenWidth * 0.08;
     final adjustFontSize = screenWidth * 0.04;
     final numFontSize = screenWidth * 0.3;
-    final numFontSize1 = screenWidth * 0.2;
     final unitFontSize = screenWidth * 0.08;
     final subTextFontSize = screenWidth * 0.04;
 
@@ -200,9 +185,11 @@ class _TargetScreenState extends State<TargetScreen> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      _user?.unit = 'ml';
+                      _user?.profile.unit = 'ml';
                       _selectedUnit = 'ml';
                     });
+                    _saveUserToSharedPrefs(_user!);
+                    _saveUserToFirestore(_user!);
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(
@@ -235,9 +222,11 @@ class _TargetScreenState extends State<TargetScreen> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      _user?.unit = 'L';
+                      _user?.profile.unit = 'L';
                       _selectedUnit = 'L';
                     });
+                    _saveUserToSharedPrefs(_user!);
+                    _saveUserToFirestore(_user!);
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(
@@ -268,30 +257,7 @@ class _TargetScreenState extends State<TargetScreen> {
               ],
             ),
           ),
-          Positioned(
-            top: screenHeight * 0.71,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: ElevatedButton(
-                onPressed: () {
 
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: MyColor.white.withOpacity(0.55),
-                ),
-                child: Text(
-                  'Adjust',
-                  style: TextStyle(
-                    color: MyColor.white,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w700,
-                    fontSize: adjustFontSize,
-                  ),
-                ),
-              ),
-            ),
-          ),
           Positioned(
             top: dividerTopPosition,
             left: 0,
@@ -328,9 +294,8 @@ class _TargetScreenState extends State<TargetScreen> {
                       //
                       ///
                       /// //
-                      _saveUserToSharedPrefs(_user!);
-                      _saveUserToFirestore(_user!);
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CustomNavigationBar()));
+
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CustomNavigationBar()));
                     },
                     child: Text(
                       'Start',
@@ -354,7 +319,7 @@ class _TargetScreenState extends State<TargetScreen> {
             child: Align(
               alignment: Alignment.center,
               child: Text(
-                '${_selectedUnit == 'ml' ? getDisplayedQuantity() : getDisplayedQuantity()}',
+                _selectedUnit == 'ml' ? getDisplayedQuantity() : getDisplayedQuantity(),
                 style: TextStyle(
                   color: MyColor.white,
                   fontFamily: 'Poppins',

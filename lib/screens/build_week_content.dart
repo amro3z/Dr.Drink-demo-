@@ -12,14 +12,14 @@ class BuildWeekContent extends StatefulWidget {
 
 class _WeekTrackerScreenState extends State<BuildWeekContent> {
   final MyUser _user = MyUser.instance;
-  final History _history = History.instance;
+  // final History _history = History.instance;
   String? unit; // Default unit
   int maxYaxis = 4000; // Amount of water in ml
 
   @override
   void initState() {
     super.initState();
-    unit = _user.unit ?? 'ml';
+    unit = _user.profile.unit ?? 'ml';
   }
 
   @override
@@ -207,8 +207,8 @@ class _WeekTrackerScreenState extends State<BuildWeekContent> {
     List<BarChartGroupData> barGroups = [];
     for (int i = 0; i < 7; i++) {
       double value = unit == 'ml'
-          ? _history.weeklyConsumption[i].toDouble()
-          : _history.weeklyConsumption[i] / 1000;
+          ? _user.history.weeklyConsumption[i].toDouble()
+          : _user.history.weeklyConsumption[i] / 1000;
 
       barGroups.add(
         BarChartGroupData(
@@ -235,14 +235,14 @@ class _WeekTrackerScreenState extends State<BuildWeekContent> {
   }
 
   String _getTotalConsumption() {
-    int total = _history.weeklyConsumption.fold(0, (sum, value) => sum + value);
+    int total = _user.history.weeklyConsumption.fold(0, (sum, value) => sum + value);
     double convertedTotal = unit == 'ml' ? total.toDouble() : total / 1000;
     return unit == 'ml' ? total.toString() : convertedTotal.toStringAsFixed(1);
   }
 
   String _getAverageConsumption() {
-    int total = _history.weeklyConsumption.fold(0, (sum, value) => sum + value);
-    int count = _history.weeklyConsumption.where((element) => element > 0).length;
+    int total = _user.history.weeklyConsumption.fold(0, (sum, value) => sum + value);
+    int count = _user.history.weeklyConsumption.where((element) => element > 0).length;
 
     if (count == 0) {
       return '0';
@@ -256,7 +256,7 @@ class _WeekTrackerScreenState extends State<BuildWeekContent> {
   }
 
   double _getMaxYValue() {
-    int maxConsumed = _history.weeklyConsumption.fold(0, (a, b) => a > b ? a : b);
+    int maxConsumed = _user.history.weeklyConsumption.fold(0, (a, b) => a > b ? a : b);
     double maxY = maxConsumed > maxYaxis ? maxConsumed.toDouble() : maxYaxis.toDouble();
     return unit == 'ml' ? maxY : maxY / 1000;
   }
