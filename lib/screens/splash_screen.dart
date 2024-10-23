@@ -1,20 +1,16 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dr_drink/componnent/navigation_bar.dart';
+import 'package:dr_drink/component/navigation_bar.dart';
 import 'package:dr_drink/screens/login_screen.dart';
 import 'package:dr_drink/widgets/welcomeWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-
-import '../logic/history.dart';
+import '../logic/notifications.dart';
 import '../logic/user.dart';
 
 
@@ -31,7 +27,6 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     checkCredentials();
-
   }
 
   Future<void> checkCredentials() async {
@@ -48,11 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
             MaterialPageRoute(builder: (context) => const LoginScreen()),
           );
         } else {
-          // User is authenticated, load their data from Firestore
-          // this is important for syncing data between devices
-          _loadUserFromFirestoreAndStoreLocally();
-          _loadHistoryFromFirestoreAndStoreLocally();
-
+          await _loadUserFromFirestoreAndStoreLocally();
         }
       });
     }
@@ -75,8 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
       /// ///
       /// ////
       /// ///
-      _loadUserFromSharedPrefs();
-      _loadHistoryFromSharedPrefs();
+      await _loadUserFromSharedPrefs();
 
       // If user data exists, navigate to the TargetScreen (home screen)
       Navigator.pushReplacement(
@@ -112,7 +102,8 @@ class _SplashScreenState extends State<SplashScreen> {
         await prefs.setBool('isUserRegistered', true);
 
         MyUser user = MyUser.fromMap(userData);
-        user.tracker.calculateWaterGoal(user.weight);
+        user.tracker.calculateWaterGoal(user.data.weight!);
+        // LocalNotificationService.setNotificationSound(user.profile.notificationSound);
 
         log(user.toString()); // didnt loged
 
@@ -131,35 +122,6 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  // load history from firestore
-  Future<void> _loadHistoryFromFirestoreAndStoreLocally() async {
-    try {
-      // Get the authenticated user's ID
-      String userId = FirebaseAuth.instance.currentUser!.uid;
-      log(userId);
-
-      // Reference to the user's document in Firestore
-      final historyDoc = FirebaseFirestore.instance.collection('history').doc(userId);
-
-      // Fetch user data from Firestore
-      DocumentSnapshot<Map<String, dynamic>> snapshot = await historyDoc.get();
-      log('second here');
-      if (snapshot.exists) {
-        Map<String, dynamic> historyData = snapshot.data()!;
-        log(json.encode(historyData));
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString("history", json.encode(historyData));
-
-        History history = History.fromMap(historyData);
-        log(history.toString()); // didnt loged
-      } else {
-        log('No history data found');
-      }
-    } catch (e) {
-      log('Error loading history from Firestore: $e');
-    }
-  }
-
   // load user from shared prefs
   Future<void> _loadUserFromSharedPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -167,12 +129,6 @@ class _SplashScreenState extends State<SplashScreen> {
     log("user loaded from shared prefs");
   }
 
-  // load history from shared prefs
-  Future<void> _loadHistoryFromSharedPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    History history = History.fromMap(json.decode(prefs.getString('history')!));
-    log("history loaded from shared prefs");
-  }
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;

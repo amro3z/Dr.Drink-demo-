@@ -39,9 +39,6 @@ class _ReminderState extends State<Reminder> {
                       color: Colors.black,
                     ),
                   ),
-                  const Spacer(
-                    flex: 3,
-                  ),
                   const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -54,18 +51,6 @@ class _ReminderState extends State<Reminder> {
                         ),
                       ),
                     ],
-                  ),
-                  const Spacer(
-                    flex: 25,
-                  ),
-                  Switch(
-                    activeColor: Colors.blueAccent,
-                    value: reminder,
-                    onChanged: (value) {
-                      setState(() {
-                        reminder = value;
-                      });
-                    },
                   ),
                 ],
               ),

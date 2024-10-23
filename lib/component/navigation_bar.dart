@@ -26,17 +26,8 @@ class _NavigationBarState extends State<CustomNavigationBar> {
   void initState() {
     super.initState();
 
-    // _loadUserFromSharedPrefs();
     _initNotifications();
   }
-  //
-  // // load user from shared prefs
-  // Future<void> _loadUserFromSharedPrefs() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   MyUser user = MyUser.fromMap(json.decode(prefs.getString('user')!));
-  //   log("user loaded from shared prefs");
-  //   log(user.toString());
-  // }
 
   void _initNotifications() async {
     await requestPermissions();

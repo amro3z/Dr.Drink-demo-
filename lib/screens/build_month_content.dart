@@ -12,14 +12,14 @@ class BuildMonthContent extends StatefulWidget {
 
 class _MonthTrackerScreenState extends State<BuildMonthContent> {
   final MyUser _user = MyUser.instance;
-  final History _history = History.instance;
+  // final History _history = History.instance;
   String? unit; // Default unit
   int goal = 4000; // Daily water goal in ml
 
   @override
   void initState() {
     super.initState();
-    unit = _user.unit ?? 'ml';
+    unit = _user.profile.unit ?? 'ml';
   }
 
   @override
@@ -202,8 +202,8 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
     List<BarChartGroupData> barGroups = [];
     for (int i = 0; i < 31; i++) {
       double value = unit == 'ml'
-          ? _history.monthlyConsumption[i].toDouble()
-          : _history.monthlyConsumption[i] / 1000;
+          ? _user.history.monthlyConsumption[i].toDouble()
+          : _user.history.monthlyConsumption[i] / 1000;
 
       barGroups.add(
         BarChartGroupData(
@@ -230,14 +230,14 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
   }
 
   String _getTotalConsumption() {
-    int total = _history.monthlyConsumption.fold(0, (sum, value) => sum + value);
+    int total = _user.history.monthlyConsumption.fold(0, (sum, value) => sum + value);
     double convertedTotal = unit == 'ml' ? total.toDouble() : total / 1000;
     return unit == 'ml' ? total.toString() : convertedTotal.toStringAsFixed(1);
   }
 
   String _getAverageConsumption() {
-    int total = _history.monthlyConsumption.fold(0, (sum, value) => sum + value);
-    int count = _history.monthlyConsumption.where((element) => element > 0).length;
+    int total = _user.history.monthlyConsumption.fold(0, (sum, value) => sum + value);
+    int count = _user.history.monthlyConsumption.where((element) => element > 0).length;
 
     if (count == 0) {
       return '0';
@@ -251,7 +251,7 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
   }
 
   double _getMaxYValue() {
-    int maxConsumed = _history.monthlyConsumption.fold(0, (a, b) => a > b ? a : b);
+    int maxConsumed = _user.history.monthlyConsumption.fold(0, (a, b) => a > b ? a : b);
     int maxGoal = goal;
 
     double maxY = maxConsumed > maxGoal ? maxConsumed.toDouble() : maxGoal.toDouble();

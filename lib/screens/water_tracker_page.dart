@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:developer';
-
 import 'package:dr_drink/cubits/weather_cubit/weather_cubit.dart';
 import 'package:dr_drink/cubits/weather_cubit/weather_states.dart';
 import 'package:dr_drink/screens/water_intake.dart';
@@ -8,12 +6,8 @@ import 'package:dr_drink/tips/ai.dart';
 import 'package:dr_drink/tips/tip_screen.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
-
-import '../componnent/circle.dart'; // CircleWithShadow widget
-import '../componnent/semi_circle_progress_painter.dart'; // Semi-circle painter
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../logic/tracker.dart';
+import '../component/circle.dart'; // CircleWithShadow widget
+import '../component/semi_circle_progress_painter.dart';
 import '../logic/user.dart';
 
 class WaterTrackerPage extends StatefulWidget {
@@ -80,7 +74,7 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
       _totalWaterGoal = _user.tracker.totalWaterGoal!;
       _totalWaterConsumed = _user.tracker.totalWaterConsumed;
       _progress = _user.tracker.getProgress();
-      _unit = _user.unit!;
+      _unit = _user.profile.unit;
     });
   }
 

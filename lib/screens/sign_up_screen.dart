@@ -1,13 +1,24 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:dr_drink/widgets/welcomeWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../logic/account.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
+
+  static Future<void> saveAccount(String name, String email) async {
+    Account account = Account(email: email, userName: name);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("account", json.encode(account.toMap()));
+  }
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -298,6 +309,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
         // Update the user's display name using the value from _nameController
         String newName = _nameController.text;
+        SignUpScreen.saveAccount(newName, user.email!);
         await currentUser.updateDisplayName(newName);
         await currentUser.reload(); // Ensure the update takes effect
 

@@ -1,9 +1,7 @@
 import 'package:dr_drink/logic/user.dart';
-import 'package:dr_drink/screens/water_intake.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../componnent/record_card.dart';
-import '../logic/history.dart';
+import '../component/record_card.dart';
 import '../values/color.dart';
 import '../values/icons.dart';
 
@@ -14,7 +12,7 @@ class BuildDayContent extends StatefulWidget {
 
 class _WaterTrackerScreenState extends State<BuildDayContent> {
   final MyUser _user = MyUser.instance;
-  final History _history = History.instance;
+  // final History _history = History.instance;
   String? unit; // Default unit
   int goal = 2000; // Daily water goal in ml
 
@@ -22,7 +20,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
   void initState() {
     super.initState();
     goal = _user.tracker.totalWaterGoal!;
-    unit = _user.unit ?? 'ml';
+    unit = _user.profile.unit ?? 'ml';
   }
 
   @override
@@ -220,13 +218,13 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
           height: 130,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: _history.records.length,
+            itemCount: _user.history.records.length,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(right: 10),
                 child: RecordCard(
-                  quantity: _history.records[index],
-                  time: _history.recordedTimes[index],
+                  quantity: _user.history.records[index],
+                  time: _user.history.recordedTimes[index],
                   unit: unit!,
                 ),
               );
@@ -241,8 +239,8 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
     List<BarChartGroupData> barGroups = [];
     for (int i = 0; i < 24; i++) {
       double value = unit == 'ml'
-          ? _history.hourlyConsumption[i].toDouble()
-          : _history.hourlyConsumption[i] / 1000;
+          ? _user.history.hourlyConsumption[i].toDouble()
+          : _user.history.hourlyConsumption[i] / 1000;
 
       barGroups.add(
         BarChartGroupData(
@@ -269,7 +267,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
   }
 
   String _getTotalConsumption() {
-    int total = _history.hourlyConsumption.fold(0, (sum, value) => sum + value);
+    int total = _user.history.hourlyConsumption.fold(0, (sum, value) => sum + value);
     double convertedTotal = unit == 'ml' ? total.toDouble() : total / 1000;
     return unit == 'ml' ? total.toString() : convertedTotal.toStringAsFixed(1);
   }
@@ -280,9 +278,9 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
   }
 
   String _getAveragePerHour() {
-    int total = _history.hourlyConsumption.fold(0, (sum, value) => sum + value);
+    int total = _user.history.hourlyConsumption.fold(0, (sum, value) => sum + value);
     int hoursWithConsumption =
-        _history.hourlyConsumption.where((value) => value > 0).length;
+        _user.history.hourlyConsumption.where((value) => value > 0).length;
 
     if (hoursWithConsumption == 0) return '0';
 
@@ -295,7 +293,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
   }
 
   double _getMaxYValue() {
-    int maxConsumed = _history.hourlyConsumption.fold(0, (a, b) => a > b ? a : b);
+    int maxConsumed = _user.history.hourlyConsumption.fold(0, (a, b) => a > b ? a : b);
     int maxGoal = goal;
     double maxY = maxConsumed > maxGoal ? maxConsumed.toDouble() : maxGoal.toDouble();
     return unit == 'ml' ? maxY : maxY / 1000;
