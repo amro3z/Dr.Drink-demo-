@@ -10,14 +10,13 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class LocalNotificationService {
-  static FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  static StreamController<NotificationResponse> streamController =
-      StreamController();
+  static FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  static StreamController<NotificationResponse> streamController = StreamController();
+
   static onTap(NotificationResponse notificationResponse) {
     log(notificationResponse.id!.toString());
-    log(notificationResponse.payload!.toString());
-    // streamController.add(notificationResponse);
+
+    streamController.add(notificationResponse);
     // Navigator.push(context, route);
   }
 
