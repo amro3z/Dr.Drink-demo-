@@ -119,7 +119,7 @@ class InsightsCard extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
-              padding: const EdgeInsets.all(10),
+              padding:  EdgeInsets.only( left :screenHeight *0.01 ),
               height: screenHeight * 0.08, // تحديد ارتفاع ثابت للمستطيل الصغير
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),

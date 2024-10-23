@@ -17,7 +17,7 @@ class TipService {
 
       // استخدام weather.condition بعد التأكد من أنها ليست null
       final prompt =
-          'Give me 1 tip for drinking water with friendly way. The weather is ${weatherCubit.weather.condition}, give a suitable tip without any stars in text.';
+          'Give me 1 tip for drinking water with friendly way the max word in the sentence 6 words only. The weather is ${weatherCubit.weather.condition}, give a suitable tip without any stars in text.';
 
       final response = await model.generateContent([Content.text(prompt)]);
 
