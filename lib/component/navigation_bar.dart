@@ -5,6 +5,7 @@ import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../logic/notifications.dart';
+import '../logic/user.dart';
 import '../screens/water_tracker_page.dart';
 
 class CustomNavigationBar extends StatefulWidget {
@@ -14,6 +15,7 @@ class CustomNavigationBar extends StatefulWidget {
 }
 
 class _NavigationBarState extends State<CustomNavigationBar> {
+  final MyUser _user = MyUser.instance;
   int currentPageIndex = 0;
   final List<Widget> _pages = [
     const WaterTrackerPage(),
@@ -32,6 +34,7 @@ class _NavigationBarState extends State<CustomNavigationBar> {
   void _initNotifications() async {
     await requestPermissions();
     await Permission.ignoreBatteryOptimizations.request();
+    LocalNotificationService.setNotificationSound(_user.profile.notificationSound);
     LocalNotificationService.showRepeatedNotification();
   }
 

@@ -76,7 +76,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(_user.account.email ?? 'No Email',style:const TextStyle(color:Colors.white)),
+                        Text(_user.account.email ?? 'No Email',style:const TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
                         const Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
                       ],
                     ),
@@ -101,11 +101,11 @@ class _ProfilePageState extends State<ProfilePage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text('${_user.profile.totalAmount}',style:TextStyle(color:Colors.white,fontSize:25)),
-                              Text(' ${_user.profile.unit}',style:TextStyle(color:Colors.white)),
+                              Text('${_user.profile.totalAmount}',style:TextStyle(color:Colors.white,fontSize:25, fontFamily: 'Poppins')),
+                              Text(' ${_user.profile.unit}',style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
                             ],
                           ),
-                          Text("Total amount drunk",style:TextStyle(color:Colors.white60)),
+                          Text("Total amount drunk",style:TextStyle(color:Colors.white60 ,  fontFamily: 'Poppins')),
                         ],
                       ),
                     ),
@@ -122,12 +122,12 @@ class _ProfilePageState extends State<ProfilePage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text('${_user.profile.totalDays}',style:TextStyle(color:Colors.white,fontSize:25)),
-                              Text(" days",style:TextStyle(color:Colors.white)),
+                              Text('${_user.profile.totalDays}',style:TextStyle(color:Colors.white,fontSize:25 , fontFamily: 'Poppins')),
+                              Text(" days",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
 
                             ],
                           ),
-                          Text("Total achievement",style:TextStyle(color:Colors.white60)),
+                          Text("Total achievement",style:TextStyle(color:Colors.white60 ,  fontFamily: 'Poppins')),
                         ],
                       ),
                     ),
@@ -172,7 +172,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               Icon(Icons.volume_up_outlined,color:Colors.white),
                               Spacer(flex: 1,),
-                              Text("Notifications Sound",style:TextStyle(color:Colors.white)),
+                              Text("Notifications Sound",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
                               Spacer(flex:25,),
                               Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
                               // Spacer(),
@@ -190,7 +190,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               Icon(Icons.brush_outlined,color:Colors.white),
                               Spacer(flex: 1,),
-                              Text("Themes",style:TextStyle(color:Colors.white)),
+                              Text("Themes",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
                               Spacer(flex:25,),
                               Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
                               // Spacer(),
@@ -207,7 +207,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               Icon(Icons.language,color:Colors.white),
                               Spacer(flex: 1,),
-                              Text("Language",style:TextStyle(color:Colors.white)),
+                              Text("Language",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
                               Spacer(flex:25,),
                               Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
                               // Spacer(),
@@ -240,11 +240,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               Icon(Icons.water_drop,color:Colors.white),
                               Spacer(flex: 1,),
-                              Text("Daily goal",style:TextStyle(color:Colors.white)),
+                              Text("Daily goal",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
                               Spacer(flex:25,),
-                              Text('${_user.profile.unit == 'ml' ? _user.tracker.totalWaterGoal : _user.tracker.totalWaterGoal! / 1000}',style:TextStyle(color:Colors.white)),
-                              Text(' ${_user.profile.unit}',style:TextStyle(color:Colors.white)),
-                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
+                              Text('${_user.profile.unit == 'ml' ? _user.tracker.totalWaterGoal : _user.tracker.totalWaterGoal! / 1000}',style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
+                              Text(' ${_user.profile.unit}',style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
+                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white ),
                               // Spacer(),
                             ],
                           ),
@@ -260,9 +260,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               Icon(Icons.local_drink,color:Colors.white),
                               Spacer(flex: 1,),
-                              Text("Units ",style:TextStyle(color:Colors.white)),
+                              Text("Units ",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
                               Spacer(flex:25,),
-                              Text("ml, L",style:TextStyle(color:Colors.white)),
+                              Text("ml, L",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
                               Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
                               // Spacer(),
                             ],
@@ -279,7 +279,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               Icon(Icons.person,color:Colors.white),
                               Spacer(flex: 1,),
-                              Text("Gender",style:TextStyle(color:Colors.white)),
+                              Text("Gender",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
                               Spacer(flex:25,),
                               Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
                               // Spacer(),
@@ -298,7 +298,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               Icon(Icons.line_weight_sharp,color:Colors.white),
                               Spacer(flex: 1,),
-                              Text("Weight",style:TextStyle(color:Colors.white)),
+                              Text("Weight",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
                               Spacer(flex:25,),
                               Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
                               // Spacer(),
@@ -334,7 +334,7 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (context)
         {
           return AlertDialog(
-            title: const Text('Account'),
+            title: const Text('Account' ,  style: TextStyle( fontFamily: 'Poppins'),),
             content: SizedBox(
               width: 70,
               height: 250,
@@ -348,6 +348,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
+                        fontFamily: 'Poppins'
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -371,6 +372,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
+                        fontFamily: 'Poppins'
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -397,6 +399,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           color: MyColor.blue,
                           decoration: TextDecoration.underline,
                           fontSize: 16,
+                            fontFamily: 'Poppins'
                         ),
                       ),
                     ),
@@ -409,7 +412,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('Cancel', style: TextStyle(color: MyColor.blue)),
+                child: const Text('Cancel', style: TextStyle(color: MyColor.blue ,  fontFamily: 'Poppins')),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -431,7 +434,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         (Route<dynamic> route) => false,
                   );
                 },
-                child: const Text('Log Out', style: TextStyle(color: Colors.red)),
+                child: const Text('Log Out', style: TextStyle(color: Colors.red ,  fontFamily: 'Poppins')),
               ),
             ],
           );
@@ -445,7 +448,7 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Change Password',style: TextStyle(color:MyColor.blue)),
+          title: const Text('Change Password',style: TextStyle(color:MyColor.blue ,  fontFamily: 'Poppins')),
           content: const Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -474,14 +477,14 @@ class _ProfilePageState extends State<ProfilePage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel',style: TextStyle(color:MyColor.blue)),
+              child: const Text('Cancel',style: TextStyle(color:MyColor.blue ,  fontFamily: 'Poppins')),
             ),
             TextButton(
               onPressed: () {
                 // منطق تغيير كلمة المرور هنا
                 Navigator.of(context).pop();
               },
-              child: const Text('Sumbit',style: TextStyle(color:MyColor.blue),),
+              child: const Text('Sumbit',style: TextStyle(color:MyColor.blue ,  fontFamily: 'Poppins'),),
             ),
           ],
         );
@@ -518,7 +521,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               const Text(
                 'Choose Theme',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 ,  fontFamily: 'Poppins'),
               ),
               // Loop through the available languages to create the list tiles
               ...languages.map((theme) {
@@ -531,7 +534,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     theme,
                     style: TextStyle(
                       color: isSelected ? MyColor.blue : Colors.black,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal, fontFamily: 'Poppins'
                     ),
                   ),
                   onTap: () {
@@ -566,7 +569,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               const Text(
                 'Choose Language',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 ,  fontFamily: 'Poppins'),
               ),
               // Loop through the available languages to create the list tiles
               ...languages.map((language) {
@@ -579,7 +582,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     language,
                     style: TextStyle(
                       color: isSelected ? MyColor.blue : Colors.black,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,  fontFamily: 'Poppins'
                     ),
                   ),
                   onTap: () {
@@ -623,7 +626,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: () {
                   Navigator.pop(context); // إغلاق المربع
                 },
-                child: const Text('Cancel',style: TextStyle(color:MyColor.blue)),
+                child: const Text('Cancel',style: TextStyle(color:MyColor.blue ,  fontFamily: 'Poppins')),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -631,7 +634,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     if (int.parse(_goalController.text) < 1000) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('The goal cannot be less than 1000 ml'),
+                          content: Text('The goal cannot be less than 1000 ml' , style: TextStyle( fontFamily: 'Poppins'),),
                         ),
                       );
                       return;
@@ -640,7 +643,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     if (int.parse(_goalController.text) < 1) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('The goal cannot be less than 1 L' ),
+                          content: Text('The goal cannot be less than 1 L' , style: TextStyle( fontFamily: 'Poppins'), ),
                         ),
                       );
                       return;
@@ -654,7 +657,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   _saveUserToFirestore(_user);
                   Navigator.pop(context); // إغلاق المربع وحفظ القيمة
                 },
-                child: const Text('Save',style: TextStyle(color:MyColor.blue),),
+                child: const Text('Save',style: TextStyle(color:MyColor.blue ,  fontFamily: 'Poppins'),),
               ),
             ],
           );
@@ -678,7 +681,7 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Units'),
+          title: const Text('Units' , style: TextStyle( fontFamily: 'Poppins'),),
           content: SizedBox(
             height: 150,
             child: Row(
@@ -706,7 +709,7 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () {
                 Navigator.pop(context); // Close the dialog
               },
-              child: const Text('Cancel', style: TextStyle(color: MyColor.blue)),
+              child: const Text('Cancel', style: TextStyle(color: MyColor.blue ,  fontFamily: 'Poppins')),
             ),
             ElevatedButton(
               onPressed: () {
@@ -724,7 +727,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 // Close the dialog
                 Navigator.pop(context);
               },
-              child: const Text('Save', style: TextStyle(color: MyColor.blue)),
+              child: const Text('Save', style: TextStyle(color: MyColor.blue ,  fontFamily: 'Poppins')),
             ),
           ],
         );
@@ -747,7 +750,7 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Gender'),
+          title: const Text('Gender' , style: TextStyle( fontFamily: 'Poppins'),),
           content: SizedBox(
             width: 70,
             height: 200,
@@ -767,7 +770,7 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () {
                 Navigator.pop(context); // Close the dialog
               },
-              child: const Text('Cancel', style: TextStyle(color: MyColor.blue)),
+              child: const Text('Cancel', style: TextStyle(color: MyColor.blue ,  fontFamily: 'Poppins')),
             ),
             ElevatedButton(
               onPressed: () {
@@ -785,7 +788,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 // Close the dialog
                 Navigator.pop(context);
               },
-              child: const Text('Save', style: TextStyle(color: MyColor.blue)),
+              child: const Text('Save', style: TextStyle(color: MyColor.blue ,  fontFamily: 'Poppins')),
             ),
           ],
         );
@@ -809,7 +812,7 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Weight'),
+          title: const Text('Weight' ,  style: TextStyle( fontFamily: 'Poppins'),),
           content: SizedBox(
             width: 50,
             height: 100,
@@ -842,7 +845,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(
                   width: 70,
                   height: 200,
-                  child: Center(child: Text("kg", style: TextStyle(fontSize: 18))),
+                  child: Center(child: Text("kg", style: TextStyle(fontSize: 18 , fontFamily: 'Poppins'))),
                 ),
               ],
             ),
@@ -852,7 +855,7 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () {
                 Navigator.pop(context); // Close the dialog
               },
-              child: const Text('Cancel', style: TextStyle(color: MyColor.blue)),
+              child: const Text('Cancel', style: TextStyle(color: MyColor.blue ,  fontFamily: 'Poppins')),
             ),
             ElevatedButton(
               onPressed: () {
@@ -869,7 +872,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 Navigator.pop(context); // Close the dialog
               },
-              child: const Text('Save', style: TextStyle(color: MyColor.blue)),
+              child: const Text('Save', style: TextStyle(color: MyColor.blue ,  fontFamily: 'Poppins')),
             ),
           ],
         );

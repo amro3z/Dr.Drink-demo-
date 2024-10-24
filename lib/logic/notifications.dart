@@ -10,6 +10,7 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class LocalNotificationService {
+  static String notificationSound = 'water_pouring';
   static FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   static StreamController<NotificationResponse> streamController = StreamController();
 
@@ -18,6 +19,10 @@ class LocalNotificationService {
 
     streamController.add(notificationResponse);
     // Navigator.push(context, route);
+  }
+
+  static void setNotificationSound(String sound) {
+    notificationSound = sound;
   }
 
   static Future init() async {
@@ -34,15 +39,16 @@ class LocalNotificationService {
 
   //showRepeatedNotification
   static void showRepeatedNotification() async {
-    const AndroidNotificationDetails android = AndroidNotificationDetails(
+    log(notificationSound);
+    AndroidNotificationDetails android = AndroidNotificationDetails(
       'id 2',
       'repeated notification',
       importance: Importance.max,
       priority: Priority.high,
       ticker: 'ticker',
-      sound: RawResourceAndroidNotificationSound('water_drop'),
+      sound: RawResourceAndroidNotificationSound(notificationSound),
     );
-    NotificationDetails details = const NotificationDetails(
+    NotificationDetails details = NotificationDetails(
       android: android,
     );
     await flutterLocalNotificationsPlugin.periodicallyShow(
@@ -55,48 +61,8 @@ class LocalNotificationService {
     );
   }
 
-  static void scheduleWaterReminders() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'water_reminder_channel', // Channel ID
-      'Water Reminder', // Channel Name
-      channelDescription: 'Reminder to drink water', // Channel Description
-      importance: Importance.high,
-      priority: Priority.high,
-      showWhen: false,
-    );
-
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-
-    List<TimeOfDay> reminderTimes = [
-      const TimeOfDay(hour: 18, minute: 40),
-      const TimeOfDay(hour: 18, minute: 42),
-      const TimeOfDay(hour: 18, minute: 44),
-      const TimeOfDay(hour: 18, minute: 46),
-    ];
-
-    for (var time in reminderTimes) {
-      final now = DateTime.now();
-      final scheduledTime =
-          DateTime(now.year, now.month, now.day, time.hour, time.minute);
-      final tz.TZDateTime tzScheduledTime =
-          tz.TZDateTime.from(scheduledTime, tz.local);
-
-      if (scheduledTime.isAfter(now)) {
-        await flutterLocalNotificationsPlugin.zonedSchedule(
-          reminderTimes.indexOf(time), // Unique ID for each notification
-          'Water Reminder',
-          'Time to drink water! Stay hydrated 💧',
-          tzScheduledTime,
-          platformChannelSpecifics,
-          androidAllowWhileIdle: true,
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.wallClockTime,
-          matchDateTimeComponents: DateTimeComponents.time,
-        );
-      }
-    }
+  static void cancelAllNotifications() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
   }
 
   static void cancelNotification(int id) async {

@@ -237,14 +237,14 @@ class _SingleVisibleItemListState extends State<SingleVisibleItemList> {
           // Add SmoothPageIndicator at the top right corner
           Positioned(
             right: 16,
-            top: 60, // Set the position from the top
+            top: screenHeight * 0.01, // Set the position from the top
             child: SmoothPageIndicator(
               controller: _pageController, // Link the controller
               count: itemBuilders.length,
               axisDirection: Axis.vertical, // Set the axis to vertical
               effect: ExpandingDotsEffect(
                 dotHeight: screenWidth * 0.023,
-                dotWidth: screenHeight * 0.022,
+                dotWidth: screenHeight * 0.019,
                 activeDotColor: widget.textColor,
                 dotColor: widget.notactivedotcolor,
                 expansionFactor: 3, // Dot expansion factor

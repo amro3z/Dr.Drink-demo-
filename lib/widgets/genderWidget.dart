@@ -54,7 +54,7 @@ class _GenderWidgetState extends State<GenderWidget> {
                         GenderWidget.gender = "Male";
                       });
                     }),
-                SizedBox(width: screenWidth*0.1,),
+                SizedBox(width: screenWidth*0.027,),
                 AnimatedGender(
                     path: "assets/image/Female.png",
                     text: "Female",
