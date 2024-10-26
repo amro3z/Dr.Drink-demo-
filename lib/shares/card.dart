@@ -329,7 +329,7 @@ class MyCard extends StatelessWidget {
               backcolor: MyColor.srow,
               cardcolor: MyColor.scrow,
               path: "assets/image/drinking water-cuate.png",
-              text: 'Benefits of Drinking Water for Skin',
+              text: 'Benefits of Drinking \nWater for Skin',
               textcolor: MyColor.snrow,
               description:
                   "Our skin is the largest organ in our body and is mostly made up of water, so it's no surprise that staying hydrated has a significant impact on skin health. \n \nRead on to know some benefits of drinking water for healthy skin.",

@@ -9,7 +9,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+
 class LocalNotificationService {
+  static String notificationSound = 'water_pouring';
+  static List<tz.TZDateTime> _notificationTimes = [];
   static FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   static StreamController<NotificationResponse> streamController = StreamController();
 
@@ -18,6 +21,10 @@ class LocalNotificationService {
 
     streamController.add(notificationResponse);
     // Navigator.push(context, route);
+  }
+
+  static void setNotificationSound(String sound) {
+    notificationSound = sound;
   }
 
   static Future init() async {
@@ -32,71 +39,88 @@ class LocalNotificationService {
     );
   }
 
-  //showRepeatedNotification
-  static void showRepeatedNotification() async {
-    const AndroidNotificationDetails android = AndroidNotificationDetails(
-      'id 2',
-      'repeated notification',
-      importance: Importance.max,
-      priority: Priority.high,
-      ticker: 'ticker',
-      sound: RawResourceAndroidNotificationSound('water_drop'),
-    );
-    NotificationDetails details = const NotificationDetails(
-      android: android,
-    );
-    await flutterLocalNotificationsPlugin.periodicallyShow(
-      1,
-      'Drink Daily',
-      'Time to drink water! Stay hydrated 💧',
-      RepeatInterval.everyMinute,
-      details,
-      payload: "Payload Data",
-    );
+  static void showHourlyNotificationsBetweenTimes() async {
+    // Ensure correct timezone setup
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
+
+    final now = tz.TZDateTime.now(tz.local); // Get current time
+    int notificationId = 100; // Unique notification ID
+
+    // Iterate over the generated notification times
+    for (var i = 0; i < _notificationTimes.length; i++) {
+      var time = _notificationTimes[i];
+      // Adjust if the notification time is in the past
+      if (time.isBefore(now)) {
+        time = time.add(const Duration(days: 1));
+        _notificationTimes[i] = time; // Update the time in the list
+      }
+
+      // log(notificationSound);
+      NotificationDetails details = NotificationDetails(
+        android: AndroidNotificationDetails(
+          'sound: $notificationSound',
+          'repeated notification',
+          importance: Importance.max,
+          priority: Priority.high,
+          ticker: 'ticker',
+          sound: RawResourceAndroidNotificationSound(notificationSound),
+        ),
+      );
+
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        notificationId++, // Unique ID for each notification as in zoneSchedule not allowed to have same id
+        'Water Reminder',
+        'Time to drink water! Stay hydrated 💧',
+        time,
+        details,
+        payload: 'hourly_reminder',
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+        UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    }
+    log('Notifications scheduled successfully!');
   }
 
-  static void scheduleWaterReminders() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'water_reminder_channel', // Channel ID
-      'Water Reminder', // Channel Name
-      channelDescription: 'Reminder to drink water', // Channel Description
-      importance: Importance.high,
-      priority: Priority.high,
-      showWhen: false,
-    );
+  static generateSchedule(String wakeUpTime, String bedTime)
+  {
+    // Get the current time
+    final now = tz.TZDateTime.now(tz.local);
 
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    // Create wake-up and bedtime objects for today
+    var wakeUp = _stringToTimeOfDay(wakeUpTime, now);
+    var bed = _stringToTimeOfDay(bedTime, now);
 
-    List<TimeOfDay> reminderTimes = [
-      const TimeOfDay(hour: 18, minute: 40),
-      const TimeOfDay(hour: 18, minute: 42),
-      const TimeOfDay(hour: 18, minute: 44),
-      const TimeOfDay(hour: 18, minute: 46),
-    ];
-
-    for (var time in reminderTimes) {
-      final now = DateTime.now();
-      final scheduledTime =
-          DateTime(now.year, now.month, now.day, time.hour, time.minute);
-      final tz.TZDateTime tzScheduledTime =
-          tz.TZDateTime.from(scheduledTime, tz.local);
-
-      if (scheduledTime.isAfter(now)) {
-        await flutterLocalNotificationsPlugin.zonedSchedule(
-          reminderTimes.indexOf(time), // Unique ID for each notification
-          'Water Reminder',
-          'Time to drink water! Stay hydrated 💧',
-          tzScheduledTime,
-          platformChannelSpecifics,
-          androidAllowWhileIdle: true,
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.wallClockTime,
-          matchDateTimeComponents: DateTimeComponents.time,
-        );
-      }
+    // If bedtime is before wake-up (spans two days), adjust bedtime
+    if (bed.isBefore(wakeUp)) {
+      bed = bed.add(const Duration(days: 1));
     }
+
+    var currentTime = wakeUp;
+    while (currentTime.isBefore(bed)) {
+      _notificationTimes.add(currentTime);
+      currentTime = currentTime.add(const Duration(minutes: 15));
+    }
+
+    log(_notificationTimes.toString());
+  }
+
+  static _stringToTimeOfDay(String time, var now) {
+    // 06:00 AM
+    var timeFormated = time.split(' ');
+    var period = timeFormated[1];
+    var hoursAndMinutes = timeFormated[0].split(':');
+    var wakeHour = period == 'AM' ? int.parse(hoursAndMinutes[0]) : int.parse(hoursAndMinutes[0]) + 12;
+    var wakeMinute = int.parse(hoursAndMinutes[1]);
+
+    return tz.TZDateTime(tz.local, now.year, now.month, now.day,
+        wakeHour, wakeMinute);
+  }
+
+
+  static void cancelAllNotifications() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
   }
 
   static void cancelNotification(int id) async {

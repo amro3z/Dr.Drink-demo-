@@ -13,7 +13,7 @@ class Profile {
     this.totalAmount = 0,
     this.totalDays = 1,
     this.enableNotification = true,
-    this.notificationSound = 'Default',
+    this.notificationSound = '',
     this.theme = 'Light Theme',
     this.language = 'English',
     this.unit = 'ml',

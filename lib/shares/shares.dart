@@ -328,8 +328,8 @@ class AnimatedGender extends StatelessWidget {
           children: [
             Image.asset(
               path,
-              width: 180,
-              height: 180,
+              width: 175,
+              height: 175,
             ),
             Text(
               text,

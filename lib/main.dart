@@ -60,7 +60,7 @@ class _MainState extends State<Main> {
           WeatherCubit()..getWeather(), // تأكد من استدعاء getWeather هنا
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: GenderWidget(),
+        home: SplashScreen(),
       ),
     );
   }

@@ -111,7 +111,7 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
                     ),
                     child: Padding(
                       padding:
-                      EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                          EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -139,14 +139,12 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
                 ],
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
-              child: Positioned(
-                top: screenHeight * 0.3,
-                child: CustomPaint(
-                  size: Size(screenWidth * 0.78, screenHeight * 0.2),
-                  painter: SemiCircleProgressPainter(_progress),
-                ),
+            // Positioning must be done directly within the Stack
+            Positioned(
+              top: screenHeight * 0.33,
+              child: CustomPaint(
+                size: Size(screenWidth * 0.78, screenHeight * 0.2),
+                painter: SemiCircleProgressPainter(_progress),
               ),
             ),
             Positioned(
