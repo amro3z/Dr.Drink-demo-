@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_drink/logic/notifications.dart';
 import 'package:dr_drink/values/color.dart';
@@ -8,23 +7,25 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../logic/user.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class SoundSettingsContent extends StatefulWidget {
   const SoundSettingsContent({super.key});
 
   @override
-  _SoundSettingsContentState createState() => _SoundSettingsContentState();
+  SoundSettingsContentState createState() => SoundSettingsContentState();
 }
 
-class _SoundSettingsContentState extends State<SoundSettingsContent> {
+class SoundSettingsContentState extends State<SoundSettingsContent> {
   final MyUser _user = MyUser.instance;
-  String selectedSound = ''; // Holds the currently selected sound
+  String _selectedSound = '';
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
     // Load the current sound setting from the notification service or user's profile
-    selectedSound = _user.profile.notificationSound;
+    _selectedSound = _user.profile.notificationSound;
   }
 
   Future<void> _saveUserToSharedPrefs(MyUser user) async {
@@ -57,16 +58,6 @@ class _SoundSettingsContentState extends State<SoundSettingsContent> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 20),
-          SwitchListTile(
-            title: const Text('Sound effect'),
-            value: selectedSound.isNotEmpty,
-            activeColor: MyColor.blue,
-            onChanged: (bool enabled) {
-              setState(() {
-                selectedSound = enabled ? _user.profile.notificationSound : '';
-              });
-            },
-          ),
           _buildRadioTile('Default', ''),
           _buildRadioTile('Water drop', 'water_drop'),
           _buildRadioTile('Water bubble', 'water_bubble'),
@@ -76,10 +67,10 @@ class _SoundSettingsContentState extends State<SoundSettingsContent> {
             alignment: Alignment.centerRight,
             child: ElevatedButton(
               onPressed: () {
-                LocalNotificationService.setNotificationSound(selectedSound);
-                _user.profile.notificationSound = selectedSound;
-                LocalNotificationService.cancelAllNotifications();
-                LocalNotificationService.showRepeatedNotification();
+                LocalNotificationService.setNotificationSound(_selectedSound);
+                _user.profile.notificationSound = _selectedSound;
+
+                LocalNotificationService.showHourlyNotificationsBetweenTimes(); // just to test the sound
                 _saveUserToSharedPrefs(_user);
                 _saveUserToFirestore(_user);
                 Navigator.pop(context); // Close the dialog or settings page
@@ -104,13 +95,22 @@ class _SoundSettingsContentState extends State<SoundSettingsContent> {
     return RadioListTile<String>(
       title: Text(title),
       value: value,
-      groupValue: selectedSound,
+      groupValue: _selectedSound,
       activeColor: MyColor.blue,
       onChanged: (String? value) {
         setState(() {
-          selectedSound = value!;
+          _selectedSound = value!;
+          _playSound(_selectedSound); // Play the selected sound
         });
       },
     );
+  }
+
+  // Function to play sound
+  Future<void> _playSound(String sound) async {
+    // You might need to change the path based on your assets location
+    String assetPath = 'sounds/$sound.ogg'; // Ensure sound files are placed in this directory
+    await _audioPlayer.setSource(AssetSource(assetPath));
+    await _audioPlayer.resume(); // Play the sound
   }
 }

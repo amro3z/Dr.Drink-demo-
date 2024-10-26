@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dr_drink/logic/notifications.dart';
 import 'package:dr_drink/screens/reminder_screen.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:dr_drink/widgets/soundWidget.dart';
@@ -41,315 +43,386 @@ class _ProfilePageState extends State<ProfilePage> {
   // late VoidCallback toggleTheme;
   final MyUser _user = MyUser.instance;
   String selectedSound = 'Water drop 2';
-  late TextEditingController _passwordController;
+  // late TextEditingController _passwordController;
   final TextEditingController _goalController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-
-    return  SafeArea(
-      child: Scaffold(
-        backgroundColor:MyColor.blue,
-        body:  Padding(
-          padding: const EdgeInsets.only(top:18 ),
-          child: ListView(
-            children: [
-              GestureDetector(
-                onTap: (){
-                  accountDialog(context);
-                },
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundColor: const Color(0xFF6690DE),
-                      backgroundImage: NetworkImage(
-                        _user.account.photoURL,
-                      ),
-                      child: _user.account.photoURL == ''
-                          ? const Icon(Icons.person, color: MyColor.blue, size: 35)
-                          : null, // Show the photo if it exists, otherwise show the icon
-                    ),
-
-                    const SizedBox(height:10 ,),
-                    Row(
-
-                      mainAxisAlignment: MainAxisAlignment.center,
+    return SafeArea(
+        child: Scaffold(
+      backgroundColor: MyColor.blue,
+      body: Padding(
+        padding: const EdgeInsets.only(top: 18),
+        child: Column(
+          children: [
+            Expanded(
+              // Make the whole body of the Scaffold expandable
+              child: ListView(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      accountDialog(context);
+                    },
+                    child: Column(
                       children: [
-                        Text(_user.account.email ?? 'No Email',style:const TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
-                        const Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundColor: const Color(0xFF6690DE),
+                          backgroundImage: NetworkImage(
+                            _user.account.photoURL,
+                          ),
+                          child: _user.account.photoURL == ''
+                              ? const Icon(Icons.person,
+                                  color: MyColor.blue, size: 35)
+                              : null,
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              _user.account.email ?? 'No Email',
+                              style: const TextStyle(
+                                  color: Colors.white, fontFamily: 'Poppins'),
+                            ),
+                            const Icon(Icons.arrow_forward_ios_outlined,
+                                size: 15, color: Colors.white),
+                          ],
+                        ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 25,),
-              // ListView(children: [],)
-              Row(
-                children: [
-                  Expanded(child:ClipRRect(
-                    borderRadius:BorderRadius.circular(50),
+                  ),
+                  const SizedBox(height: 25),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(50),
+                          child: Container(
+                            padding: const EdgeInsets.all(15),
+                            margin: const EdgeInsets.all(10),
+                            color: const Color(0xFF1D5ACE),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Icon(Icons.water_drop, color: Colors.white),
+                                    Text(
+                                      '${_user.profile.totalAmount}',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 25,
+                                          fontFamily: 'Poppins'),
+                                    ),
+                                    Text(
+                                      ' ${_user.profile.unit}',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'Poppins'),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  "Total \namount drunk",
+                                  style: TextStyle(
+                                      color: Colors.white60,
+                                      fontFamily: 'Poppins'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(50),
+                          child: Container(
+                            padding: const EdgeInsets.all(15),
+                            margin: const EdgeInsets.all(10),
+                            color: const Color(0xFF1D5ACE),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Icon(Icons.calendar_today_rounded,
+                                        color: Colors.white),
+                                    Text(
+                                      ' ${_user.profile.totalDays}',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 25,
+                                          fontFamily: 'Poppins'),
+                                    ),
+                                    Text(
+                                      " days",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'Poppins'),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  "Total \nachievement",
+                                  style: TextStyle(
+                                      color: Colors.white60,
+                                      fontFamily: 'Poppins'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10), // Add spacing
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
                     child: Container(
                       padding: const EdgeInsets.all(15),
-                      margin:const EdgeInsets.all(10),
-                      color:const Color(0xFF1D5ACE),
+                      margin: const EdgeInsets.all(10),
+                      color: const Color(0xFF1D5ACE),
                       child: Column(
-                        crossAxisAlignment:CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Icon(Icons.water_drop,color:Colors.white),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text('${_user.profile.totalAmount}',style:TextStyle(color:Colors.white,fontSize:25, fontFamily: 'Poppins')),
-                              Text(' ${_user.profile.unit}',style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
-                            ],
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => const Reminder()));
+                            },
+                            behavior: HitTestBehavior.opaque,
+                            child: const Row(
+                              children: [
+                                Icon(Icons.notifications, color: Colors.white),
+                                Spacer(flex: 1),
+                                Text("Reminders",
+                                    style: TextStyle(color: Colors.white)),
+                                Spacer(flex: 25),
+                                Icon(Icons.arrow_forward_ios_outlined,
+                                    size: 15, color: Colors.white),
+                              ],
+                            ),
                           ),
-                          Text("Total amount drunk",style:TextStyle(color:Colors.white60 ,  fontFamily: 'Poppins')),
+                          const SizedBox(height: 25),
+                          GestureDetector(
+                            onTap: () {
+                              showSoundSettings(context);
+                            },
+                            behavior: HitTestBehavior.opaque,
+                            child: const Row(
+                              children: [
+                                Icon(Icons.volume_up_outlined,
+                                    color: Colors.white),
+                                Spacer(flex: 1),
+                                Text("Notifications Sound",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Poppins')),
+                                Spacer(flex: 25),
+                                Icon(Icons.arrow_forward_ios_outlined,
+                                    size: 15, color: Colors.white),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 25),
+                          GestureDetector(
+                            onTap: () {
+                              showThemeChanger(context);
+                            },
+                            behavior: HitTestBehavior.opaque,
+                            child: const Row(
+                              children: [
+                                Icon(Icons.brush_outlined, color: Colors.white),
+                                Spacer(flex: 1),
+                                Text("Themes",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Poppins')),
+                                Spacer(flex: 25),
+                                Icon(Icons.arrow_forward_ios_outlined,
+                                    size: 15, color: Colors.white),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 25),
+                          GestureDetector(
+                            onTap: () {
+                              showLanguageChanger(context);
+                            },
+                            behavior: HitTestBehavior.opaque,
+                            child: const Row(
+                              children: [
+                                Icon(Icons.language, color: Colors.white),
+                                Spacer(flex: 1),
+                                Text("Language",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Poppins')),
+                                Spacer(flex: 25),
+                                Icon(Icons.arrow_forward_ios_outlined,
+                                    size: 15, color: Colors.white),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                  ),),
-                  Expanded(child:ClipRRect(borderRadius:BorderRadius.circular(50),
+                  ),
+                  const SizedBox(height: 10), // Add spacing
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
                     child: Container(
                       padding: const EdgeInsets.all(15),
-                      margin:const EdgeInsets.all(10),
-                      color:const Color(0xFF1D5ACE),
+                      margin: const EdgeInsets.all(10),
+                      color: const Color(0xFF1D5ACE),
                       child: Column(
-                        crossAxisAlignment:CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Icon(Icons.calendar_today_rounded,color:Colors.white),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text('${_user.profile.totalDays}',style:TextStyle(color:Colors.white,fontSize:25 , fontFamily: 'Poppins')),
-                              Text(" days",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
-
-                            ],
+                          GestureDetector(
+                            onTap: () {
+                              dailyGoal_dialog(context);
+                            },
+                            behavior: HitTestBehavior.opaque,
+                            child: Row(
+                              children: [
+                                Icon(Icons.water_drop, color: Colors.white),
+                                Spacer(flex: 1),
+                                Text("Daily goal",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Poppins')),
+                                Spacer(flex: 25),
+                                Text(
+                                  '${_user.profile.unit == 'ml' ? _user.tracker.totalWaterGoal : _user.tracker.totalWaterGoal! / 1000}',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: 'Poppins'),
+                                ),
+                                Text(' ${_user.profile.unit}',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Poppins')),
+                                Icon(Icons.arrow_forward_ios_outlined,
+                                    size: 15, color: Colors.white),
+                              ],
+                            ),
                           ),
-                          Text("Total achievement",style:TextStyle(color:Colors.white60 ,  fontFamily: 'Poppins')),
+                          const SizedBox(height: 25),
+                          GestureDetector(
+                            onTap: () {
+                              units_dialog(context);
+                            },
+                            behavior: HitTestBehavior.opaque,
+                            child: const Row(
+                              children: [
+                                Icon(Icons.local_drink, color: Colors.white),
+                                Spacer(flex: 1),
+                                Text("Units ",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Poppins')),
+                                Spacer(flex: 25),
+                                Text("ml, L",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Poppins')),
+                                Icon(Icons.arrow_forward_ios_outlined,
+                                    size: 15, color: Colors.white),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 25),
+                          GestureDetector(
+                            onTap: () {
+                              gender_dialog(context);
+                            },
+                            behavior: HitTestBehavior.opaque,
+                            child: const Row(
+                              children: [
+                                Icon(Icons.person, color: Colors.white),
+                                Spacer(flex: 1),
+                                Text("Gender",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Poppins')),
+                                Spacer(flex: 25),
+                                Icon(Icons.arrow_forward_ios_outlined,
+                                    size: 15, color: Colors.white),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 25),
+                          GestureDetector(
+                            onTap: () {
+                              weight_dialog(context);
+                            },
+                            behavior: HitTestBehavior.opaque,
+                            child: const Row(
+                              children: [
+                                Icon(Icons.line_weight_sharp,
+                                    color: Colors.white),
+                                Spacer(flex: 1),
+                                Text("Weight",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Poppins')),
+                                Spacer(flex: 25),
+                                Icon(Icons.arrow_forward_ios_outlined,
+                                    size: 15, color: Colors.white),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                  ),),
+                  ),
                 ],
               ),
-              Expanded(
-                child:ClipRRect(borderRadius: BorderRadius.circular(50),
-                  child: Container(
-                    padding: const EdgeInsets.all(15),
-                    margin:const EdgeInsets.all(10),
-                    color:const Color(0xFF1D5ACE),
-                    child:  Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment:CrossAxisAlignment.end,
-                      children: [
-                        GestureDetector(
-                          onTap: (){
-                            Navigator.of(context).push(
-                                MaterialPageRoute(builder:(context)=> const Reminder()));
-                          },
-                          behavior: HitTestBehavior.opaque,
-                          child: const Row(
-                            children: [
-                              Icon(Icons.notifications,color:Colors.white),
-                              Spacer(flex: 1,),
-                              Text("Reminders",style:TextStyle(color:Colors.white)),
-                              Spacer(flex:25,),
-                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
-                              // Spacer(),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(height:25 ),
-                        GestureDetector(
-                          onTap: (){
-                            showSoundSettings( context);
-                          },
-                          behavior: HitTestBehavior.opaque,
-                          child: const Row(
-                            children: [
-                              Icon(Icons.volume_up_outlined,color:Colors.white),
-                              Spacer(flex: 1,),
-                              Text("Notifications Sound",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
-                              Spacer(flex:25,),
-                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
-                              // Spacer(),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(height:25 ),
-                        GestureDetector(
-                          onTap: (){
-                            showThemeChanger( context);
-                          },
-                          behavior: HitTestBehavior.opaque,
-                          child: const Row(
-                            children: [
-                              Icon(Icons.brush_outlined,color:Colors.white),
-                              Spacer(flex: 1,),
-                              Text("Themes",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
-                              Spacer(flex:25,),
-                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
-                              // Spacer(),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height:25 ),
-                        GestureDetector(
-                          onTap: (){
-                            showLanguageChanger(context);
-                          },
-                          behavior: HitTestBehavior.opaque,
-                          child: const Row(
-                            children: [
-                              Icon(Icons.language,color:Colors.white),
-                              Spacer(flex: 1,),
-                              Text("Language",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
-                              Spacer(flex:25,),
-                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
-                              // Spacer(),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child:ClipRRect(borderRadius: BorderRadius.circular(50),
-                  child:Container(
-                    padding: const EdgeInsets.all(15),
-                    margin:const EdgeInsets.all(10),
-                    color:const Color(0xFF1D5ACE),
-                    child:  Column(
-
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment:CrossAxisAlignment.end,
-                      children: [
-                        GestureDetector(
-                          onTap: (){
-                            dailyGoal_dialog(context);
-                            // Profile.dailyGoal_dialog(context);
-                          },
-                          behavior: HitTestBehavior.opaque,
-                          child: Row(
-                            children: [
-                              Icon(Icons.water_drop,color:Colors.white),
-                              Spacer(flex: 1,),
-                              Text("Daily goal",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
-                              Spacer(flex:25,),
-                              Text('${_user.profile.unit == 'ml' ? _user.tracker.totalWaterGoal : _user.tracker.totalWaterGoal! / 1000}',style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
-                              Text(' ${_user.profile.unit}',style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
-                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white ),
-                              // Spacer(),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height:25 ),
-                        GestureDetector(
-                          onTap: (){
-                            units_dialog(context);
-                            // Profile.units_dialog(context);
-                          },
-                          behavior: HitTestBehavior.opaque,
-                          child: const Row(
-                            children: [
-                              Icon(Icons.local_drink,color:Colors.white),
-                              Spacer(flex: 1,),
-                              Text("Units ",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
-                              Spacer(flex:25,),
-                              Text("ml, L",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
-                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
-                              // Spacer(),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height:25 ),
-                        GestureDetector(
-                          onTap: (){
-                            gender_dialog(context);
-                            //  Profile.gender_dialog(context);
-                          },
-                          behavior: HitTestBehavior.opaque,
-                          child: const Row(
-                            children: [
-                              Icon(Icons.person,color:Colors.white),
-                              Spacer(flex: 1,),
-                              Text("Gender",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
-                              Spacer(flex:25,),
-                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
-                              // Spacer(),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height:25 ),
-
-                        GestureDetector(
-                          onTap: (){
-                            weight_dialog(context);
-                            //  Profile.weight_dialog(context);
-                          },
-                          behavior: HitTestBehavior.opaque,
-                          child: const Row(
-                            children: [
-                              Icon(Icons.line_weight_sharp,color:Colors.white),
-                              Spacer(flex: 1,),
-                              Text("Weight",style:TextStyle(color:Colors.white ,  fontFamily: 'Poppins')),
-                              Spacer(flex:25,),
-                              Icon(Icons.arrow_forward_ios_outlined,size:15,color:Colors.white),
-                              // Spacer(),
-                            ],
-                          ),
-                        ),
-
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    );
+    ));
   }
 
   @override
   void initState() {
     super.initState();
   }
+
   @override
   void dispose() {
-    _passwordController.dispose();
+    // _passwordController.dispose();
     super.dispose();
   }
 
   void accountDialog(BuildContext context) {
     showDialog(
         context: context,
-        builder: (context)
-        {
+        builder: (context) {
           return AlertDialog(
-            title: const Text('Account' ,  style: TextStyle( fontFamily: 'Poppins'),),
+            title: const Text(
+              'Account',
+              style: TextStyle(fontFamily: 'Poppins'),
+            ),
             content: SizedBox(
               width: 70,
               height: 250,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   // Email Field
                   const Text(
                     'Email',
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                        fontFamily: 'Poppins'
-                    ),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Poppins'),
                   ),
                   const SizedBox(height: 4),
                   TextFormField(
@@ -359,10 +432,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                     ),
                   ),
-
 
                   const SizedBox(height: 16),
 
@@ -370,10 +443,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   const Text(
                     'Username',
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                        fontFamily: 'Poppins'
-                    ),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Poppins'),
                   ),
                   const SizedBox(height: 4),
                   TextFormField(
@@ -383,7 +455,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -392,15 +465,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   Align(
                     alignment: Alignment.topLeft,
                     child: GestureDetector(
-                      onTap: _showChangePasswordDialog,
+                      onTap: () {
+                        _resetPassword();
+                      },
                       child: const Text(
                         'Change Password',
                         style: TextStyle(
-                          color: MyColor.blue,
-                          decoration: TextDecoration.underline,
-                          fontSize: 16,
-                            fontFamily: 'Poppins'
-                        ),
+                            color: MyColor.blue,
+                            decoration: TextDecoration.underline,
+                            fontSize: 16,
+                            fontFamily: 'Poppins'),
                       ),
                     ),
                   ),
@@ -412,7 +486,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('Cancel', style: TextStyle(color: MyColor.blue ,  fontFamily: 'Poppins')),
+                child: const Text('Cancel',
+                    style:
+                        TextStyle(color: MyColor.blue, fontFamily: 'Poppins')),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -426,70 +502,44 @@ class _ProfilePageState extends State<ProfilePage> {
                   }
 
                   await FirebaseAuth.instance.signOut();
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
                   await prefs.setBool('isUserRegistered', false);
+                  LocalNotificationService.cancelAllNotifications();
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => LoginScreen()),
-                        (Route<dynamic> route) => false,
+                    (Route<dynamic> route) => false,
                   );
                 },
-                child: const Text('Log Out', style: TextStyle(color: Colors.red ,  fontFamily: 'Poppins')),
+                child: const Text('Log Out',
+                    style: TextStyle(color: Colors.red, fontFamily: 'Poppins')),
               ),
             ],
           );
-
-        }
-    );
+        });
   }
 
-  void _showChangePasswordDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Change Password',style: TextStyle(color:MyColor.blue ,  fontFamily: 'Poppins')),
-          content: const Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Old Password',
-                ),
-              ),
-              SizedBox(height: 8),
-              TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'New Password',
-                ),
-              ),
-              SizedBox(height: 8),
-              TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Confirm the new password',
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel',style: TextStyle(color:MyColor.blue ,  fontFamily: 'Poppins')),
-            ),
-            TextButton(
-              onPressed: () {
-                // منطق تغيير كلمة المرور هنا
-                Navigator.of(context).pop();
-              },
-              child: const Text('Sumbit',style: TextStyle(color:MyColor.blue ,  fontFamily: 'Poppins'),),
-            ),
-          ],
-        );
-      },
-    );
+  void _resetPassword() async {
+    try {
+      await FirebaseAuth.instance
+          .sendPasswordResetEmail(email: _user.account.email!);
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.success,
+        animType: AnimType.rightSlide,
+        title: 'Success',
+        desc: 'Password change email sent!',
+      ).show();
+    } catch (e) {
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.error,
+        animType: AnimType.rightSlide,
+        title: 'Error',
+        desc: e.toString(),
+      ).show();
+    }
   }
 
   void showSoundSettings(BuildContext context) {
@@ -506,7 +556,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void showThemeChanger(BuildContext context) {
     const List<String> languages = ['Light Theme', 'Dark Theme'];
-    const List<Icon> icons = [Icon(Icons.wb_sunny), Icon(Icons.nightlight_round)];
+    const List<Icon> icons = [
+      Icon(Icons.wb_sunny),
+      Icon(Icons.nightlight_round)
+    ];
 
     showModalBottomSheet(
       context: context,
@@ -521,7 +574,10 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               const Text(
                 'Choose Theme',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 ,  fontFamily: 'Poppins'),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    fontFamily: 'Poppins'),
               ),
               // Loop through the available languages to create the list tiles
               ...languages.map((theme) {
@@ -533,9 +589,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   title: Text(
                     theme,
                     style: TextStyle(
-                      color: isSelected ? MyColor.blue : Colors.black,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal, fontFamily: 'Poppins'
-                    ),
+                        color: isSelected ? MyColor.blue : Colors.black,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
+                        fontFamily: 'Poppins'),
                   ),
                   onTap: () {
                     // Update the selected language
@@ -569,7 +626,10 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               const Text(
                 'Choose Language',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18 ,  fontFamily: 'Poppins'),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    fontFamily: 'Poppins'),
               ),
               // Loop through the available languages to create the list tiles
               ...languages.map((language) {
@@ -581,9 +641,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   title: Text(
                     language,
                     style: TextStyle(
-                      color: isSelected ? MyColor.blue : Colors.black,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,  fontFamily: 'Poppins'
-                    ),
+                        color: isSelected ? MyColor.blue : Colors.black,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
+                        fontFamily: 'Poppins'),
                   ),
                   onTap: () {
                     // Update the selected language
@@ -603,22 +664,21 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void dailyGoal_dialog(BuildContext context) {
     showDialog(
-
         context: context,
-        builder: (context)
-        {
+        builder: (context) {
           return AlertDialog(
-
             title: const Text('Daily Goal'),
             content: TextField(
               controller: _goalController,
               keyboardType: TextInputType.number,
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly, // Accept only digits
-                LengthLimitingTextInputFormatter(_user.profile.unit == 'ml'? 4 : 1),    // Limit to 4 digits
+                LengthLimitingTextInputFormatter(
+                    _user.profile.unit == 'ml' ? 4 : 1), // Limit to 4 digits
               ],
               decoration: InputDecoration(
-                hintText: '${_user.profile.unit == 'ml' ? _user.tracker.totalWaterGoal : _user.tracker.totalWaterGoal! / 1000} ${_user.profile.unit}',
+                hintText:
+                    '${_user.profile.unit == 'ml' ? _user.tracker.totalWaterGoal : _user.tracker.totalWaterGoal! / 1000} ${_user.profile.unit}',
               ),
             ),
             actions: [
@@ -626,7 +686,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: () {
                   Navigator.pop(context); // إغلاق المربع
                 },
-                child: const Text('Cancel',style: TextStyle(color:MyColor.blue ,  fontFamily: 'Poppins')),
+                child: const Text('Cancel',
+                    style:
+                        TextStyle(color: MyColor.blue, fontFamily: 'Poppins')),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -634,7 +696,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     if (int.parse(_goalController.text) < 1000) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('The goal cannot be less than 1000 ml' , style: TextStyle( fontFamily: 'Poppins'),),
+                          content: Text(
+                            'The goal cannot be less than 1000 ml',
+                            style: TextStyle(fontFamily: 'Poppins'),
+                          ),
                         ),
                       );
                       return;
@@ -643,7 +708,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     if (int.parse(_goalController.text) < 1) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('The goal cannot be less than 1 L' , style: TextStyle( fontFamily: 'Poppins'), ),
+                          content: Text(
+                            'The goal cannot be less than 1 L',
+                            style: TextStyle(fontFamily: 'Poppins'),
+                          ),
                         ),
                       );
                       return;
@@ -651,19 +719,21 @@ class _ProfilePageState extends State<ProfilePage> {
                   }
                   // function of save data
                   setState(() {
-                    _user.tracker.totalWaterGoal = int.parse(_goalController.text);
+                    _user.tracker.totalWaterGoal =
+                        int.parse(_goalController.text);
                   });
                   _saveUserToSharedPrefs(_user);
                   _saveUserToFirestore(_user);
                   Navigator.pop(context); // إغلاق المربع وحفظ القيمة
                 },
-                child: const Text('Save',style: TextStyle(color:MyColor.blue ,  fontFamily: 'Poppins'),),
+                child: const Text(
+                  'Save',
+                  style: TextStyle(color: MyColor.blue, fontFamily: 'Poppins'),
+                ),
               ),
             ],
           );
-        }
-    );
-
+        });
   }
 
   void units_dialog(BuildContext context) {
@@ -675,13 +745,16 @@ class _ProfilePageState extends State<ProfilePage> {
 
     // Create the controller with the initial item
     FixedExtentScrollController controller =
-    FixedExtentScrollController(initialItem: initialIndex);
+        FixedExtentScrollController(initialItem: initialIndex);
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Units' , style: TextStyle( fontFamily: 'Poppins'),),
+          title: const Text(
+            'Units',
+            style: TextStyle(fontFamily: 'Poppins'),
+          ),
           content: SizedBox(
             height: 150,
             child: Row(
@@ -696,9 +769,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     perspective: 0.006,
                     diameterRatio: 0.4,
                     physics: const FixedExtentScrollPhysics(),
-                    children: units
-                        .map((unit) => Center(child: Text(unit)))
-                        .toList(),
+                    children:
+                        units.map((unit) => Center(child: Text(unit))).toList(),
                   ),
                 ),
               ],
@@ -709,7 +781,8 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () {
                 Navigator.pop(context); // Close the dialog
               },
-              child: const Text('Cancel', style: TextStyle(color: MyColor.blue ,  fontFamily: 'Poppins')),
+              child: const Text('Cancel',
+                  style: TextStyle(color: MyColor.blue, fontFamily: 'Poppins')),
             ),
             ElevatedButton(
               onPressed: () {
@@ -727,7 +800,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 // Close the dialog
                 Navigator.pop(context);
               },
-              child: const Text('Save', style: TextStyle(color: MyColor.blue ,  fontFamily: 'Poppins')),
+              child: const Text('Save',
+                  style: TextStyle(color: MyColor.blue, fontFamily: 'Poppins')),
             ),
           ],
         );
@@ -744,13 +818,16 @@ class _ProfilePageState extends State<ProfilePage> {
 
     // Create the controller with the initial item
     FixedExtentScrollController controller =
-    FixedExtentScrollController(initialItem: initialIndex);
+        FixedExtentScrollController(initialItem: initialIndex);
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Gender' , style: TextStyle( fontFamily: 'Poppins'),),
+          title: const Text(
+            'Gender',
+            style: TextStyle(fontFamily: 'Poppins'),
+          ),
           content: SizedBox(
             width: 70,
             height: 200,
@@ -760,9 +837,8 @@ class _ProfilePageState extends State<ProfilePage> {
               perspective: 0.006,
               diameterRatio: 0.4,
               physics: const FixedExtentScrollPhysics(),
-              children: genders
-                  .map((gender) => Center(child: Text(gender)))
-                  .toList(),
+              children:
+                  genders.map((gender) => Center(child: Text(gender))).toList(),
             ),
           ),
           actions: [
@@ -770,7 +846,8 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () {
                 Navigator.pop(context); // Close the dialog
               },
-              child: const Text('Cancel', style: TextStyle(color: MyColor.blue ,  fontFamily: 'Poppins')),
+              child: const Text('Cancel',
+                  style: TextStyle(color: MyColor.blue, fontFamily: 'Poppins')),
             ),
             ElevatedButton(
               onPressed: () {
@@ -788,7 +865,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 // Close the dialog
                 Navigator.pop(context);
               },
-              child: const Text('Save', style: TextStyle(color: MyColor.blue ,  fontFamily: 'Poppins')),
+              child: const Text('Save',
+                  style: TextStyle(color: MyColor.blue, fontFamily: 'Poppins')),
             ),
           ],
         );
@@ -806,13 +884,16 @@ class _ProfilePageState extends State<ProfilePage> {
 
     // Create the controller with the initial index
     FixedExtentScrollController controller =
-    FixedExtentScrollController(initialItem: initialIndex);
+        FixedExtentScrollController(initialItem: initialIndex);
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Weight' ,  style: TextStyle( fontFamily: 'Poppins'),),
+          title: const Text(
+            'Weight',
+            style: TextStyle(fontFamily: 'Poppins'),
+          ),
           content: SizedBox(
             width: 50,
             height: 100,
@@ -845,7 +926,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(
                   width: 70,
                   height: 200,
-                  child: Center(child: Text("kg", style: TextStyle(fontSize: 18 , fontFamily: 'Poppins'))),
+                  child: Center(
+                      child: Text("kg",
+                          style:
+                              TextStyle(fontSize: 18, fontFamily: 'Poppins'))),
                 ),
               ],
             ),
@@ -855,7 +939,8 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () {
                 Navigator.pop(context); // Close the dialog
               },
-              child: const Text('Cancel', style: TextStyle(color: MyColor.blue ,  fontFamily: 'Poppins')),
+              child: const Text('Cancel',
+                  style: TextStyle(color: MyColor.blue, fontFamily: 'Poppins')),
             ),
             ElevatedButton(
               onPressed: () {
@@ -872,12 +957,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 Navigator.pop(context); // Close the dialog
               },
-              child: const Text('Save', style: TextStyle(color: MyColor.blue ,  fontFamily: 'Poppins')),
+              child: const Text('Save',
+                  style: TextStyle(color: MyColor.blue, fontFamily: 'Poppins')),
             ),
           ],
         );
       },
     );
   }
-
 }
