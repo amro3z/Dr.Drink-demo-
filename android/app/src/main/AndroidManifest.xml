@@ -10,6 +10,9 @@
         android:label="dr_drink"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data
+            android:name="com.google.android.gms.client_id"
+            android:value="710563306562-rvsp9fi6b0dgi3m60efibncag4bv8j6c.apps.googleusercontent.com" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

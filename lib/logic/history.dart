@@ -1,3 +1,6 @@
+import '../logic/storage.dart';
+import 'package:dr_drink/logic/user.dart';
+
 class History {
   // Public attributes
   List<int> records;
@@ -68,6 +71,28 @@ class History {
       'weeklyConsumption': weeklyConsumption,
       'monthlyConsumption': monthlyConsumption,
     };
+  }
+
+  void storeRecord(double waterLevel, DateTime? recordedTime) {
+    Storage storage = Storage();
+    MyUser user = MyUser.instance;
+    String unit = user.profile.unit;
+
+    int hours = recordedTime!.hour > 12 ? recordedTime.hour - 12 : recordedTime.hour;
+    String minutes = recordedTime.minute.toString();
+    if (recordedTime.minute < 10) {
+      minutes = '0${recordedTime.minute}';
+    }
+
+    int record = unit == 'ml' ? (waterLevel * 2).truncate() : (waterLevel * 0.2).truncate() * 10;
+    user.tracker.drink(record);
+    user.history.addRecord(record, '$hours:$minutes ${recordedTime.hour > 12 ? 'PM' : 'AM'}');
+    user.history.addHourlyConsumption(recordedTime.hour, record);
+    user.history.addWeeklyConsumption(recordedTime.weekday, record);
+    user.history.addMonthlyConsumption(recordedTime.day - 1, record);
+    user.profile.addAmount(record);
+
+    storage.saveUser(user);
   }
 
   // Create a History object from a map

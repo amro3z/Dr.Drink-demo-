@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_drink/logic/notifications.dart';
+import 'package:dr_drink/logic/storage.dart';
 import 'package:dr_drink/screens/reminder_screen.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:dr_drink/widgets/soundWidget.dart';
@@ -21,30 +22,33 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-Future<void> _saveUserToSharedPrefs(MyUser user) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString('user', json.encode(user.toMap()));
-}
-
-Future<void> _saveUserToFirestore(MyUser user) async {
-  try {
-    final userCollection = FirebaseFirestore.instance.collection('users');
-    String userId = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
-
-    await userCollection.doc(userId).set(user.toMap());
-
-    log('User saved to Firestore successfully.');
-  } catch (e) {
-    log('Failed to save user to Firestore: $e');
-  }
-}
-
 class _ProfilePageState extends State<ProfilePage> {
   // late VoidCallback toggleTheme;
   final MyUser _user = MyUser.instance;
-  String selectedSound = 'Water drop 2';
-  // late TextEditingController _passwordController;
+  Storage _storage = Storage();
   final TextEditingController _goalController = TextEditingController();
+  int totalDaysUsed = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _calculateTotalDays();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void _calculateTotalDays() {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null && user.metadata.creationTime != null) {
+      DateTime creationDate = user.metadata.creationTime!;
+      DateTime today = DateTime.now();
+      totalDaysUsed = today.difference(creationDate).inDays;
+      setState(() {}); // Update the UI with the new value
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,29 +152,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Icon(Icons.calendar_today_rounded,
-                                        color: Colors.white),
-                                    Text(
-                                      ' ${_user.profile.totalDays}',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 25,
-                                          fontFamily: 'Poppins'),
-                                    ),
-                                    Text(
-                                      " days",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'Poppins'),
-                                    ),
+                                    Icon(Icons.calendar_today_rounded, color: Colors.white),
+                                    Text(' ${totalDaysUsed+1}', style: TextStyle(color: Colors.white, fontSize: 25, fontFamily: 'Poppins'),),
+                                    Text(" days", style: TextStyle(color: Colors.white, fontFamily: 'Poppins'),),
                                   ],
                                 ),
-                                Text(
-                                  "Total \nachievement",
-                                  style: TextStyle(
-                                      color: Colors.white60,
-                                      fontFamily: 'Poppins'),
-                                ),
+                                Text("Total \nachievement", style: TextStyle(color: Colors.white60, fontFamily: 'Poppins'),),
                               ],
                             ),
                           ),
@@ -390,17 +377,6 @@ class _ProfilePageState extends State<ProfilePage> {
     ));
   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    // _passwordController.dispose();
-    super.dispose();
-  }
-
   void accountDialog(BuildContext context) {
     showDialog(
         context: context,
@@ -597,8 +573,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   onTap: () {
                     // Update the selected language
                     _user.profile.theme = theme;
-                    _saveUserToSharedPrefs(_user);
-                    _saveUserToFirestore(_user);
+                    _storage.saveUser(_user);
                     Navigator.pop(context); // Close the dialog
                   },
                 );
@@ -649,8 +624,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   onTap: () {
                     // Update the selected language
                     _user.profile.language = language;
-                    _saveUserToSharedPrefs(_user);
-                    _saveUserToFirestore(_user);
+                    _storage.saveUser(_user);
                     Navigator.pop(context); // Close the dialog
                   },
                 );
@@ -684,7 +658,7 @@ class _ProfilePageState extends State<ProfilePage> {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context); // إغلاق المربع
+                  Navigator.pop(context);
                 },
                 child: const Text('Cancel',
                     style:
@@ -722,9 +696,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     _user.tracker.totalWaterGoal =
                         int.parse(_goalController.text);
                   });
-                  _saveUserToSharedPrefs(_user);
-                  _saveUserToFirestore(_user);
-                  Navigator.pop(context); // إغلاق المربع وحفظ القيمة
+                  _storage.saveUser(_user);
+                  Navigator.pop(context);
                 },
                 child: const Text(
                   'Save',
@@ -794,8 +767,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   _user.profile.unit = units[selectedIndex];
                 });
 
-                _saveUserToSharedPrefs(_user);
-                _saveUserToFirestore(_user);
+                _storage.saveUser(_user);
 
                 // Close the dialog
                 Navigator.pop(context);
@@ -859,8 +831,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 log(_user.toMap().toString());
 
-                _saveUserToSharedPrefs(_user);
-                _saveUserToFirestore(_user);
+                _storage.saveUser(_user);
 
                 // Close the dialog
                 Navigator.pop(context);
@@ -952,8 +923,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 log(_user.toMap().toString());
 
-                _saveUserToSharedPrefs(_user);
-                _saveUserToFirestore(_user);
+                _storage.saveUser(_user);
 
                 Navigator.pop(context); // Close the dialog
               },

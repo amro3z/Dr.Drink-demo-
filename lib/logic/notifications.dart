@@ -39,7 +39,7 @@ class LocalNotificationService {
     );
   }
 
-  static void showHourlyNotificationsBetweenTimes() async {
+  static void schedule() async {
     // Ensure correct timezone setup
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
@@ -75,16 +75,19 @@ class LocalNotificationService {
         time,
         details,
         payload: 'hourly_reminder',
-        androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
         UILocalNotificationDateInterpretation.absoluteTime,
       );
     }
     log('Notifications scheduled successfully!');
+    log(_notificationTimes.toString());
   }
 
-  static generateSchedule(String wakeUpTime, String bedTime)
+  static generateSchedule(String wakeUpTime, String bedTime, int intervalHour, int intervalMinute)
   {
+    _notificationTimes = [];
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
     // Get the current time
     final now = tz.TZDateTime.now(tz.local);
 
@@ -98,9 +101,12 @@ class LocalNotificationService {
     }
 
     var currentTime = wakeUp;
-    while (currentTime.isBefore(bed)) {
+    while (true) {
+      currentTime = currentTime.add(Duration(hours: intervalHour, minutes: intervalMinute));
+      if (currentTime.isAfter(bed)) {
+        break;
+      }
       _notificationTimes.add(currentTime);
-      currentTime = currentTime.add(const Duration(minutes: 15));
     }
 
     log(_notificationTimes.toString());

@@ -35,9 +35,8 @@ class _NavigationBarState extends State<CustomNavigationBar> {
     await requestPermissions();
     await Permission.ignoreBatteryOptimizations.request();
     LocalNotificationService.setNotificationSound(_user.profile.notificationSound);
-    LocalNotificationService.generateSchedule(_user.data.wakeUpTime!, _user.data.bedTime!);
-    // LocalNotificationService.showRepeatedNotification();
-    LocalNotificationService.showHourlyNotificationsBetweenTimes();
+    LocalNotificationService.generateSchedule(_user.data.wakeUpTime!, _user.data.bedTime!, _user.profile.intervalHours, _user.profile.intervalMinutes);
+    LocalNotificationService.schedule();
   }
 
   Future<void> requestPermissions() async {
