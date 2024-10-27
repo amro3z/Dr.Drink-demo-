@@ -15,20 +15,26 @@ import 'package:dr_drink/logic/notifications.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize Local Notification Service
   await LocalNotificationService.init();
 
+  // Initialize Firebase with error handling
   try {
     await Firebase.initializeApp(
-        options: const FirebaseOptions(
-            apiKey: 'AIzaSyABLxq1U60vAWE5cIqyqSjb0MIudKiWKQ4',
-            appId: '1:710563306562:android:d894e4e55beb2b6c5fe1db',
-            messagingSenderId: '710563306562',
-            projectId: 'drink-daily-app'));
+      options: const FirebaseOptions(
+        apiKey: 'AIzaSyABLxq1U60vAWE5cIqyqSjb0MIudKiWKQ4',
+        appId: '1:710563306562:android:d894e4e55beb2b6c5fe1db',
+        messagingSenderId: '710563306562',
+        projectId: 'drink-daily-app',
+      ),
+    );
     log('Firebase successfully connected!');
-  } catch (e) {
+  } catch (e, stacktrace) {
     log('Firebase connection error: $e');
+    log('Stacktrace: $stacktrace');
   }
 
+  // Ensure the app starts correctly
   runApp(const Main());
 }
 
@@ -54,7 +60,6 @@ class _MainState extends State<Main> {
 
   @override
   Widget build(BuildContext context) {
-
     return BlocProvider(
       create: (context) =>
           WeatherCubit()..getWeather(), // تأكد من استدعاء getWeather هنا

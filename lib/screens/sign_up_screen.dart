@@ -1,24 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:dr_drink/logic/storage.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:dr_drink/widgets/welcomeWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../logic/account.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
-
-  static Future<void> saveAccount(String name, String email) async {
-    Account account = Account(email: email, userName: name);
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("account", json.encode(account.toMap()));
-  }
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -33,6 +25,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final FocusNode _passwordFocusNode = FocusNode();
   bool _isLoading = false;
   bool _isPasswordVisible = false;
+  Storage storage = Storage();
 
   @override
   void dispose() {
@@ -43,6 +36,58 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _nameFocusNode.dispose();
     _passwordFocusNode.dispose();
     super.dispose();
+  }
+
+  void _registerUser() async {
+    if (_emailController.text.isEmpty) {
+      _showErrorDialog('Error', 'Email cannot be empty.');
+      return;
+    }
+    if (_nameController.text.isEmpty) {
+      _showErrorDialog('Error', 'Name cannot be empty.');
+      return;
+    }
+    if (_passwordController.text.isEmpty) {
+      _showErrorDialog('Error', 'Password cannot be empty.');
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final email = _emailController.text;
+      final password = _passwordController.text;
+
+      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+
+      await credential.user?.sendEmailVerification(); // Send verification email
+
+      // Show the waiting dialog while checking for verification
+      _showWaitingDialog(credential.user!);
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (e.code == 'weak-password') {
+        _showErrorDialog('Weak Password', 'The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        _showErrorDialog('Email Already In Use',
+            'The account already exists for that email.');
+      } else {
+        _showErrorDialog('Sign Up Failed',
+            e.message ?? 'An error occurred while signing up.');
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+
+      _showErrorDialog('Sign Up Failed',
+          'An error occurred while signing up. Please try again.');
+    }
   }
 
   @override
@@ -219,59 +264,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  void _registerUser() async {
-    if (_emailController.text.isEmpty) {
-      _showErrorDialog('Error', 'Email cannot be empty.');
-      return;
-    }
-    if (_nameController.text.isEmpty) {
-      _showErrorDialog('Error', 'Name cannot be empty.');
-      return;
-    }
-    if (_passwordController.text.isEmpty) {
-      _showErrorDialog('Error', 'Password cannot be empty.');
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final email = _emailController.text;
-      final password = _passwordController.text;
-
-      final credential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
-
-      await credential.user?.sendEmailVerification(); // Send verification email
-
-      // Show the waiting dialog while checking for verification
-      _showWaitingDialog(credential.user!);
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-
-      if (e.code == 'weak-password') {
-        _showErrorDialog('Weak Password', 'The password provided is too weak.');
-      } else if (e.code == 'email-already-in-use') {
-        _showErrorDialog('Email Already In Use',
-            'The account already exists for that email.');
-      } else {
-        _showErrorDialog('Sign Up Failed',
-            e.message ?? 'An error occurred while signing up.');
-      }
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-
-      _showErrorDialog('Sign Up Failed',
-          'An error occurred while signing up. Please try again.');
-    }
-  }
-
   void _showWaitingDialog(User user) {
     showDialog(
       context: context,
@@ -309,7 +301,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
         // Update the user's display name using the value from _nameController
         String newName = _nameController.text;
-        SignUpScreen.saveAccount(newName, user.email!);
+        storage.saveAccount(newName, user.email!);
         await currentUser.updateDisplayName(newName);
         await currentUser.reload(); // Ensure the update takes effect
 
@@ -323,7 +315,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       }
     });
   }
-
 
   void _showErrorDialog(String title, String description) {
     AwesomeDialog(

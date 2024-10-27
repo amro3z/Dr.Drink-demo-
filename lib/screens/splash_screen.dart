@@ -9,10 +9,11 @@ import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+// import 'package:connectivity_plus/connectivity_plus.dart';
 import '../cubits/weather_cubit/weather_cubit.dart';
 import '../cubits/weather_cubit/weather_states.dart';
 import '../logic/notifications.dart';
+import '../logic/storage.dart';
 import '../logic/user.dart';
 import '../tips/ai.dart';
 
@@ -28,24 +29,23 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   late final WeatherCubit weatherCubit;
-  late final TipService tipService; // يجب تهيئة TipService بعد تهيئة weatherCubit
+  late final TipService tipService;
+  Storage storage = Storage();
+
   @override
   void initState() {
     super.initState();
-    listenToNotificationStream();
+
     checkCredentials();
 
+    listenToNotificationStream();
+
     weatherCubit = WeatherCubit();
-
-    // تهيئة TipService بعد تهيئة weatherCubit
     tipService = TipService(weatherCubit: weatherCubit);
-
-    weatherCubit.getWeather(); // جلب حالة الطقس
-
-    // إضافة مستمع لتحميل بيانات الطقس قبل استدعاء fetchTipsFromService
+    weatherCubit.getWeather();
     weatherCubit.stream.listen((state) {
       if (state is WeatherLoadedState) {
-        fetchTipsFromService(); // جلب النصائح بعد تحميل الطقس
+        fetchTipsFromService();
       }
     });
   }
@@ -58,118 +58,51 @@ class _SplashScreenState extends State<SplashScreen> {
       setState(() {
         SplashScreen.tips = fetchedTips;
       });
-
-      // if (fetchedTips.isNotEmpty) {
-      //   Future.delayed(const Duration(seconds: 1), () {
-      //     TipDisplay.showTipBottomSheet(context, fetchedTips[0]);
-      //   });
-      // }
     } catch (e) {
-      log('Error in fetching tips from service: $e'); // تسجيل أي خطأ يحدث هنا
+      log('Error in fetching tips from service: $e');
     }
   }
 
   void listenToNotificationStream(){
-    LocalNotificationService.streamController.stream.listen( (notificationResponse)
+    LocalNotificationService.streamController.stream.listen((notificationResponse)
     {
       log(notificationResponse.payload!.toString());
-    },
-    );
+    },);
   }
 
   Future<void> checkCredentials() async {
-    final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult.contains(ConnectivityResult.none)) {
-      log('****************************offline');
-      _checkUserAuthLocaly();
-    } else {
-      log('****************************online');
-      Future.delayed(const Duration(seconds: 1), () async { // added async
-        if (FirebaseAuth.instance.currentUser == null) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
-          );
-        } else {
-          await _loadUserFromFirestoreAndStoreLocally();
+    Future.delayed(const Duration(seconds: 1), () async {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      bool success = false;
+
+      if (currentUser != null) {
+        try {
+          log('User is authenticated with Firebase');
+          success = await storage.loadUserFromFirestoreAndStoreLocally();
+        } catch (e) {
+          log('Error loading user from Firestore: $e');
+          success = await storage.loadUserFromSharedPrefs();
         }
-      });
-    }
-  }
+      }
 
-  // Check if the user has already entered their data
-  Future<void> _checkUserAuthLocaly() async {
-    await Future.delayed(const Duration(seconds: 1));
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    bool? isUserRegistered = prefs.getBool('isUserRegistered');
-
-
-    if (!mounted) return; // Check if the widget is still in the tree
-
-    if (isUserRegistered == true) {
-
-      await _loadUserFromSharedPrefs();
-
-      // If user data exists, navigate to the TargetScreen (home screen)
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const CustomNavigationBar()),
-      );
-    } else {
-      // If no user data, navigate to GenderWidget (input screen)
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-      );
-    }
-  }
-
-  Future<void> _loadUserFromFirestoreAndStoreLocally() async {
-    try {
-      // Get the authenticated user's ID
-      String userId = FirebaseAuth.instance.currentUser!.uid;
-      log(userId);
-
-      // Reference to the user's document in Firestore
-      final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
-
-      // Fetch user data from Firestore
-      DocumentSnapshot<Map<String, dynamic>> snapshot = await userDoc.get();
-      log('second here');
-      if (snapshot.exists) {
-        Map<String, dynamic> userData = snapshot.data()!;
-        log(json.encode(userData));
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString("user", json.encode(userData));
-        await prefs.setBool('isUserRegistered', true);
-
-        MyUser user = MyUser.fromMap(userData);
-        user.tracker.calculateWaterGoal(user.data.weight!);
-        // LocalNotificationService.setNotificationSound(user.profile.notificationSound);
-
-        log(user.toString()); // didnt loged
-
+      // Navigate based on success
+      if (success) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const CustomNavigationBar()),
         );
-      } else {
+      } else if (currentUser == null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
+      } else { // User is authenticated but doesnt have data
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const WelcomePage()),
         );
       }
-    } catch (e) {
-      log('Error loading user from Firestore: $e');
-    }
-  }
-
-  // load user from shared prefs
-  Future<void> _loadUserFromSharedPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    MyUser user = MyUser.fromMap(json.decode(prefs.getString('user')!));
-    log("user loaded from shared prefs");
+    });
   }
 
   @override

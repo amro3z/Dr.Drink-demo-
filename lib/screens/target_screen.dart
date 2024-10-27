@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dr_drink/logic/storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -32,7 +33,7 @@ class TargetScreen extends StatefulWidget {
 
 class _TargetScreenState extends State<TargetScreen> {
   MyUser? _user;
-  Account? _account;
+  Storage storage = Storage();
   bool _showContent = false;
   String _selectedUnit = 'ml';
   int? _quantity;
@@ -49,27 +50,13 @@ class _TargetScreenState extends State<TargetScreen> {
       });
     });
     // load account from shared preferences
-    _loadAccountFromSharedPrefs();
-
-    _fetchUserData();
-
-
-
+    // _loadAccountFromSharedPrefs();
+    _fetchDataFromScreens();
   }
 
-  // Load account from shared preferences
-  Future<void> _loadAccountFromSharedPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? accountJson = prefs.getString('account');
-    if (accountJson != null) {
-      setState(() {
-        _account = Account.fromMap(json.decode(accountJson));
-      });
-    }
-  }
 
   // Function to store user inputs in SharedPreferences and calculate water goal and it is async to wait for the SharedPreferences to be ready
-  Future<void> _fetchUserData() async {
+  Future<void> _fetchDataFromScreens() async {
 
     // Store values from your widgets
     int age = Agewidget.selectedAge;
@@ -78,7 +65,7 @@ class _TargetScreenState extends State<TargetScreen> {
     String wakeUpTime = '${Wakewidget.selectedHour}:${Wakewidget.selectedMinute} ${Wakewidget.selectedPeriod}';
     String bedTime = '${Sleepwidget.selectedHour}:${Sleepwidget.selectedMinute} ${Sleepwidget.selectedPeriod}';
 
-    await _loadAccountFromSharedPrefs();
+    Account? account = await storage.loadAccountFromSharedPrefs();
 
     setState(() {
       Data data = Data(gender: gender, weight: weight, age: age, wakeUpTime: wakeUpTime, bedTime: bedTime);
@@ -86,38 +73,10 @@ class _TargetScreenState extends State<TargetScreen> {
       History history = History();
       Tracker tracker = Tracker();
       tracker.calculateWaterGoal(weight);
-      log(_account!.toMap().toString());
-      _user = MyUser(account: _account,data: data, profile: profile, history: history, tracker: tracker);
+      _user = MyUser(account: account,data: data, profile: profile, history: history, tracker: tracker);
 
-      _saveUserToSharedPrefs(_user!);
-      _saveUserToFirestore(_user!);
+      storage.saveUser(_user!);
       _quantity = tracker.totalWaterGoal;
-    });
-  }
-
-  Future<void> _saveUserToSharedPrefs(MyUser user) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user', json.encode(user.toMap()));
-    await prefs.setBool('isUserRegistered', true);
-  }
-
-  // Function to Save User to Firestore
-  Future<void> _saveUserToFirestore(MyUser user) async {
-    try {
-      final userCollection = FirebaseFirestore.instance.collection('users');
-      String userId = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous'; // Get the user ID if available
-
-      await userCollection.doc(userId).set(user.toMap());
-
-      log('User saved to Firestore successfully.');
-    } catch (e) {
-      log('Failed to save user to Firestore: $e');
-    }
-  }
-
-  void setQuantity(int quantity) {
-    setState(() {
-      _quantity = quantity;
     });
   }
 
@@ -188,8 +147,7 @@ class _TargetScreenState extends State<TargetScreen> {
                       _user?.profile.unit = 'ml';
                       _selectedUnit = 'ml';
                     });
-                    _saveUserToSharedPrefs(_user!);
-                    _saveUserToFirestore(_user!);
+                    storage.saveUser(_user!);
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(
@@ -225,8 +183,7 @@ class _TargetScreenState extends State<TargetScreen> {
                       _user?.profile.unit = 'L';
                       _selectedUnit = 'L';
                     });
-                    _saveUserToSharedPrefs(_user!);
-                    _saveUserToFirestore(_user!);
+                    storage.saveUser(_user!);
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(
@@ -290,11 +247,6 @@ class _TargetScreenState extends State<TargetScreen> {
                 child: Center(
                   child: GestureDetector(
                     onTap: (){
-                      // need to be changed as they take time which make the navigation to home slow
-                      //
-                      ///
-                      /// //
-
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CustomNavigationBar()));
                     },
                     child: Text(

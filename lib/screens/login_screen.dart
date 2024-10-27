@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dr_drink/logic/storage.dart';
 import 'package:dr_drink/screens/sign_up_screen.dart';
 import 'package:dr_drink/widgets/welcomeWidget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,6 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   bool _isPasswordVisible = false;
+  Storage storage = Storage();
 
   @override
   void dispose() {
@@ -64,91 +66,16 @@ class _LoginScreenState extends State<LoginScreen> {
       await FirebaseAuth.instance.signInWithCredential(credential);
 
       if (userCredential.user != null) {
-        await _loadUserFromFirestoreAndStoreLocally();
+        await loadData();
       }
-    } catch (e) {
+    } catch (e, stacktrace) {
+      log('Firebase connection error: $e');
+      log('Stacktrace: $stacktrace');
       AwesomeDialog(
         context: context,
         dialogType: DialogType.error,
         animType: AnimType.rightSlide,
         title: 'Google Sign-In Failed',
-        desc: e.toString(),
-      ).show();
-    }
-  }
-
-  Future<void> _loadUserFromFirestoreAndStoreLocally() async {
-    try {
-      // Get the authenticated user's ID
-      String userId = FirebaseAuth.instance.currentUser!.uid;
-      log(userId);
-
-      // Reference to the user's document in Firestore
-      final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
-
-      // Fetch user data from Firestore
-      DocumentSnapshot<Map<String, dynamic>> snapshot = await userDoc.get();
-      log('second here');
-      if (snapshot.exists) {
-        Map<String, dynamic> userData = snapshot.data()!;
-        log(json.encode(userData));
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString("user", json.encode(userData));
-        await prefs.setBool('isUserRegistered', true);
-
-        MyUser user = MyUser.fromMap(userData);
-        user.tracker.calculateWaterGoal(user.data.weight!);
-
-        log(user.toString()); // didnt loged
-
-        // await Future.delayed(const Duration(seconds: 3)); // loading screen here
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const CustomNavigationBar()),
-        );
-      } else {
-        LoginScreen.saveAccount(
-            FirebaseAuth.instance.currentUser!.displayName ?? 'User',
-            FirebaseAuth.instance.currentUser!.email ?? 'test@gmail.com',
-            FirebaseAuth.instance.currentUser!.photoURL ?? ''
-        );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const WelcomePage()),
-        );
-      }
-    } catch (e) {
-      log('Error loading user from Firestore: $e');
-    }
-  }
-
-  void _resetPassword() async {
-    if (_emailController.text.isEmpty) {
-      AwesomeDialog(
-        context: context,
-        dialogType: DialogType.error,
-        animType: AnimType.rightSlide,
-        title: 'Error',
-        desc: 'Please enter your email to reset password.',
-      ).show();
-      return;
-    }
-
-    try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: _emailController.text);
-      AwesomeDialog(
-        context: context,
-        dialogType: DialogType.success,
-        animType: AnimType.rightSlide,
-        title: 'Success',
-        desc: 'Password reset email sent!',
-      ).show();
-    } catch (e) {
-      AwesomeDialog(
-        context: context,
-        dialogType: DialogType.error,
-        animType: AnimType.rightSlide,
-        title: 'Error',
         desc: e.toString(),
       ).show();
     }
@@ -200,17 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (credential.user != null) {
-
-        // need to be changed
-        ///
-        /// ////
-        /// ////
-        await _loadUserFromFirestoreAndStoreLocally();
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const CustomNavigationBar()),
-        );
+        await loadData();
       }
     } on FirebaseAuthException catch (e) {
       setState(() {
@@ -245,6 +162,63 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void _resetPassword() async {
+    if (_emailController.text.isEmpty) {
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.error,
+        animType: AnimType.rightSlide,
+        title: 'Error',
+        desc: 'Please enter your email to reset password.',
+      ).show();
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: _emailController.text);
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.success,
+        animType: AnimType.rightSlide,
+        title: 'Success',
+        desc: 'Password reset email sent!',
+      ).show();
+    } catch (e) {
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.error,
+        animType: AnimType.rightSlide,
+        title: 'Error',
+        desc: e.toString(),
+      ).show();
+    }
+  }
+
+  Future<void> loadData() async {
+    try {
+      bool success = await storage.loadUserFromFirestoreAndStoreLocally();
+      if (success) {
+        // await Future.delayed(const Duration(seconds: 3)); // loading screen here
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const CustomNavigationBar()),
+        );
+        // return;
+      } else {
+        LoginScreen.saveAccount(
+            FirebaseAuth.instance.currentUser!.displayName ?? 'User',
+            FirebaseAuth.instance.currentUser!.email ?? 'test@gmail.com',
+            FirebaseAuth.instance.currentUser!.photoURL ?? ''
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const WelcomePage()),
+        );
+      }
+    } catch (e) {
+      log('Error loading user from Firestore: $e');
+    }
+  }
 
 
   @override

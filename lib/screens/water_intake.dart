@@ -10,6 +10,7 @@ import '../component/record_card.dart';
 import '../cubits/weather_cubit/weather_cubit.dart';
 import '../cubits/weather_cubit/weather_states.dart';
 import '../logic/history.dart';
+import '../logic/storage.dart';
 import '../logic/user.dart';
 import '../tips/ai.dart';
 
@@ -25,13 +26,14 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
   double waterLevel = 50;
   DateTime? recordedTime;
   final MyUser _user = MyUser.instance;
-
+  Storage storage = Storage();
   List<String> tips = []; // Store tips here
   late final TipService tipService;
   late final WeatherCubit weatherCubit;
 
   @override
   void initState() {
+    super.initState();
     unit = _user.profile.unit ?? 'ml';
 
     weatherCubit = WeatherCubit();
@@ -61,61 +63,11 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
     }
   }
 
-
-
   void _onDragUpdate(DragUpdateDetails details) {
     setState(() {
       double newWaterLevel = waterLevel - details.delta.dy / 3;
       waterLevel = newWaterLevel.clamp(5.0, 100.0);
     });
-  }
-
-  Future<void> _saveUserToSharedPrefs(MyUser user) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user', json.encode(user.toMap()));
-  }
-
-  Future<void> _saveUserToFirestore(MyUser user) async {
-    try {
-      final userCollection = FirebaseFirestore.instance.collection('users');
-      String userId = FirebaseAuth.instance.currentUser?.uid ?? 'anonymous';
-
-      await userCollection.doc(userId).set(user.toMap());
-
-      log('User saved to Firestore successfully.');
-    } catch (e) {
-      log('Failed to save user to Firestore: $e');
-    }
-  }
-
-  void _storeRecord() {
-    recordedTime = DateTime.now();
-    int hours = recordedTime!.hour > 12 ? recordedTime!.hour - 12 : recordedTime!.hour;
-    String minutes = recordedTime!.minute.toString();
-    if (recordedTime!.minute < 10) {
-      minutes = '0${recordedTime!.minute}';
-    }
-
-    int record = unit == 'ml' ? (waterLevel * 2).truncate() : (waterLevel * 0.2).truncate() * 10;
-    _user.tracker.drink(record);
-    _user.history.addRecord(record, '$hours:$minutes ${recordedTime!.hour > 12 ? 'PM' : 'AM'}');
-    _user.history.addHourlyConsumption(recordedTime!.hour, record);
-    _user.history.addWeeklyConsumption(recordedTime!.weekday, record);
-    _user.history.addMonthlyConsumption(recordedTime!.day - 1, record);
-    _user.profile.addAmount(record);
-
-    _saveUserToSharedPrefs(_user);
-    _saveUserToFirestore(_user);
-    setState(() {});
-    log('Water intake records: ${_user.history.records.toString()}');
-
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   SnackBar(
-    //     content: Text('Recorded $record ${unit == 'ml' ? 'ml' : 'L'} at $hours:$minutes ${recordedTime!.hour > 12 ? 'PM' : 'AM'}'),
-    //     duration: const Duration(seconds: 3),
-    //     behavior: SnackBarBehavior.floating,
-    //   ),
-    // );
   }
 
   String _getAmount() {
@@ -174,7 +126,6 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -299,7 +250,9 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                      _storeRecord();
+                      setState(() {
+                        _user.history.storeRecord(waterLevel, DateTime.now());
+                      });
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
