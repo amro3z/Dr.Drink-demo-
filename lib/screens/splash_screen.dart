@@ -1,20 +1,15 @@
-import 'dart:convert';
 import 'dart:developer';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_drink/component/navigation_bar.dart';
 import 'package:dr_drink/screens/login_screen.dart';
-import 'package:dr_drink/widgets/welcomeWidget.dart';
+import 'package:dr_drink/widgets/welcome_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:connectivity_plus/connectivity_plus.dart';
 import '../cubits/weather_cubit/weather_cubit.dart';
 import '../cubits/weather_cubit/weather_states.dart';
 import '../logic/notifications.dart';
 import '../logic/storage.dart';
-import '../logic/user.dart';
 import '../tips/ai.dart';
 
 
@@ -96,7 +91,7 @@ class _SplashScreenState extends State<SplashScreen> {
           context,
           MaterialPageRoute(builder: (context) => const LoginScreen()),
         );
-      } else { // User is authenticated but doesnt have data
+      } else { // User is authenticated but doesn't have data
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const WelcomePage()),

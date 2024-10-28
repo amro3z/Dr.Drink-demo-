@@ -1,11 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -37,6 +33,37 @@ class LocalNotificationService {
       onDidReceiveNotificationResponse: onTap,
       onDidReceiveBackgroundNotificationResponse: onTap,
     );
+  }
+
+
+  static generateSchedule(TimeOfDay wakeUpTime, TimeOfDay bedTime, TimeOfDay interval)
+  {
+    _notificationTimes = [];
+    cancelAllNotifications();
+
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
+    // Get the current time
+    final now = tz.TZDateTime.now(tz.local);
+
+    var wakeUp = tz.TZDateTime(tz.local, now.year, now.month, now.day, wakeUpTime.hour, wakeUpTime.minute);
+    var bed = tz.TZDateTime(tz.local, now.year, now.month, now.day, bedTime.hour, bedTime.minute);
+
+    // If bedtime is before wake-up (spans two days), adjust bedtime
+    if (bed.isBefore(wakeUp)) {
+      bed = bed.add(const Duration(days: 1));
+    }
+
+    var currentTime = wakeUp;
+    while (true) {
+      currentTime = currentTime.add(Duration(hours: interval.hour, minutes: interval.minute));
+      if (currentTime.isAfter(bed) || currentTime.isAtSameMomentAs(bed)) {
+        break;
+      }
+      _notificationTimes.add(currentTime);
+    }
+
+    log(_notificationTimes.toString());
   }
 
   static void schedule() async {
@@ -83,49 +110,10 @@ class LocalNotificationService {
     log(_notificationTimes.toString());
   }
 
-  static generateSchedule(String wakeUpTime, String bedTime, int intervalHour, int intervalMinute)
-  {
-    _notificationTimes = [];
-    tz.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation('Africa/Cairo'));
-    // Get the current time
-    final now = tz.TZDateTime.now(tz.local);
-
-    // Create wake-up and bedtime objects for today
-    var wakeUp = _stringToTimeOfDay(wakeUpTime, now);
-    var bed = _stringToTimeOfDay(bedTime, now);
-
-    // If bedtime is before wake-up (spans two days), adjust bedtime
-    if (bed.isBefore(wakeUp)) {
-      bed = bed.add(const Duration(days: 1));
-    }
-
-    var currentTime = wakeUp;
-    while (true) {
-      currentTime = currentTime.add(Duration(hours: intervalHour, minutes: intervalMinute));
-      if (currentTime.isAfter(bed)) {
-        break;
-      }
-      _notificationTimes.add(currentTime);
-    }
-
-    log(_notificationTimes.toString());
-  }
-
-  static _stringToTimeOfDay(String time, var now) {
-    // 06:00 AM
-    var timeFormated = time.split(' ');
-    var period = timeFormated[1];
-    var hoursAndMinutes = timeFormated[0].split(':');
-    var wakeHour = period == 'AM' ? int.parse(hoursAndMinutes[0]) : int.parse(hoursAndMinutes[0]) + 12;
-    var wakeMinute = int.parse(hoursAndMinutes[1]);
-
-    return tz.TZDateTime(tz.local, now.year, now.month, now.day,
-        wakeHour, wakeMinute);
-  }
 
 
   static void cancelAllNotifications() async {
+    log('Cancelling all notifications');
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 

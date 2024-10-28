@@ -1,10 +1,8 @@
 import 'dart:developer';
 import 'package:dr_drink/cubits/weather_cubit/weather_cubit.dart';
 import 'package:dr_drink/cubits/weather_cubit/weather_states.dart';
-import 'package:dr_drink/screens/splash_screen.dart';
 import 'package:dr_drink/screens/water_intake.dart';
 import 'package:dr_drink/tips/ai.dart';
-import 'package:dr_drink/tips/tip_screen.dart';
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 import '../component/circle.dart'; // CircleWithShadow widget
@@ -149,7 +147,7 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
             ),
             Positioned(
               top: screenHeight * 0.35,
-              child: CircleWithShadow(),
+              child: const CircleWithShadow(),
             ),
             Positioned(
               top: screenHeight * 0.48,
@@ -202,7 +200,7 @@ class _WaterTrackerPageState extends State<WaterTrackerPage> {
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => WaterIntakeScreen(),
+                          builder: (context) => const WaterIntakeScreen(),
                         ),
                       );
                       _updateWaterConsumed();

@@ -1,12 +1,10 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_drink/logic/notifications.dart';
 import 'package:dr_drink/logic/storage.dart';
 import 'package:dr_drink/screens/reminder_screen.dart';
 import 'package:dr_drink/values/color.dart';
-import 'package:dr_drink/widgets/soundWidget.dart';
+import 'package:dr_drink/widgets/sound_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,7 +23,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   // late VoidCallback toggleTheme;
   final MyUser _user = MyUser.instance;
-  Storage _storage = Storage();
+  final Storage _storage = Storage();
   final TextEditingController _goalController = TextEditingController();
   int totalDaysUsed = 0;
 
@@ -112,23 +110,24 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Icon(Icons.water_drop, color: Colors.white),
+                                    const Icon(Icons.water_drop,
+                                        color: Colors.white),
                                     Text(
                                       '${_user.profile.totalAmount}',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 25,
                                           fontFamily: 'Poppins'),
                                     ),
                                     Text(
                                       ' ${_user.profile.unit}',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           color: Colors.white,
                                           fontFamily: 'Poppins'),
                                     ),
                                   ],
                                 ),
-                                Text(
+                                const Text(
                                   "Total \namount drunk",
                                   style: TextStyle(
                                       color: Colors.white60,
@@ -152,12 +151,29 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Icon(Icons.calendar_today_rounded, color: Colors.white),
-                                    Text(' ${totalDaysUsed+1}', style: TextStyle(color: Colors.white, fontSize: 25, fontFamily: 'Poppins'),),
-                                    Text(" days", style: TextStyle(color: Colors.white, fontFamily: 'Poppins'),),
+                                    const Icon(Icons.calendar_today_rounded,
+                                        color: Colors.white),
+                                    Text(
+                                      ' ${totalDaysUsed + 1}',
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 25,
+                                          fontFamily: 'Poppins'),
+                                    ),
+                                    const Text(
+                                      " days",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'Poppins'),
+                                    ),
                                   ],
                                 ),
-                                Text("Total \nachievement", style: TextStyle(color: Colors.white60, fontFamily: 'Poppins'),),
+                                const Text(
+                                  "Total \nachievement",
+                                  style: TextStyle(
+                                      color: Colors.white60,
+                                      fontFamily: 'Poppins'),
+                                ),
                               ],
                             ),
                           ),
@@ -272,29 +288,30 @@ class _ProfilePageState extends State<ProfilePage> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              dailyGoal_dialog(context);
+                              dailyGoalDialog(context);
                             },
                             behavior: HitTestBehavior.opaque,
                             child: Row(
                               children: [
-                                Icon(Icons.water_drop, color: Colors.white),
-                                Spacer(flex: 1),
-                                Text("Daily goal",
+                                const Icon(Icons.water_drop,
+                                    color: Colors.white),
+                                const Spacer(flex: 1),
+                                const Text("Daily goal",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontFamily: 'Poppins')),
-                                Spacer(flex: 25),
+                                const Spacer(flex: 25),
                                 Text(
-                                  '${_user.profile.unit == 'ml' ? _user.tracker.totalWaterGoal : _user.tracker.totalWaterGoal! / 1000}',
-                                  style: TextStyle(
+                                  '${_user.profile.unit == 'ml' ? _user.tracker.totalWaterGoal : (_user.tracker.totalWaterGoal! / 1000).toStringAsFixed(2)}',
+                                  style: const TextStyle(
                                       color: Colors.white,
                                       fontFamily: 'Poppins'),
                                 ),
                                 Text(' ${_user.profile.unit}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         color: Colors.white,
                                         fontFamily: 'Poppins')),
-                                Icon(Icons.arrow_forward_ios_outlined,
+                                const Icon(Icons.arrow_forward_ios_outlined,
                                     size: 15, color: Colors.white),
                               ],
                             ),
@@ -302,7 +319,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           const SizedBox(height: 25),
                           GestureDetector(
                             onTap: () {
-                              units_dialog(context);
+                              unitsDialog(context);
                             },
                             behavior: HitTestBehavior.opaque,
                             child: const Row(
@@ -326,7 +343,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           const SizedBox(height: 25),
                           GestureDetector(
                             onTap: () {
-                              gender_dialog(context);
+                              genderDialog(context);
                             },
                             behavior: HitTestBehavior.opaque,
                             child: const Row(
@@ -346,7 +363,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           const SizedBox(height: 25),
                           GestureDetector(
                             onTap: () {
-                              weight_dialog(context);
+                              weightDialog(context);
                             },
                             behavior: HitTestBehavior.opaque,
                             child: const Row(
@@ -474,7 +491,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       await googleSignIn.signOut(); // Sign out from Google
                     }
                   } catch (e) {
-                    print("Error signing out from Google: $e");
+                    log("Error signing out from Google: $e");
                   }
 
                   await FirebaseAuth.instance.signOut();
@@ -484,7 +501,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   LocalNotificationService.cancelAllNotifications();
                   Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()),
                     (Route<dynamic> route) => false,
                   );
                 },
@@ -636,7 +654,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  void dailyGoal_dialog(BuildContext context) {
+  void dailyGoalDialog(BuildContext context) {
     showDialog(
         context: context,
         builder: (context) {
@@ -652,7 +670,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
               decoration: InputDecoration(
                 hintText:
-                    '${_user.profile.unit == 'ml' ? _user.tracker.totalWaterGoal : _user.tracker.totalWaterGoal! / 1000} ${_user.profile.unit}',
+                    '${_user.profile.unit == 'ml' ? _user.tracker.totalWaterGoal : (_user.tracker.totalWaterGoal! / 1000).toStringAsFixed(2)} ${_user.profile.unit}',
               ),
             ),
             actions: [
@@ -709,7 +727,7 @@ class _ProfilePageState extends State<ProfilePage> {
         });
   }
 
-  void units_dialog(BuildContext context) {
+  void unitsDialog(BuildContext context) {
     // List of available units
     final units = ["ml", "L"];
 
@@ -781,7 +799,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  void gender_dialog(BuildContext context) {
+  void genderDialog(BuildContext context) {
     // List of genders
     final genders = ["Male", "Female"];
 
@@ -802,7 +820,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           content: SizedBox(
             width: 70,
-            height: 200,
+            height: 150,
             child: ListWheelScrollView(
               controller: controller,
               itemExtent: 50,
@@ -845,7 +863,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  void weight_dialog(BuildContext context) {
+  void weightDialog(BuildContext context) {
     // Initialize the range for weight (from 40 to 200)
     const int minWeight = 40;
     const int maxWeight = 200;
@@ -867,7 +885,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           content: SizedBox(
             width: 50,
-            height: 100,
+            height: 150,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,

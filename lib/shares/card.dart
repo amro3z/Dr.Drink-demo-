@@ -6,10 +6,10 @@ class InsightsCard extends StatelessWidget {
   InsightsCard({
     super.key,
     required this.backcolor,
-    required this.cardcolor,
+    required this.cardColor,
     required this.text,
     required this.path,
-    required this.textcolor,
+    required this.textColor,
     required this.description,
     required this.description_1,
     required this.description_2,
@@ -33,8 +33,8 @@ class InsightsCard extends StatelessWidget {
     this.top = 0,
   });
   final Color backcolor;
-  final Color cardcolor;
-  final Color textcolor;
+  final Color cardColor;
+  final Color textColor;
   final String text;
   final String title_1;
   final String title_2;
@@ -67,9 +67,9 @@ class InsightsCard extends StatelessWidget {
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => SingleVisibleItemList(
             title: text,
-            backgroundColor: cardcolor,
-            textColor: textcolor,
-            notactivedotcolor: backcolor,
+            backgroundColor: cardColor,
+            textColor: textColor,
+            notActiveColor: backcolor,
             description: description,
             description_1: description_1,
             description_2: description_2,
@@ -90,7 +90,7 @@ class InsightsCard extends StatelessWidget {
       },
       child: Stack(
         clipBehavior:
-            Clip.none, // يسمح للمستطيل الصغير بالخروج خارج حدود المستطيل الكبير
+            Clip.none,
         children: [
           Container(
             decoration: BoxDecoration(
@@ -102,38 +102,37 @@ class InsightsCard extends StatelessWidget {
           ),
 
           Positioned(
-            top: top, // الصورة تبدأ من أعلى البطاقة
+            top: top,
             left: left,
-            bottom: bottom, // ترك مساحة للنص أسفل الصورة
+            bottom: bottom,
             right: right,
             child: Image(
               image: AssetImage(path),
               width: screenWidth * 0.1,
               height: screenHeight * 0.2,
-              fit: BoxFit.contain, // لضمان أن الصورة مناسبة للحجم
+              fit: BoxFit.contain,
             ),
           ),
-          // المستطيل الصغير موضوع تحت المستطيل الكبير بالكامل
           Positioned(
-            bottom: 0, // هنا نتحكم في ظهور جزء من المستطيل أسفل المستطيل الكبير
+            bottom: 0,
             left: 0,
             right: 0,
             child: Container(
               padding:  EdgeInsets.only( left :screenHeight *0.01 ),
-              height: screenHeight * 0.08, // تحديد ارتفاع ثابت للمستطيل الصغير
+              height: screenHeight * 0.08,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: cardcolor,
+                color: cardColor,
               ),
               child: Center(
                 child: Text(
                   text,
-                  maxLines: 3, // تحديد أقصى عدد للأسطر
+                  maxLines: 3,
                   overflow: TextOverflow
-                      .ellipsis, // إضافة نقاط في حالة تجاوز النص المساحة
+                      .ellipsis,
                   textAlign: TextAlign.start,
                   style: TextStyle(
-                    color: textcolor,
+                    color: textColor,
                     fontSize: screenWidth * 0.038,
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.bold,
@@ -165,12 +164,12 @@ class _ListCardState extends State<ListCard> {
       height: screenHeight * 0.3,
       width: screenWidth,
       child: ListView.builder(
-        scrollDirection: Axis.horizontal, // الاتجاه الأفقي
+        scrollDirection: Axis.horizontal,
         itemCount: widget.categoryCard.length,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.symmetric(
-                horizontal: 8.0), // مسافة بسيطة بين الكروت
+                horizontal: 8.0),
             child: widget.categoryCard[index],
           );
         },
@@ -195,10 +194,10 @@ class MyCard extends StatelessWidget {
             InsightsCard(
               bottom: screenHeight * 0.032,
               backcolor: MyColor.frow,
-              cardcolor: MyColor.fcrow,
+              cardColor: MyColor.fcrow,
               path: "assets/image/avoid_mistake.png",
               text: 'Avoid These Water Drinking Mistakes',
-              textcolor: MyColor.fnrow,
+              textColor: MyColor.fnrow,
               description:
                   "Did you know that even when you drink water, you can make some mistakes to affect your health? \n \nLet's explore the most common water-drinking mistakes and how you can avoid them.",
               title_1: "Not Drinking Enough Water",
@@ -227,10 +226,10 @@ class MyCard extends StatelessWidget {
               bottom: screenHeight * 0.0001,
               top: screenHeight * 0.0015,
               backcolor: MyColor.frow,
-              cardcolor: MyColor.fcrow,
+              cardColor: MyColor.fcrow,
               path: "assets/image/drinking_water.png",
               text: 'Best Times to Drink Water',
-              textcolor: MyColor.fnrow,
+              textColor: MyColor.fnrow,
               description:
                   "We all know that drinking enough water is important, but did you know that timing can be just as important as the amount? \n \nHere are some optimal times to drink water throughout the day.",
               title_1: "After Waking Up",
@@ -259,10 +258,10 @@ class MyCard extends StatelessWidget {
               bottom: screenHeight * 0.001,
               top: screenHeight * 0.025,
               backcolor: MyColor.frow,
-              cardcolor: MyColor.fcrow,
+              cardColor: MyColor.fcrow,
               path: "assets/image/replacing.png",
               text: 'Replacing Beverages with Water for Health',
-              textcolor: MyColor.fnrow,
+              textColor: MyColor.fnrow,
               description:
                   "It's time to stop indulging in those sugary drinks and start drinking water. \n \nGet ready for the 7 benefits of drinking water instead of sugary beverages below.",
               title_1: "Weight Loss",
@@ -291,10 +290,10 @@ class MyCard extends StatelessWidget {
               bottom: screenHeight * 0.001,
               top: screenHeight * 0.03,
               backcolor: MyColor.frow,
-              cardcolor: MyColor.fcrow,
+              cardColor: MyColor.fcrow,
               path: "assets/image/rb_13254.png",
               text: 'Drink Water on an Empty Stomach ?',
-              textcolor: MyColor.fnrow,
+              textColor: MyColor.fnrow,
               description:
                   "Have you ever wondered if there are any benefits to drinking water on an empty stomach? \n \nNo worries. The benefits and drawbacks of doing that and tips for optimal hydration are all included here. Let's check them out.",
               title_1: "Aid Digestion",
@@ -327,10 +326,10 @@ class MyCard extends StatelessWidget {
             InsightsCard(
               bottom: screenHeight * 0.02,
               backcolor: MyColor.srow,
-              cardcolor: MyColor.scrow,
+              cardColor: MyColor.scrow,
               path: "assets/image/drinking water-cuate.png",
               text: 'Benefits of Drinking \nWater for Skin',
-              textcolor: MyColor.snrow,
+              textColor: MyColor.snrow,
               description:
                   "Our skin is the largest organ in our body and is mostly made up of water, so it's no surprise that staying hydrated has a significant impact on skin health. \n \nRead on to know some benefits of drinking water for healthy skin.",
               title_1: 'Hydrate the Skin',
@@ -358,10 +357,10 @@ class MyCard extends StatelessWidget {
             InsightsCard(
               bottom: screenHeight * 0.05,
               backcolor: MyColor.srow,
-              cardcolor: MyColor.scrow,
+              cardColor: MyColor.scrow,
               path: "assets/image/drinking water-amico.png",
               text: 'Drinking Schedule for Wrinkle-Free Skin',
-              textcolor: MyColor.snrow,
+              textColor: MyColor.snrow,
               description:
                   "To maximize the benefits of drinking water for your skin, it is essential to follow a proper drinking schedule. \n \nHere are some tips to help you get started:",
               title_1: 'Start Your Day With a Glass of Water',
@@ -390,10 +389,10 @@ class MyCard extends StatelessWidget {
             InsightsCard(
               bottom: screenHeight * 0.05,
               backcolor: MyColor.srow,
-              cardcolor: MyColor.scrow,
+              cardColor: MyColor.scrow,
               path: "assets/image/cherry drink-amico.png",
               text: 'Miracle Juices for Glowing Skin',
-              textcolor: MyColor.snrow,
+              textColor: MyColor.snrow,
               description:
                   "Juices are a great way to pack in nutrients that help enhance skin health and promote a natural glow. \n \nHere are some of the best juices for healthy, radiant, and glowing skin:",
               description_1:
@@ -421,10 +420,10 @@ class MyCard extends StatelessWidget {
             InsightsCard(
               bottom: screenHeight * 0.015,
               backcolor: MyColor.srow,
-              cardcolor: MyColor.scrow,
+              cardColor: MyColor.scrow,
               path: "assets/image/hot_water.png",
               text: 'Hot and Cold Water Benefits for Skin',
-              textcolor: MyColor.snrow,
+              textColor: MyColor.snrow,
               description:
                   "Drinking water and using hot and cold water on your skin can both improve the appearance and health of your skin. \n \nHowever, different water temperatures can yield different benefits. Read on to know their unique benefits.",
               description_1:
@@ -459,12 +458,12 @@ class MyCard extends StatelessWidget {
           categoryCard: [
             InsightsCard(
               backcolor: MyColor.trow,
-              cardcolor: MyColor.tcrow,
+              cardColor: MyColor.tcrow,
               bottom: screenHeight * 0.001,
               top: screenHeight * 0.033,
               path: "assets/image/Insomnia-pana.png",
               text: 'Bedtime Drinks for Better Sleep',
-              textcolor: MyColor.tnrow,
+              textColor: MyColor.tnrow,
               description:
                   "Are you tired of tossing and turning all night, struggling to get a good night's rest? You're not alone. \n \nFortunately, we'll explore some of the most effective and delicious drinks to help you get the restful night's sleep you deserve.",
               description_1:
@@ -474,7 +473,7 @@ class MyCard extends StatelessWidget {
               description_3:
                   "Tart cherries are a natural source of melatonin, a hormone that regulates sleep-wake cycles. \n \nDrinking it before bed can help increase melatonin levels, leading to better sleep.",
               description_4:
-                  "Coconut water is a natural source of magnesium, a mineral that can help relax the body and improve sleep quality. \n n\It also contains potassium, which can help regulate blood pressure and promote muscle relaxation.",
+                  "Coconut water is a natural source of magnesium, a mineral that can help relax the body and improve sleep quality. \n \nIt also contains potassium, which can help regulate blood pressure and promote muscle relaxation.",
               description_5:
                   "Nutmeg contains a natural sedative called myristicin, which can help calm your mind and reduce anxiety. \n \nTo make nutmeg tea, simply simmer a cup of water with a pinch of nutmeg for about 10 minutes.",
               description_6:
@@ -491,11 +490,11 @@ class MyCard extends StatelessWidget {
             ),
             InsightsCard(
               backcolor: MyColor.trow,
-              cardcolor: MyColor.tcrow,
+              cardColor: MyColor.tcrow,
               bottom: screenHeight * 0.055,
               path: "assets/image/Mulled wine-amico.png",
               text: 'Impact of Alcohol on Your Body',
-              textcolor: MyColor.tnrow,
+              textColor: MyColor.tnrow,
               description:
                   "Drinking alcohol can be enjoyable, but have you ever considered how alcohol is affecting your body? \n \nReading this article, you can take a closer look at the impact of alcohol, so you can make informed decisions about your drinking habits and overall health.",
               description_1:
@@ -522,11 +521,11 @@ class MyCard extends StatelessWidget {
             ),
             InsightsCard(
               backcolor: MyColor.trow,
-              cardcolor: MyColor.tcrow,
+              cardColor: MyColor.tcrow,
               bottom: screenHeight * 0.033,
               path: "assets/image/Drinking tea-pana.png",
               text: 'Herbal Teas for better\nMental Health',
-              textcolor: MyColor.tnrow,
+              textColor: MyColor.tnrow,
               description:
                   "When you try to find medicines to support your mental health, don't forget natural remedies. The best herbal teas for better mental health are here for you to feel calm and centered no matter what life throws your way.",
               description_1:
@@ -554,10 +553,10 @@ class MyCard extends StatelessWidget {
             InsightsCard(
               bottom: screenHeight * 0.05,
               backcolor: MyColor.trow,
-              cardcolor: MyColor.tcrow,
+              cardColor: MyColor.tcrow,
               path: "assets/image/Hydratation-amico.png",
               text: 'Stop Anxiety by Drinking Water',
-              textcolor: MyColor.tnrow,
+              textColor: MyColor.tnrow,
               description:
                   "Stress and anxiety are common problems that many people face. A simple yet effective way to calm yourself is drinking water. \n \nRead on to let water calm your mind and reduce your stress.",
               description_1:
@@ -592,15 +591,15 @@ class MyCard extends StatelessWidget {
           categoryCard: [
             InsightsCard(
               backcolor: MyColor.forow,
-              cardcolor: MyColor.focrow,
+              cardColor: MyColor.focrow,
               bottom: screenHeight * 0.025,
               path: "assets/image/Hydratation-cuate.png",
               text: 'Top Fat-Burning Drinks for Weight Loss',
-              textcolor: MyColor.fonrow,
+              textColor: MyColor.fonrow,
               description:
                   "Losing weight is a challenging process itself. Make it easier and more pleasant with some enjoyable drinks! \n \nHere are some of the best fat-burning drinks that you can incorporate into your weight loss journey:",
               description_1:
-                  "Green tea is loaded with antioxidants to boost metabolism and help burn fat. The polyphenols in green tea help increase fat oxidation, which can aid in weight loss. \n \It also contains caffeine, which can help boost energy levels and improve exercise performance.",
+                  "Green tea is loaded with antioxidants to boost metabolism and help burn fat. The polyphenols in green tea help increase fat oxidation, which can aid in weight loss. \n \nIt also contains caffeine, which can help boost energy levels and improve exercise performance.",
               description_2:
                   "Coffee contains caffeine. Caffeine has been found to increase metabolism and fat oxidation, which can help with fat burning. \n \nHowever, make sure to avoid adding sugar or cream to your coffee, as these can add extra calories.",
               description_3:
@@ -610,7 +609,7 @@ class MyCard extends StatelessWidget {
               description_5:
                   "Drinking ginger tea can help reduce appetite and aid in weight loss efforts. \n \nIt may assist in fat burning by boosting metabolism and increasing energy expenditure.",
               description_6:
-                  "Cumin and cinnamon have been found to have beneficial effects on weight loss and metabolism. \ \nSimply add a teaspoon of cumin and a teaspoon of cinnamon to boiling water, let it steep for 5 minutes, and enjoy.",
+                  "Cumin and cinnamon have been found to have beneficial effects on weight loss and metabolism. \n \nSimply add a teaspoon of cumin and a teaspoon of cinnamon to boiling water, let it steep for 5 minutes, and enjoy.",
               title_1: 'Green Tea',
               title_2: 'Cofee',
               title_3: 'Apple Cider Vinegar',
@@ -623,11 +622,11 @@ class MyCard extends StatelessWidget {
             ),
             InsightsCard(
               backcolor: MyColor.forow,
-              cardcolor: MyColor.focrow,
+              cardColor: MyColor.focrow,
               bottom: screenHeight * 0.038,
               path: "assets/image/Hot beverage-pana.png",
               text: 'What to Drink During Fasting ?',
-              textcolor: MyColor.fonrow,
+              textColor: MyColor.fonrow,
               description:
                   "Fasting is popular and proved to have numerous benefits in recent years. You may wonder what you can drink to stay hydrated and reduce hunger pangs during fasting. \n \nHere's a guide",
               description_1:
@@ -635,7 +634,7 @@ class MyCard extends StatelessWidget {
               description_2:
                   "It can reduce hunger and boost energy levels. Caffeine has been shown to increase metabolic rate and mobilize fat for fuel, which can be especially helpful during longer fasts. \n \nHowever, be careful not to add any sweeteners or milk, as they can break your fast.",
               description_3:
-                  "Herbal teas, such as peppermint, ginger, and chamomile, can be soothing and relaxing during fasting. \n \They can also help to reduce inflammation, aid digestion, and promote relaxation.",
+                  "Herbal teas, such as peppermint, ginger, and chamomile, can be soothing and relaxing during fasting. \n \nThey can also help to reduce inflammation, aid digestion, and promote relaxation.",
               description_4:
                   "It is believed to contain low calories, help detoxify the liver, aid digestion, and boost the immune system. The citric acid in it is also said to have alkalizing properties, which balance the body's pH levels. \n \nHowever, please consume it in moderation as too much acidity can have negative effects.",
               description_5:
@@ -654,11 +653,11 @@ class MyCard extends StatelessWidget {
             ),
             InsightsCard(
               backcolor: MyColor.forow,
-              cardcolor: MyColor.focrow,
+              cardColor: MyColor.focrow,
               bottom: screenHeight * 0.007,
               path: "assets/image/Stretching exercises-rafiki.png",
               text: 'Drink Water to Lose Weight: How To',
-              textcolor: MyColor.fonrow,
+              textColor: MyColor.fonrow,
               description:
                   "Do you ever know that drinking water can help with your weight loss? \n \nIt's true, and there're some more useful tips for you to dig deeper into and get the best out of it for losing weight.",
               description_1:
@@ -668,7 +667,7 @@ class MyCard extends StatelessWidget {
               description_3:
                   "Drinking 16 ounces of water 30 minutes before meals can help reduce hunger and prevent overeating. \n \nIt can also help you feel fuller and reduce calorie intake.",
               description_4:
-                  "Sugary drinks like soda and juice are high in calories and can contribute to weight gain. \n \By replacing these drinks with water, you can save hundreds of calories each day.",
+                  "Sugary drinks like soda and juice are high in calories and can contribute to weight gain. \n \nBy replacing these drinks with water, you can save hundreds of calories each day.",
               description_5:
                   "Sometimes people mistake thirst for hunger, leading them to eat unnecessarily. \n \nIf you're feeling hungry, try drinking a glass of water first to help you feel fuller and reduce calorie intake. \n \nIf you're still hungry, have a healthy snack or meal.",
               description_6:
@@ -685,11 +684,11 @@ class MyCard extends StatelessWidget {
             ),
             InsightsCard(
               backcolor: MyColor.forow,
-              cardcolor: MyColor.focrow,
+              cardColor: MyColor.focrow,
               bottom: screenHeight * 0.003,
               path: "assets/image/Breathing exercise-rafiki.png",
               text: 'Benefits of Hydration for Exercise',
-              textcolor: MyColor.fonrow,
+              textColor: MyColor.fonrow,
               description:
                   "Have you ever noticed that people often carry a bottle of water with them during their workout? \n \nRead on to know more about the benefits proper hydration can bring to your workout.",
               description_1:
@@ -699,9 +698,9 @@ class MyCard extends StatelessWidget {
               description_3:
                   "When your body is dehydrated, it is more difficult to regulate body temperature, which can lead to heat exhaustion or even heatstroke. \n \nStaying hydrated helps regulate body temperature and reduces the risk of heat-related illnesses.",
               description_4:
-                  "Water helps transport nutrients to cells and remove waste products, which is essential for recovery after exercise. \n \Staying hydrated after exercise can help reduce soreness and speed up recovery time.",
+                  "Water helps transport nutrients to cells and remove waste products, which is essential for recovery after exercise. \n \nStaying hydrated after exercise can help reduce soreness and speed up recovery time.",
               description_5:
-                  "Dehydration can lead to decreased cognitive performance, which can impact decision making and reaction time. \n \Staying hydrated can help maintain cognitive function and keep athletes focused during exercise.",
+                  "Dehydration can lead to decreased cognitive performance, which can impact decision making and reaction time. \n \nStaying hydrated can help maintain cognitive function and keep athletes focused during exercise.",
               description_6:
                   "The optimal fluid intake during exercise depends on various factors, including your body weight, workout intensity, and duration. \n \nYou can use our app to estimate how much you need to drink to compensate for the water you lost after exercise.",
               title_1: 'Increase Athletic Performance',

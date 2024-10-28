@@ -28,22 +28,13 @@ class _ReminderState extends State<Reminder> {
   @override
   void initState() {
     super.initState();
-    selectedHour = _user.profile.intervalHours;
-    selectedMinute = _user.profile.intervalMinutes;
-    wakeUpTime = convertStringToTimeOfDay(_user.data.wakeUpTime!);
-    bedTime = convertStringToTimeOfDay(_user.data.bedTime!);
+    selectedHour = _user.profile.interval.hour;
+    selectedMinute = _user.profile.interval.minute;
+    wakeUpTime = _user.data.wakeUpTime!;
+    bedTime = _user.data.bedTime!;
 
     hourController = FixedExtentScrollController(initialItem: selectedHour);
     minuteController = FixedExtentScrollController(initialItem: selectedMinute ~/ 10);
-  }
-
-  //convert time string 6:00 AM to TimeOfDay
-  TimeOfDay convertStringToTimeOfDay(String time) {
-    final List<String> timeSplit = time.split(' ');
-    final List<String> timeValues = timeSplit[0].split(':');
-    final int hour = int.parse(timeValues[0]);
-    final int minute = int.parse(timeValues[1]);
-    return TimeOfDay(hour: timeSplit[1] == 'AM' ? hour : hour + 12, minute: minute);
   }
 
   // Function to generate reminder times
@@ -56,10 +47,15 @@ class _ReminderState extends State<Reminder> {
     DateTime bedTime = DateTime(currentTime.year, currentTime.month, currentTime.day, this.bedTime.hour, this.bedTime.minute);
     // log('Wake-up time: ${DateFormat.jm().format(wakeUp)}');
     // log('Bed time: ${DateFormat.jm().format(bedTime)}');
+
+    if(bedTime.isBefore(wakeUp)) {
+      bedTime = bedTime.add(const Duration(days: 1));
+    }
+
     // Calculate reminder times based on the selected interval
     while (true) {
       wakeUp = wakeUp.add(Duration(hours: selectedHour, minutes: selectedMinute));
-      if (wakeUp.isAfter(bedTime)) {
+      if (wakeUp.isAfter(bedTime) || wakeUp.isAtSameMomentAs(bedTime)) {
         break;
       }
       times.add(DateFormat.jm().format(wakeUp));
@@ -89,64 +85,88 @@ class _ReminderState extends State<Reminder> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Hour Picker
-                        Expanded(
-                          child: ListWheelScrollView.useDelegate(
-                            controller: hourController,
-                            itemExtent: 50,
-                            perspective: 0.005,
-                            physics: const FixedExtentScrollPhysics(),
-                            onSelectedItemChanged: (value) {
-                              setModalState(() {
-                                selectedHour = value;
-                              });
-                            },
-                            childDelegate: ListWheelChildBuilderDelegate(
-                              builder: (context, index) {
-                                return Center(
-                                  child: Text(
-                                    '$index hour',
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                );
-                              },
-                              childCount: 4, // 0 to 3 hours
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        // Minute Picker
-                        Expanded(
-                          child: ListWheelScrollView.useDelegate(
-                            controller: minuteController,
-                            itemExtent: 50,
-                            perspective: 0.005,
-                            physics: const FixedExtentScrollPhysics(),
-                            onSelectedItemChanged: (value) {
-                              setModalState(() {
-                                selectedMinute = value * 10;
 
-                                if (selectedHour == 0 && selectedMinute == 0) {
-                                  selectedMinute = 10;
-                                  minuteController.jumpToItem(1);
-                                }
-                              });
-                            },
-                            childDelegate: ListWheelChildBuilderDelegate(
-                              builder: (context, index) {
-                                int minuteValue = index * 10;
-                                return Center(
-                                  child: Text(
-                                    '$minuteValue min',
-                                    style: const TextStyle(fontSize: 20),
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Hour Picker
+                              Expanded(
+                                child: ListWheelScrollView.useDelegate(
+                                  controller: hourController,
+                                  itemExtent: 50,
+                                  perspective: 0.005,
+                                  physics: const FixedExtentScrollPhysics(),
+                                  onSelectedItemChanged: (value) {
+                                    setModalState(() {
+                                      selectedHour = value;
+
+                                      if (selectedHour == 0 && selectedMinute == 0) {
+                                        selectedMinute = 10;
+                                        minuteController.jumpToItem(1);
+                                      }
+                                    });
+                                  },
+                                  childDelegate: ListWheelChildBuilderDelegate(
+                                    builder: (context, index) {
+                                      bool isSelected = index == hourController.selectedItem;
+                                      return Center(
+                                        child: Text(
+                                          '$index hour',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                            color: isSelected ? MyColor.blue : Colors.black54,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    childCount: 4, // 0 to 3 hours
                                   ),
-                                );
-                              },
-                              childCount: 6,
-                            ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              // Minute Picker
+                              Expanded(
+                                child: ListWheelScrollView.useDelegate(
+                                  controller: minuteController,
+                                  itemExtent: 50,
+                                  perspective: 0.005,
+                                  physics: const FixedExtentScrollPhysics(),
+                                  onSelectedItemChanged: (value) {
+                                    setModalState(() {
+                                      selectedMinute = value * 10;
+
+                                      if (selectedHour == 0 && selectedMinute == 0) {
+                                        selectedMinute = 10;
+                                        minuteController.jumpToItem(1);
+                                      }
+                                    });
+                                  },
+                                  childDelegate: ListWheelChildBuilderDelegate(
+                                    builder: (context, index) {
+                                      int minuteValue = index * 10;
+                                      bool isSelected = index == minuteController.selectedItem;
+                                      return Center(
+                                        child: Text(
+                                          '$minuteValue min',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                            color: isSelected ? MyColor.blue : Colors.black54,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    childCount: 6, // 0 to 50 minutes in steps of 10
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
+
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -156,9 +176,8 @@ class _ReminderState extends State<Reminder> {
                       onPressed: () {
                         hourController = FixedExtentScrollController(initialItem: selectedHour);
                         minuteController = FixedExtentScrollController(initialItem: selectedMinute ~/ 10);
-                        _user.profile.intervalHours = selectedHour;
-                        _user.profile.intervalMinutes = selectedMinute;
-                        LocalNotificationService.generateSchedule(_user.data.wakeUpTime!, _user.data.bedTime!, _user.profile.intervalHours, _user.profile.intervalMinutes);
+                        _user.profile.interval = TimeOfDay(hour: selectedHour, minute: selectedMinute);
+                        LocalNotificationService.generateSchedule(_user.data.wakeUpTime!, _user.data.bedTime!, _user.profile.interval);
                         LocalNotificationService.schedule();
                         storage.saveUser(_user);
                         Navigator.pop(context);
@@ -190,8 +209,7 @@ class _ReminderState extends State<Reminder> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-
+            colorScheme: const ColorScheme.light(
               primary: MyColor.blue, // Header color (Blue)
               onPrimary: Colors.white, // Header text color
               onSurface: Colors.black, // Body text color
@@ -214,12 +232,10 @@ class _ReminderState extends State<Reminder> {
         } else {
           bedTime = pickedTime;
         }
-        _user.data.wakeUpTime = wakeUpTime.format(context); // .format(context) converts TimeOfDay to String in format 'HH:MM AM/PM'
-        _user.data.bedTime = bedTime.format(context);
-        LocalNotificationService.generateSchedule(_user.data.wakeUpTime!, _user.data.bedTime!, _user.profile.intervalHours, _user.profile.intervalMinutes);
+        _user.data.wakeUpTime = wakeUpTime; // 6:00 AM
+        _user.data.bedTime = bedTime;
+        LocalNotificationService.generateSchedule(_user.data.wakeUpTime!, _user.data.bedTime!, _user.profile.interval);
         LocalNotificationService.schedule();
-        // log('Wake-up time: ${wakeUpTime.format(context)}');
-        // log('Bed time: ${bedTime.format(context)}');
         storage.saveUser(_user);
       });
     }
@@ -347,8 +363,13 @@ class _ReminderState extends State<Reminder> {
             ),
 
             const SizedBox(height: 20), // Space before the explanation text
-
-// Explanation Text with Times
+            // line separator
+            Container(
+              height: 1,
+              color: Colors.grey[300],
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+            ),
+            const SizedBox(height: 20), // Space after the line separator
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
@@ -379,5 +400,3 @@ class _ReminderState extends State<Reminder> {
     );
   }
 }
-
-

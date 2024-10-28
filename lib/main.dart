@@ -1,15 +1,9 @@
 import 'dart:developer';
-
-import 'package:dr_drink/screens/insights_data.dart';
-import 'package:dr_drink/screens/insights_screen.dart';
 import 'package:dr_drink/screens/splash_screen.dart';
-import 'package:dr_drink/widgets/genderWidget.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'cubits/weather_cubit/weather_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:dr_drink/logic/notifications.dart';
 
 void main() async {
@@ -62,7 +56,7 @@ class _MainState extends State<Main> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          WeatherCubit()..getWeather(), // تأكد من استدعاء getWeather هنا
+          WeatherCubit()..getWeather(),
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         home: SplashScreen(),

@@ -1,27 +1,21 @@
-import 'dart:convert';
 import 'dart:developer';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dr_drink/screens/splash_screen.dart';
 import 'package:dr_drink/values/color.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../component/record_card.dart';
 import '../cubits/weather_cubit/weather_cubit.dart';
 import '../cubits/weather_cubit/weather_states.dart';
-import '../logic/history.dart';
 import '../logic/storage.dart';
 import '../logic/user.dart';
 import '../tips/ai.dart';
 
 class WaterIntakeScreen extends StatefulWidget {
   @override
-  _WaterIntakeScreenState createState() => _WaterIntakeScreenState();
+  WaterIntakeScreenState createState() => WaterIntakeScreenState();
 
-  WaterIntakeScreen({super.key});
+  const WaterIntakeScreen({super.key});
 }
 
-class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
+class WaterIntakeScreenState extends State<WaterIntakeScreen> {
   String? unit;
   double waterLevel = 50;
   DateTime? recordedTime;
@@ -34,7 +28,7 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
   @override
   void initState() {
     super.initState();
-    unit = _user.profile.unit ?? 'ml';
+    unit = _user.profile.unit;
 
     weatherCubit = WeatherCubit();
     tipService = TipService(weatherCubit: weatherCubit);
@@ -106,12 +100,12 @@ class _WaterIntakeScreenState extends State<WaterIntakeScreen> {
                   Expanded(
                     child: ListView.builder(
                       controller: scrollController, // Attach scroll controller
-                      itemCount: _user.history.records.length,
+                      itemCount: _user.history.recordedQuantities.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           child: RecordCard(
-                            quantity: _user.history.records[index],
+                            quantity: _user.history.recordedQuantities[index],
                             time: _user.history.recordedTimes[index],
                           ),
                         );

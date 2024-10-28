@@ -2,10 +2,11 @@ import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
 
 class CircleWithShadow extends StatelessWidget {
+  const CircleWithShadow({super.key});
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
 
     double circleSize = screenWidth * 0.7;
 
@@ -21,7 +22,7 @@ class CircleWithShadow extends StatelessWidget {
               color: Colors.black.withOpacity(0.1),
               blurRadius: 2,
               spreadRadius: 1,
-              offset: Offset(0, 3),
+              offset: const Offset(0, 3),
             ),
           ],
         ),

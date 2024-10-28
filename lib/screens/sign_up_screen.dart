@@ -1,13 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dr_drink/logic/storage.dart';
 import 'package:dr_drink/values/color.dart';
-import 'package:dr_drink/widgets/welcomeWidget.dart';
+import 'package:dr_drink/widgets/welcome_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../logic/account.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -106,7 +103,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: screenHeight * 0.14),
-                Container(
+                SizedBox(
                   width: double.infinity,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

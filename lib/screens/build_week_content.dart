@@ -3,14 +3,15 @@ import 'package:fl_chart/fl_chart.dart';
 import '../logic/user.dart';
 import '../values/color.dart';
 import '../values/icons.dart';
-import '../logic/history.dart';
 
 class BuildWeekContent extends StatefulWidget {
+  const BuildWeekContent({super.key});
+
   @override
-  _WeekTrackerScreenState createState() => _WeekTrackerScreenState();
+  WeekTrackerScreenState createState() => WeekTrackerScreenState();
 }
 
-class _WeekTrackerScreenState extends State<BuildWeekContent> {
+class WeekTrackerScreenState extends State<BuildWeekContent> {
   final MyUser _user = MyUser.instance;
   // final History _history = History.instance;
   String? unit; // Default unit
@@ -19,7 +20,7 @@ class _WeekTrackerScreenState extends State<BuildWeekContent> {
   @override
   void initState() {
     super.initState();
-    unit = _user.profile.unit ?? 'ml';
+    unit = _user.profile.unit;
   }
 
   @override
@@ -33,7 +34,7 @@ class _WeekTrackerScreenState extends State<BuildWeekContent> {
         children: [
           Column(
             children: [
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               _buildHeader(textHeadSize),
               const SizedBox(height: 25),
               _buildChartContainer(textHeadSize),
@@ -134,7 +135,7 @@ class _WeekTrackerScreenState extends State<BuildWeekContent> {
             strokeWidth: 1,
           ),
           verticalInterval: 1,
-          getDrawingVerticalLine: (value) => FlLine(
+          getDrawingVerticalLine: (value) => const FlLine(
             color: Colors.transparent,
             strokeWidth: 0,
           ),
@@ -149,7 +150,7 @@ class _WeekTrackerScreenState extends State<BuildWeekContent> {
           leftTitles: AxisTitles(
             axisNameWidget: const Text(
               "",
-              style: const TextStyle(
+              style: TextStyle(
                   fontWeight: FontWeight.bold, fontSize: 14),
             ),
             sideTitles: SideTitles(

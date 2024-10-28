@@ -3,14 +3,15 @@ import 'package:fl_chart/fl_chart.dart';
 import '../logic/user.dart';
 import '../values/color.dart';
 import '../values/icons.dart';
-import '../logic/history.dart';
 
 class BuildMonthContent extends StatefulWidget {
+  const BuildMonthContent({super.key});
+
   @override
-  _MonthTrackerScreenState createState() => _MonthTrackerScreenState();
+  MonthTrackerScreenState createState() => MonthTrackerScreenState();
 }
 
-class _MonthTrackerScreenState extends State<BuildMonthContent> {
+class MonthTrackerScreenState extends State<BuildMonthContent> {
   final MyUser _user = MyUser.instance;
   // final History _history = History.instance;
   String? unit; // Default unit
@@ -19,7 +20,7 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
   @override
   void initState() {
     super.initState();
-    unit = _user.profile.unit ?? 'ml';
+    unit = _user.profile.unit;
   }
 
   @override
@@ -33,9 +34,9 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
         children: [
           Column(
             children: [
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               _buildHeader(textHeadSize),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               _buildChartContainer(textHeadSize),
             ],
           ),
@@ -76,7 +77,7 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildStatsRow(textHeadSize),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             _buildBarChart(),
           ],
         ),
@@ -138,7 +139,7 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
               strokeWidth: 1,
             ),
             verticalInterval: 1,
-            getDrawingVerticalLine: (value) => FlLine(
+            getDrawingVerticalLine: (value) => const FlLine(
               color: Colors.transparent,
               strokeWidth: 0,
             ),
@@ -151,9 +152,9 @@ class _MonthTrackerScreenState extends State<BuildMonthContent> {
               sideTitles: SideTitles(showTitles: false),
             ),
             leftTitles: AxisTitles(
-              axisNameWidget: Text(
+              axisNameWidget: const Text(
                 '',
-                style: const TextStyle(
+                style: TextStyle(
                     fontWeight: FontWeight.bold, fontSize: 14, fontFamily: 'Poppins'),
               ),
               sideTitles: SideTitles(
