@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // استيراد SystemChrome
+import 'package:flutter/services.dart';
 import 'package:dr_drink/shares/card.dart';
 
 class InsightsPage extends StatelessWidget {
@@ -7,12 +7,11 @@ class InsightsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // تخلي شريط الحالة شفاف
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        statusBarColor: Colors.white, // شريط الحالة شفاف
+        statusBarColor: Colors.white,
         statusBarIconBrightness:
-            Brightness.dark, // الأيقونات تبقى غامقة عشان الخلفية فاتحة
+            Brightness.dark,
       ),
     );
 
@@ -37,7 +36,7 @@ class InsightsPage extends StatelessWidget {
       body: const CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: MyCard(), // الكارت بتاعك
+            child: MyCard(),
           ),
         ],
       ),

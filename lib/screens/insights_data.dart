@@ -21,7 +21,7 @@ class SingleVisibleItemList extends StatefulWidget {
   final String description_7;
   final Color backgroundColor;
   final Color textColor;
-  final Color notactivedotcolor;
+  final Color notActiveColor;
   const SingleVisibleItemList({
     super.key,
     required this.title,
@@ -35,7 +35,7 @@ class SingleVisibleItemList extends StatefulWidget {
     required this.description_7,
     required this.backgroundColor,
     required this.textColor,
-    required this.notactivedotcolor,
+    required this.notActiveColor,
     required this.title_1,
     required this.title_2,
     required this.title_3,
@@ -46,11 +46,11 @@ class SingleVisibleItemList extends StatefulWidget {
   });
 
   @override
-  _SingleVisibleItemListState createState() => _SingleVisibleItemListState();
+  SingleVisibleItemListState createState() => SingleVisibleItemListState();
 }
 
-class _SingleVisibleItemListState extends State<SingleVisibleItemList> {
-  PageController _pageController = PageController();
+class SingleVisibleItemListState extends State<SingleVisibleItemList> {
+  final PageController _pageController = PageController();
   double _currentPage = 0.0;
 
   @override
@@ -76,7 +76,7 @@ class _SingleVisibleItemListState extends State<SingleVisibleItemList> {
     required String title,
     required String description,
     String? imagePath,
-    double? fontsize = 25,
+    double? fontSize = 25,
   }) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
@@ -134,7 +134,7 @@ class _SingleVisibleItemListState extends State<SingleVisibleItemList> {
             opacity: opacity,
             title: widget.title,
             description: widget.description,
-            fontsize: 40,
+            fontSize: 40,
             // Update with your image path
           ),
       (opacity) => buildItem(
@@ -178,7 +178,7 @@ class _SingleVisibleItemListState extends State<SingleVisibleItemList> {
           title: widget.title_7,
           description: widget.description_7,
           imagePath: 'assets/image/7.png',
-          fontsize: 0 // Update with your image path
+          fontSize: 0 // Update with your image path
           ),
     ];
 
@@ -198,7 +198,7 @@ class _SingleVisibleItemListState extends State<SingleVisibleItemList> {
           elevation: 0,
           scrolledUnderElevation: 0,
           title: Text(
-            '${widget.title}',
+            widget.title,
             style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.bold,
@@ -225,7 +225,7 @@ class _SingleVisibleItemListState extends State<SingleVisibleItemList> {
                     double pageDifference = (_currentPage - index).abs();
                     double opacity = (1 - pageDifference).clamp(0.0, 1.0);
 
-                    return Container(
+                    return SizedBox(
                       height: MediaQuery.of(context).size.height,
                       child: itemBuilders[index](opacity),
                     );
@@ -246,7 +246,7 @@ class _SingleVisibleItemListState extends State<SingleVisibleItemList> {
                 dotHeight: screenWidth * 0.023,
                 dotWidth: screenHeight * 0.019,
                 activeDotColor: widget.textColor,
-                dotColor: widget.notactivedotcolor,
+                dotColor: widget.notActiveColor,
                 expansionFactor: 3, // Dot expansion factor
                 spacing: 12, // Space between dots
               ),

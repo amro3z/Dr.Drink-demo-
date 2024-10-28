@@ -4,7 +4,6 @@ import 'package:dr_drink/logic/tracker.dart';
 import 'package:dr_drink/logic/profile.dart';
 import 'package:dr_drink/logic/history.dart';
 import 'package:dr_drink/logic/account.dart';
-
 import 'data.dart';
 
 class MyUser {

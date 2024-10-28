@@ -1,8 +1,4 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_drink/logic/storage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import '../cubits/weather_cubit/weather_cubit.dart';
@@ -14,12 +10,11 @@ import '../logic/tracker.dart';
 import '../values/color.dart';
 import '../tips/ai.dart';
 import '../logic/user.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:dr_drink/widgets/ageWidget.dart';
-import 'package:dr_drink/widgets/weightWidget.dart';
-import 'package:dr_drink/widgets/genderWidget.dart';
-import 'package:dr_drink/widgets/wakeWidget.dart';
-import 'package:dr_drink/widgets/sleepWidget.dart';
+import 'package:dr_drink/widgets/age_widget.dart';
+import 'package:dr_drink/widgets/weight_widget.dart';
+import 'package:dr_drink/widgets/gender_widget.dart';
+import 'package:dr_drink/widgets/wake_widget.dart';
+import 'package:dr_drink/widgets/sleep_widget.dart';
 import 'package:dr_drink/component/navigation_bar.dart';
 
 class TargetScreen extends StatefulWidget {
@@ -37,7 +32,6 @@ class _TargetScreenState extends State<TargetScreen> {
   bool _showContent = false;
   String _selectedUnit = 'ml';
   int? _quantity;
-  late final WeatherCubit weatherCubit;
   late final TipService tipService;
   List<String> tips = [];
 
@@ -59,18 +53,28 @@ class _TargetScreenState extends State<TargetScreen> {
   Future<void> _fetchDataFromScreens() async {
 
     // Store values from your widgets
-    int age = Agewidget.selectedAge;
-    int weight = Weightwidget.selectedWeight;
+    int age = AgeWidget.selectedAge;
+    int weight = WeightWidget.selectedWeight;
     String gender = GenderWidget.gender;
-    String wakeUpTime = '${Wakewidget.selectedHour}:${Wakewidget.selectedMinute} ${Wakewidget.selectedPeriod}';
-    String bedTime = '${Sleepwidget.selectedHour}:${Sleepwidget.selectedMinute} ${Sleepwidget.selectedPeriod}';
+    TimeOfDay wakeUpTime = TimeOfDay(
+      hour: WakeWidget.selectedPeriod == 'PM' && WakeWidget.selectedHour != 12
+          ? WakeWidget.selectedHour + 12
+          : WakeWidget.selectedHour % 12,
+      minute: WakeWidget.selectedMinute,
+    );
+    TimeOfDay bedTime = TimeOfDay(
+      hour: SleepWidget.selectedPeriod == 'PM' && SleepWidget.selectedHour != 12
+          ? SleepWidget.selectedHour + 12
+          : SleepWidget.selectedHour % 12,
+      minute: SleepWidget.selectedMinute,
+    );
 
     Account? account = await storage.loadAccountFromSharedPrefs();
 
     setState(() {
       Data data = Data(gender: gender, weight: weight, age: age, wakeUpTime: wakeUpTime, bedTime: bedTime);
       Profile profile = Profile(unit: _selectedUnit);
-      History history = History();
+      History history = History(lastRecordedTime: DateTime.now());
       Tracker tracker = Tracker();
       tracker.calculateWaterGoal(weight);
       _user = MyUser(account: account,data: data, profile: profile, history: history, tracker: tracker);
@@ -94,7 +98,6 @@ class _TargetScreenState extends State<TargetScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     final textFontSize = screenWidth * 0.08;
-    final adjustFontSize = screenWidth * 0.04;
     final numFontSize = screenWidth * 0.3;
     final unitFontSize = screenWidth * 0.08;
     final subTextFontSize = screenWidth * 0.04;

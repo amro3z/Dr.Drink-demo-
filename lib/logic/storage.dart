@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dr_drink/logic/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'account.dart';
-import 'history.dart';
 
 class Storage {
   Future<bool> loadUserFromFirestoreAndStoreLocally() async {

@@ -1,6 +1,5 @@
 import 'package:dr_drink/values/color.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class RecordCard extends StatefulWidget {
   final int quantity;
@@ -19,14 +18,13 @@ class _RecordCardState extends State<RecordCard> {
 
   @override
   void initState() {
+    super.initState();
     amount = widget.unit == 'ml' ? '${widget.quantity} ml' : '${widget.quantity/1000} L';
     time = widget.time;
   }
 
   @override
   Widget build(BuildContext context) {
-    // DateTime now = DateTime.now();
-    // String formattedtime = DateFormat.jm().format(now);
     return Container(
       height: 140,
       width: 90,

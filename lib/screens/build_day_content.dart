@@ -6,11 +6,13 @@ import '../values/color.dart';
 import '../values/icons.dart';
 
 class BuildDayContent extends StatefulWidget {
+  const BuildDayContent({super.key});
+
   @override
-  _WaterTrackerScreenState createState() => _WaterTrackerScreenState();
+  WaterTrackerScreenState createState() => WaterTrackerScreenState();
 }
 
-class _WaterTrackerScreenState extends State<BuildDayContent> {
+class WaterTrackerScreenState extends State<BuildDayContent> {
   final MyUser _user = MyUser.instance;
   // final History _history = History.instance;
   String? unit; // Default unit
@@ -19,8 +21,10 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
   @override
   void initState() {
     super.initState();
+
+    _user.history.updateLastRecordedTime(DateTime.now());
     goal = _user.tracker.totalWaterGoal!;
-    unit = _user.profile.unit ?? 'ml';
+    unit = _user.profile.unit;
   }
 
   @override
@@ -34,11 +38,11 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
         children: [
           Column(
             children: [
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               _buildHeader(textHeadSize),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               _buildChartContainer(textHeadSize),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               _buildRecordsSection(textHeadSize),
             ],
           ),
@@ -79,7 +83,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildStatsRow(textHeadSize),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             _buildBarChart(),
           ],
         ),
@@ -141,7 +145,7 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
               strokeWidth: 1,
             ),
             verticalInterval: 1,
-            getDrawingVerticalLine: (value) => FlLine(
+            getDrawingVerticalLine: (value) => const FlLine(
               color: Colors.transparent,
               strokeWidth: 0,
             ),
@@ -154,9 +158,9 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
               sideTitles: SideTitles(showTitles: false),
             ),
             leftTitles: AxisTitles(
-              axisNameWidget: Text(
+              axisNameWidget: const Text(
                 '',
-                style: const TextStyle(
+                style: TextStyle(
                     fontWeight: FontWeight.bold, fontSize: 14, fontFamily: 'Poppins'),
               ),
               sideTitles: SideTitles(
@@ -186,10 +190,10 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
                   if (value % 4 == 0 || value == 0 || value == 23) {
                     return Text(
                       value.toInt().toString(),
-                      style: TextStyle(fontSize: 12),
+                      style: const TextStyle(fontSize: 12),
                     );
                   }
-                  return SizedBox();
+                  return const SizedBox();
                 },
               ),
             ),
@@ -214,16 +218,16 @@ class _WaterTrackerScreenState extends State<BuildDayContent> {
           ),
         ),
         const SizedBox(height: 10),
-        Container(
+        SizedBox(
           height: 130,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: _user.history.records.length,
+            itemCount: _user.history.recordedQuantities.length,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(right: 10),
                 child: RecordCard(
-                  quantity: _user.history.records[index],
+                  quantity: _user.history.recordedQuantities[index],
                   time: _user.history.recordedTimes[index],
                   unit: unit!,
                 ),

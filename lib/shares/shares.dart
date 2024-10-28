@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class AppBaricon extends StatelessWidget {
-  AppBaricon(
+class AppBarIcon extends StatelessWidget {
+  const AppBarIcon(
       {super.key,
       required this.path,
       this.onTap,
@@ -15,7 +15,7 @@ class AppBaricon extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Image.asset(
             path,
             width: 40,
@@ -34,7 +34,7 @@ class WheelList extends StatelessWidget {
   final int start;
   final int end;
   final ValueChanged<int> onSelectedItemChanged;
-  WheelList(
+  const WheelList(
       {super.key,
       required this.scroll,
       required this.selectedItem,
@@ -49,18 +49,18 @@ class WheelList extends StatelessWidget {
       child: SizedBox(
         height: 400,
         child: ListWheelScrollView.useDelegate(
-          controller: scroll, // استخدام الـ controller
-          itemExtent: 50, // المسافة بين كل عنصر
+          controller: scroll,
+          itemExtent: 50,
           onSelectedItemChanged: (index) {
             final selectedValue = index + start;
             onSelectedItemChanged(
-                selectedValue); // تمرير القيمة المختارة للويدجيت الأب
+                selectedValue);
           },
           perspective: 0.003,
           physics: const FixedExtentScrollPhysics(),
           childDelegate: ListWheelChildBuilderDelegate(
             builder: (context, index) {
-              final item = index + start; // الأرقام تبدأ من 40
+              final item = index + start;
               return Center(
                 child: Text(
                   item.toString(),
@@ -70,12 +70,12 @@ class WheelList extends StatelessWidget {
                     fontFamily: "Poppins",
                     color: selectedItem == item
                         ? Colors.black
-                        : Colors.grey, // تمييز الرقم المختار
+                        : Colors.grey,
                   ),
                 ),
               );
             },
-            childCount: end - start + 1, // الأرقام من start إلى end
+            childCount: end - start + 1,
           ),
         ),
       ),
@@ -84,7 +84,7 @@ class WheelList extends StatelessWidget {
 }
 
 class TimeWheel extends StatelessWidget {
-  final FixedExtentScrollController controller; // إضافة المتحكم
+  final FixedExtentScrollController controller;
   final int selectedItem;
   final int start;
   final int end;
@@ -95,7 +95,7 @@ class TimeWheel extends StatelessWidget {
   final double fontSize;
   const TimeWheel({
     Key? key,
-    required this.controller, // إضافة المتحكم كمعامل
+    required this.controller,
     required this.selectedItem,
     required this.start,
     required this.end,
@@ -112,7 +112,7 @@ class TimeWheel extends StatelessWidget {
       height: height,
       width: width,
       child: ListWheelScrollView.useDelegate(
-        controller: controller, // استخدم المتحكم
+        controller: controller,
         itemExtent: 50,
         onSelectedItemChanged: (index) {
           onSelectedItemChanged(index + start);
@@ -124,7 +124,7 @@ class TimeWheel extends StatelessWidget {
             final item = index + start;
             final itemText = padWithZero
                 ? item.toString().padLeft(2, '0')
-                : item.toString(); // لضمان أن تكون الدقائق بصيغة 00
+                : item.toString();
 
             return Center(
               child: Text(
@@ -145,9 +145,8 @@ class TimeWheel extends StatelessWidget {
   }
 }
 
-// AmPmWheel ويدجيت مخصص لـ AM/PM
 class AmPmWheel extends StatelessWidget {
-  final FixedExtentScrollController controller; // إضافة المتحكم
+  final FixedExtentScrollController controller;
   final String selectedItem;
   final ValueChanged<String> onSelectedItemChanged;
   final double height;
@@ -156,7 +155,7 @@ class AmPmWheel extends StatelessWidget {
 
   const AmPmWheel({
     Key? key,
-    required this.controller, // إضافة المتحكم كمعامل
+    required this.controller,
     required this.selectedItem,
     required this.onSelectedItemChanged,
     required this.height,
@@ -170,7 +169,7 @@ class AmPmWheel extends StatelessWidget {
       height: height,
       width: 80,
       child: ListWheelScrollView.useDelegate(
-        controller: controller, // استخدم المتحكم
+        controller: controller,
         itemExtent: 50,
         onSelectedItemChanged: (index) {
           final period = index == 0 ? "AM" : "PM";
@@ -224,7 +223,6 @@ Widget buildMealTimeSection(
       required BuildContext context,
     final double fontSize = 30.0}) {
   double screenWidth = MediaQuery.of(context).size.width;
-  double screenHeight = MediaQuery.of(context).size.height;
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: [
