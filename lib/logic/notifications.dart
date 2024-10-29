@@ -102,6 +102,7 @@ class LocalNotificationService {
         time,
         details,
         payload: 'hourly_reminder',
+        androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
         UILocalNotificationDateInterpretation.absoluteTime,
       );

@@ -213,7 +213,7 @@ Widget buildMealTimeSection(
     required String timeLabel,
     required int hour,
     required int minute,
-    required String perioed,
+    required String period,
     required FixedExtentScrollController hourController,
     required FixedExtentScrollController minuteController,
     required FixedExtentScrollController periodController,
@@ -289,7 +289,7 @@ Widget buildMealTimeSection(
           AmPmWheel(
             height: 120,
             controller: periodController,
-            selectedItem: perioed,
+            selectedItem: period,
             onSelectedItemChanged: onPeriodChanged,
             fontSize: fontSize,
           ),

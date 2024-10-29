@@ -124,7 +124,7 @@ class MealWidgetState extends State<MealWidget> {
     return buildMealTimeSection(
       hour: MealWidget.breakfastHour,
       minute: MealWidget.breakfastMinute,
-      perioed: MealWidget.breakfastPeriod,
+      period: MealWidget.breakfastPeriod,
       mealLabel: "Breakfast",
       timeLabel:
           "${MealWidget.breakfastHour}:${MealWidget.breakfastMinute.toString().padLeft(2, '0')} ${MealWidget.breakfastPeriod} ",
@@ -156,7 +156,7 @@ class MealWidgetState extends State<MealWidget> {
           "${MealWidget.lunchHour}:${MealWidget.lunchMinute.toString().padLeft(2, '0')} ${MealWidget.lunchPeriod} ",
       hour: MealWidget.lunchHour,
       minute: MealWidget.lunchMinute,
-      perioed: MealWidget.lunchPeriod,
+      period: MealWidget.lunchPeriod,
       hourController: lunchHourController,
       minuteController: lunchMinuteController,
       periodController: lunchPeriodController,
@@ -185,7 +185,7 @@ class MealWidgetState extends State<MealWidget> {
           "${MealWidget.dinnerHour}:${MealWidget.dinnerMinute.toString().padLeft(2, '0')} ${MealWidget.dinnerPeriod} ",
       hour: MealWidget.dinnerHour,
       minute: MealWidget.dinnerMinute,
-      perioed: MealWidget.dinnerPeriod,
+      period: MealWidget.dinnerPeriod,
       hourController: dinnerHourController,
       minuteController: dinnerMinuteController,
       periodController: dinnerPeriodController,
