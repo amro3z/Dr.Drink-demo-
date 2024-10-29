@@ -85,6 +85,8 @@ class History {
 
     // Daily reset: Check for a full day change (not just the day number)
     if (!_isSameDay(time, _lastRecordedTime!)) {
+      MyUser user = MyUser.instance;
+      user.tracker.totalWaterConsumed = 0;
       _clearHourlyConsumption();
       _clearRecords();
     }
