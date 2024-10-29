@@ -1,7 +1,6 @@
 import 'package:dr_drink/logic/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import '../cubits/weather_cubit/weather_cubit.dart';
 import '../logic/account.dart';
 import '../logic/data.dart';
 import '../logic/history.dart';
@@ -48,10 +47,8 @@ class _TargetScreenState extends State<TargetScreen> {
     _fetchDataFromScreens();
   }
 
-
   // Function to store user inputs in SharedPreferences and calculate water goal and it is async to wait for the SharedPreferences to be ready
   Future<void> _fetchDataFromScreens() async {
-
     // Store values from your widgets
     int age = AgeWidget.selectedAge;
     int weight = WeightWidget.selectedWeight;
@@ -72,12 +69,22 @@ class _TargetScreenState extends State<TargetScreen> {
     Account? account = await storage.loadAccountFromSharedPrefs();
 
     setState(() {
-      Data data = Data(gender: gender, weight: weight, age: age, wakeUpTime: wakeUpTime, bedTime: bedTime);
+      Data data = Data(
+          gender: gender,
+          weight: weight,
+          age: age,
+          wakeUpTime: wakeUpTime,
+          bedTime: bedTime);
       Profile profile = Profile(unit: _selectedUnit);
       History history = History(lastRecordedTime: DateTime.now());
       Tracker tracker = Tracker();
       tracker.calculateWaterGoal(weight);
-      _user = MyUser(account: account,data: data, profile: profile, history: history, tracker: tracker);
+      _user = MyUser(
+          account: account,
+          data: data,
+          profile: profile,
+          history: history,
+          tracker: tracker);
 
       storage.saveUser(_user!);
       _quantity = tracker.totalWaterGoal;
@@ -217,7 +224,6 @@ class _TargetScreenState extends State<TargetScreen> {
               ],
             ),
           ),
-
           Positioned(
             top: dividerTopPosition,
             left: 0,
@@ -238,20 +244,24 @@ class _TargetScreenState extends State<TargetScreen> {
             right: 0,
             child: Align(
               alignment: Alignment.center,
-              child: Container(
-                height: 50,
-                width: 290,
-                decoration: ShapeDecoration(
-                  color: MyColor.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(borderRadius),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CustomNavigationBar()),
+                  );
+                },
+                child: Container(
+                  height: 50,
+                  width: 290,
+                  decoration: ShapeDecoration(
+                    color: MyColor.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(borderRadius),
+                    ),
                   ),
-                ),
-                child: Center(
-                  child: GestureDetector(
-                    onTap: (){
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CustomNavigationBar()));
-                    },
+                  child: Center(
                     child: Text(
                       'Start',
                       style: TextStyle(
@@ -259,7 +269,7 @@ class _TargetScreenState extends State<TargetScreen> {
                         fontFamily: 'Poppins',
                         fontSize: subTextFontSize,
                         fontWeight: FontWeight.w700,
-                        decoration: TextDecoration.none ,
+                        decoration: TextDecoration.none,
                       ),
                     ),
                   ),
@@ -274,11 +284,13 @@ class _TargetScreenState extends State<TargetScreen> {
             child: Align(
               alignment: Alignment.center,
               child: Text(
-                _selectedUnit == 'ml' ? getDisplayedQuantity() : getDisplayedQuantity(),
+                _selectedUnit == 'ml'
+                    ? getDisplayedQuantity()
+                    : getDisplayedQuantity(),
                 style: TextStyle(
                   color: MyColor.white,
                   fontFamily: 'Poppins',
-                  fontSize:  numFontSize,
+                  fontSize: numFontSize,
                   fontWeight: FontWeight.w500,
                   decoration: TextDecoration.none,
                 ),
