@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 class Profile {
   // Public attributes
   int totalAmount;
-  bool enableNotification;
+  int totalDays;
   String notificationSound;
-  TimeOfDay interval;
+  TimeOfDay notificationInterval;
   String theme;
   String language;
   String unit;
@@ -13,9 +13,9 @@ class Profile {
   // Constructor
   Profile({
     this.totalAmount = 0,
-    this.enableNotification = true,
+    this.totalDays = 1,
     this.notificationSound = '',
-    this.interval = const TimeOfDay(hour: 1, minute: 0),
+    this.notificationInterval = const TimeOfDay(hour: 1, minute: 0),
     this.theme = 'Light Theme',
     this.language = 'English',
     this.unit = 'ml',
@@ -30,9 +30,9 @@ class Profile {
   Map<String, dynamic> toMap() {
     return {
       'totalAmount': totalAmount,
-      'enableNotification': enableNotification,
+      'totalDays': totalDays,
       'notificationSound': notificationSound,
-      'interval': _timeOfDayToString(interval),
+      'interval': _timeOfDayToString(notificationInterval),
       'theme': theme,
       'language': language,
       'unit': unit,
@@ -43,9 +43,9 @@ class Profile {
   factory Profile.fromMap(Map<String, dynamic> map) {
     return Profile(
       totalAmount: map['totalAmount'] ?? 0,
-      enableNotification: map['enableNotification'] ?? true,
+      totalDays: map['totalDays'] ?? 1,
       notificationSound: map['notificationSound'] ?? 'Default',
-      interval: _stringToTimeOfDay(map['interval']) ?? const TimeOfDay(hour: 1, minute: 0),
+      notificationInterval: _stringToTimeOfDay(map['interval']) ?? const TimeOfDay(hour: 1, minute: 0),
       theme: map['theme'] ?? 'Light Theme',
       language: map['language'] ?? 'English',
       unit: map['unit'] ?? 'ml',
