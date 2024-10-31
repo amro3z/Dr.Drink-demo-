@@ -25,27 +25,15 @@ class _ProfilePageState extends State<ProfilePage> {
   final MyUser _user = MyUser.instance;
   final Storage _storage = Storage();
   final TextEditingController _goalController = TextEditingController();
-  int totalDaysUsed = 0;
 
   @override
   void initState() {
     super.initState();
-    _calculateTotalDays();
   }
 
   @override
   void dispose() {
     super.dispose();
-  }
-
-  void _calculateTotalDays() {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null && user.metadata.creationTime != null) {
-      DateTime creationDate = user.metadata.creationTime!;
-      DateTime today = DateTime.now();
-      totalDaysUsed = today.difference(creationDate).inDays;
-      setState(() {}); // Update the UI with the new value
-    }
   }
 
   @override
@@ -154,7 +142,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     const Icon(Icons.calendar_today_rounded,
                                         color: Colors.white),
                                     Text(
-                                      ' ${totalDaysUsed + 1}',
+                                      ' ${_user.profile.totalDays}',
                                       style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 25,

@@ -28,8 +28,8 @@ class _ReminderState extends State<Reminder> {
   @override
   void initState() {
     super.initState();
-    selectedHour = _user.profile.interval.hour;
-    selectedMinute = _user.profile.interval.minute;
+    selectedHour = _user.profile.notificationInterval.hour;
+    selectedMinute = _user.profile.notificationInterval.minute;
     wakeUpTime = _user.data.wakeUpTime!;
     bedTime = _user.data.bedTime!;
 
@@ -176,8 +176,8 @@ class _ReminderState extends State<Reminder> {
                       onPressed: () {
                         hourController = FixedExtentScrollController(initialItem: selectedHour);
                         minuteController = FixedExtentScrollController(initialItem: selectedMinute ~/ 10);
-                        _user.profile.interval = TimeOfDay(hour: selectedHour, minute: selectedMinute);
-                        LocalNotificationService.generateSchedule(_user.data.wakeUpTime!, _user.data.bedTime!, _user.profile.interval);
+                        _user.profile.notificationInterval = TimeOfDay(hour: selectedHour, minute: selectedMinute);
+                        LocalNotificationService.generateSchedule(_user.data.wakeUpTime!, _user.data.bedTime!, _user.profile.notificationInterval);
                         LocalNotificationService.schedule();
                         storage.saveUser(_user);
                         Navigator.pop(context);
@@ -234,7 +234,7 @@ class _ReminderState extends State<Reminder> {
         }
         _user.data.wakeUpTime = wakeUpTime; // 6:00 AM
         _user.data.bedTime = bedTime;
-        LocalNotificationService.generateSchedule(_user.data.wakeUpTime!, _user.data.bedTime!, _user.profile.interval);
+        LocalNotificationService.generateSchedule(_user.data.wakeUpTime!, _user.data.bedTime!, _user.profile.notificationInterval);
         LocalNotificationService.schedule();
         storage.saveUser(_user);
       });
