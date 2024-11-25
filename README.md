@@ -5,11 +5,11 @@
 
 
 # Porposal
-[NEXT29_GIZ1_SWD4_S3e_DD App_Group 1.pdf](https://github.com/user-attachments/files/17905824/NEXT29_GIZ1_SWD4_S3e_DD.App_Group.1.pdf)
+https://drive.google.com/file/d/1D5OHAleYzvqsRUWTh9tKD5IiepNLpioa/view?usp=sharing
 # Functional & Non-Functional Requirements
-[Functional&Non-Functional Requirements.pdf](https://github.com/user-attachments/files/17906307/Functional.Non-Functional.Requirements.pdf)
+https://drive.google.com/file/d/1lre2AAO7dkTAY_CfCPi3El_70f5DpZnt/view?usp=sharing
 # Presentation
-[Graduation_Project_Presentation_Content.pptx](https://github.com/user-attachments/files/17906314/Graduation_Project_Presentation_Content.pptx)
+https://docs.google.com/presentation/d/1yGl4hR_wMG36dfZwxhigXsEFPVck7BW3/edit?usp=sharing&ouid=111154119592866856581&rtpof=true&sd=true
 
 # Description
 The "Drink Daily App" is designed to help users develop and maintain the healthy habit of drinking enough water every day. It aims to promote better hydration through features such as:
