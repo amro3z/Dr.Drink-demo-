@@ -8,6 +8,8 @@
 https://drive.google.com/file/d/1D5OHAleYzvqsRUWTh9tKD5IiepNLpioa/view?usp=sharing
 # Functional & Non-Functional Requirements
 https://drive.google.com/file/d/1lre2AAO7dkTAY_CfCPi3El_70f5DpZnt/view?usp=sharing
+# Software Manual
+https://drive.google.com/file/d/1jEY3mEdd6xxQleSGSYSOUWzzIf29sc7w/view?usp=sharing
 # Presentation
 https://docs.google.com/presentation/d/1yGl4hR_wMG36dfZwxhigXsEFPVck7BW3/edit?usp=sharing&ouid=111154119592866856581&rtpof=true&sd=true
 
