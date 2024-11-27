@@ -8,6 +8,8 @@
 https://drive.google.com/file/d/1D5OHAleYzvqsRUWTh9tKD5IiepNLpioa/view?usp=sharing
 # Functional & Non-Functional Requirements
 https://drive.google.com/file/d/1lre2AAO7dkTAY_CfCPi3El_70f5DpZnt/view?usp=sharing
+# Figma Prototype Design (UI/UX)
+https://www.figma.com/proto/KVqY5eySr1oZ8skh0BcVmY/Drink-Daily-App-DD?node-id=1-8&starting-point-node-id=1%3A8
 # Software Manual
 https://drive.google.com/file/d/1jEY3mEdd6xxQleSGSYSOUWzzIf29sc7w/view?usp=sharing
 # Presentation
