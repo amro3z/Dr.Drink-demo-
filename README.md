@@ -14,6 +14,8 @@ https://www.figma.com/proto/KVqY5eySr1oZ8skh0BcVmY/Drink-Daily-App-DD?node-id=1-
 https://drive.google.com/file/d/1jEY3mEdd6xxQleSGSYSOUWzzIf29sc7w/view?usp=sharing
 # Presentation
 https://docs.google.com/presentation/d/1yGl4hR_wMG36dfZwxhigXsEFPVck7BW3/edit?usp=sharing&ouid=111154119592866856581&rtpof=true&sd=true
+# Marketing Presentation
+https://www.canva.com/design/DAGUbp8xoSk/jp35xnrZWeAcvJb_8k76HA/view?utm_content=DAGUbp8xoSk&utm_campaign=designshare&utm_medium=link&utm_source=editor
 
 # Description
 The "Drink Daily App" is designed to help users develop and maintain the healthy habit of drinking enough water every day. It aims to promote better hydration through features such as:
